@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comisiones - Developer7452</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="../img/logo.png" alt="Developer7452 Logo" class="site-logo">
+            <h1 class="site-title">Developer7452</h1>
+        </div>
+        
+        <!-- Menú de usuario -->
+        <div class="user-menu-container">
+            <div class="user-avatar" id="userAvatar">
+                <div class="avatar-placeholder">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar lateral -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info-sidebar" id="userInfoSidebar">
+                    <div class="user-avatar-sidebar">
+                        <div class="avatar-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="user-details">
+                        <h3 class="user-name" id="userName">Iniciar Sesión</h3>
+                        <p class="user-status" id="userStatus">Haz clic para conectar</p>
+                    </div>
+                </div>
+                <button class="close-sidebar" id="closeSidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="sidebar-items">
+                <a href="../index.html" class="sidebar-item">
+                    <i class="fas fa-home menu-icon"></i>
+                    Inicio
+                </a>
+                <a href="sobre-mi.html" class="sidebar-item">
+                    <i class="fas fa-user menu-icon"></i>
+                    Sobre Mí
+                </a>
+                <a href="comisiones.html" class="sidebar-item active">
+                    <i class="fas fa-paint-brush menu-icon"></i>
+                    Comisiones
+                </a>
+                <a href="proyectos.html" class="sidebar-item">
+                    <i class="fas fa-project-diagram menu-icon"></i>
+                    Proyectos
+                </a>
+                <a href="paginas-web.html" class="sidebar-item">
+                    <i class="fas fa-globe menu-icon"></i>
+                    Páginas Web
+                </a>
+                <a href="#" class="sidebar-item" id="logoutBtn" style="display: none;">
+                    <i class="fas fa-sign-out-alt menu-icon"></i>
+                    Cerrar Sesión
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="social-links">
+                    <a href="https://discord.com" target="_blank" class="social-link discord">
+                        <i class="fab fa-discord"></i>
+                    </a>
+                    <a href="https://tiktok.com" target="_blank" class="social-link tiktok">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                    <a href="https://twitter.com" target="_blank" class="social-link twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </div>
+                <p class="copyright">© 2025 Developer7452</p>
+            </div>
+        </div>
+        
+        <!-- Overlay para cerrar sidebar -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <h1 class="page-title">Comisiones</h1>
+        
+        <div class="commissions-intro">
+            <p>Ofrezco servicios de desarrollo de addons personalizados para Minecraft Bedrock Edition. Trabajo contigo para crear exactamente lo que necesitas.</p>
+        </div>
+        
+        <div class="pricing-grid">
+            <!-- Plan Básico -->
+            <div class="pricing-card">
+                <div class="pricing-header">
+                    <h3 class="plan-name">Básico</h3>
+                    <div class="price">
+                        <span class="currency">$</span>
+                        <span class="amount">25</span>
+                        <span class="period">/addon</span>
+                    </div>
+                    <p class="plan-description">Ideal para addons simples y personalizaciones básicas</p>
+                </div>
+                <div class="pricing-features">
+                    <div class="feature">
+                        <i class="fas fa-check feature-check"></i>
+                        <span>Hasta 5 elementos nuevos</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-check feature-check"></i>
+                        <span>Texturas básicas</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-check feature-check"></i>
+                        <span>Comportamientos simples</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-check feature-check"></i>
+                        <span>Soporte por 1 semana</span>
+                    </div>
+                    <div class="feature unavailable">
+                        <i class="fas fa-times feature-unavailable"></i>
+                        <span>Mecánicas complejas</span>
+                    </div>
+                    <div class="feature unavailable">
+                        <i class="fas fa-times feature-unavailable"></i>
+                        <span>Texturas HD</span>
+                    </div>
+                </div>
+                <div class="pricing-examples">
+                    <h4>Ejemplos incluidos:</h4>
+                    <ul>
+                        <li>Armaduras con stats básicos</li>
+                        <li>Herramientas con durabilidad mejorada</li>
+                        <li>Bloques decorativos simples</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Plan Estándar -->
+            <div class="pricing-card featured">
+                <div class="popular-badge">MÁS POPULAR</div>
+                <div class="pricing-header">
+                    <h3 class="plan-name">Estándar</h3>
+                    <div class="price">
+                        <span class="currency">$</span>
+                        <span class="amount">50</span>
+                        <span class="period">/addon</span>
+                    </div>
+                    <p class="plan-description">Perfecto para addons con mecánicas personalizadas</p>
+                </div>
+                <div class="pricing-features">
+                    <div class="feature">
+                        <i class="fas fa-check feature-check"></i>
+                        <span>Hasta 15 elementos nuevos</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-check feature-check"></i>
+                        <span>Texturas personalizadas</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-check feature-check"></i>
+                        <span>Comportamientos avanzados</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-check feature-check"></i>
+                        <span>Soporte por 2 semanas</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-check feature-check"></i>
+                        <span>Mecánicas personalizadas</span>
+                    </div>
+                    <div class="feature unavailable">
+                        <i class="fas fa-times feature-unavailable"></i>
+                        <span>Sistema completo de juego</span>
+                    </div>
+                </div>
+                <div class="pricing-examples">
+                    <h4>Ejemplos incluidos:</h4>
+                    <ul>
+                        <li>Mobs con IA personalizada</li>
+                        <li>Armas con efectos especiales</li>
+                        <li>Generación de estructuras</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Plan Premium -->
+            <div class="pricing-card">
+                <div class="pricing-header">
+                    <h3 class="plan-name">Premium</h3>
+                    <div class="price">
+                        <span class="currency">$</span>
+                        <span class="amount">100</span>
+                        <span class="period">/addon</span>
+                    </div>
+                    <p class="plan-description">Para proyectos complejos y sistemas completos</p>
+                </div>
+                <div class="pricing-features">
+                    <div class="feature">
+                        <i class="fas fa-check feature-check"></i>
+                        <span>Elementos ilimitados</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-check feature-check"></i>
+                        <span>Texturas HD personalizadas</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-check feature-check"></i>
+                        <span>Comportamientos complejos</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-check feature-check"></i>
+                        <span>Soporte por 1 mes</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-check feature-check"></i>
+                        <span>Sistemas completos de juego</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-check feature-check"></i>
+                        <span>Actualizaciones prioritarias</span>
+                    </div>
+                </div>
+                <div class="pricing-examples">
+                    <h4>Ejemplos incluidos:</h4>
+                    <ul>
+                        <li>Dimensiones completas</li>
+                        <li>Sistemas de misiones</li>
+                        <li>Mods de magia o tecnología</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="additional-services">
+            <h2 class="section-title">Servicios Adicionales</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <h3 class="service-name">Mantenimiento</h3>
+                    <p class="service-price">$15/mes</p>
+                    <p class="service-description">Actualizaciones y corrección de bugs para mantener tu addon funcional</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </div>
+                    <h3 class="service-name">Expansiones</h3>
+                    <p class="service-price">Desde $20</p>
+                    <p class="service-description">Añadir nuevo contenido a addons existentes</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-bug"></i>
+                    </div>
+                    <h3 class="service-name">Corrección de Bugs</h3>
+                    <p class="service-price">$10/hora</p>
+                    <p class="service-description">Reparación de problemas en addons existentes</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3 class="service-name">Diseño de Texturas</h3>
+                    <p class="service-price">$5/textura</p>
+                    <p class="service-description">Creación de texturas personalizadas HD</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="commission-process">
+            <h2 class="section-title">Proceso de Comisión</h2>
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Consulta</h3>
+                    <p class="step-description">Describe tu idea y requisitos para el addon</p>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Cotización</h3>
+                    <p class="step-description">Te envío un presupuesto detallado y timeline</p>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Desarrollo</h3>
+                    <p class="step-description">Creo el addon manteniéndote informado del progreso</p>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title">Entrega</h3>
+                    <p class="step-description">Recibes el addon completo y documentación</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="contact-cta">
+            <div class="cta-content">
+                <h2>¿Interesado en una comisión?</h2>
+                <p>Contáctame para discutir tu proyecto y obtener una cotización personalizada</p>
+                <div class="cta-buttons">
+                    <a href="https://discord.com" target="_blank" class="cta-button discord">
+                        <i class="fab fa-discord"></i>
+                        Contactar por Discord
+                    </a>
+                    <a href="mailto:developer7452@example.com" class="cta-button email">
+                        <i class="fas fa-envelope"></i>
+                        Enviar Email
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/complement.js"></script>
+    <script src="../js/discord.js"></script>
+    <script>
+        // Funcionalidad del sidebar lateral
+        function setupSidebar() {
+            const userAvatar = document.getElementById('userAvatar');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            const closeSidebar = document.getElementById('closeSidebar');
+            
+            function toggleSidebar() {
+                const isActive = sidebar.classList.contains('active');
+                
+                if (isActive) {
+                    closeSidebarFunction();
+                } else {
+                    sidebar.classList.add('active');
+                    sidebarOverlay.classList.add('active');
+                    document.body.classList.add('menu-open');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+            
+            function closeSidebarFunction() {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                document.body.classList.remove('menu-open');
+                document.body.style.overflow = '';
+            }
+            
+            if (userAvatar) {
+                userAvatar.addEventListener('click', toggleSidebar);
+            }
+            
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', closeSidebarFunction);
+            }
+            
+            if (closeSidebar) {
+                closeSidebar.addEventListener('click', closeSidebarFunction);
+            }
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && sidebar && sidebar.classList.contains('active')) {
+                    closeSidebarFunction();
+                }
+            });
+        }
+
+        // Inicializar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            setupSidebar();
+        });
+    </script>
+    
+    <style>
+        /* Estilos específicos para la página de Comisiones */
+        .commissions-intro {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            color: #94a3b8;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .pricing-card {
+            background-color: var(--dark-card);
+            border-radius: var(--rounded-lg);
+            padding: 2rem;
+            border: 1px solid var(--dark-border);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .pricing-card.featured {
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+        
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+        }
+        
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+        }
+        
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark-text);
+        }
+        
+        .price {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+        }
+        
+        .currency {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .amount {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            line-height: 1;
+        }
+        
+        .period {
+            font-size: 1rem;
+            color: #94a3b8;
+        }
+        
+        .plan-description {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+        
+        .pricing-features {
+            flex-grow: 1;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem 0;
+        }
+        
+        .feature-check {
+            color: var(--success-color);
+            font-size: 0.9rem;
+            width: 1rem;
+        }
+        
+        .feature-unavailable {
+            color: var(--error-color);
+            font-size: 0.9rem;
+            width: 1rem;
+        }
+        
+        .feature.unavailable span {
+            color: #64748b;
+            text-decoration: line-through;
+        }
+        
+        .pricing-examples {
+            background-color: rgba(139, 92, 246, 0.05);
+            border-radius: var(--rounded);
+            padding: 1.25rem;
+            border: 1px solid rgba(139, 92, 246, 0.1);
+        }
+        
+        .pricing-examples h4 {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            color: var(--primary-color);
+        }
+        
+        .pricing-examples ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .pricing-examples li {
+            position: relative;
+            padding-left: 1rem;
+            margin-bottom: 0.5rem;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .pricing-examples li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--dark-text);
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4rem;
+            height: 0.25rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 0.25rem;
+        }
+        
+        .additional-services {
+            margin-bottom: 4rem;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .service-card {
+            background-color: var(--dark-card);
+            border-radius: var(--rounded);
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--dark-border);
+            transition: var(--transition);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary-color);
+        }
+        
+        .service-icon {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .service-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-text);
+        }
+        
+        .service-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+        }
+        
+        .service-description {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .commission-process {
+            margin-bottom: 4rem;
+        }
+        
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+        
+        .process-step {
+            text-align: center;
+            position: relative;
+        }
+        
+        .step-number {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 700;
+            box-shadow: var(--shadow);
+        }
+        
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--dark-text);
+        }
+        
+        .step-description {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .contact-cta {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(16, 185, 129, 0.1));
+            border-radius: var(--rounded-lg);
+            padding: 3rem 2rem;
+            text-align: center;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        
+        .cta-content h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark-text);
+        }
+        
+        .cta-content p {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .cta-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+        
+        .cta-button.discord {
+            background-color: #5865F2;
+            color: white;
+        }
+        
+        .cta-button.email {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* Estilos responsivos */
+        @media (max-width: 768px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .pricing-card.featured {
+                transform: none;
+            }
+            
+            .pricing-card.featured:hover {
+                transform: translateY(-5px);
+            }
+            
+            .services-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .process-steps {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .cta-button {
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .pricing-card {
+                padding: 1.5rem;
+            }
+            
+            .amount {
+                font-size: 2.5rem;
+            }
+            
+            .service-card {
+                padding: 1.25rem;
+            }
+            
+            .contact-cta {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</body>
+</html>

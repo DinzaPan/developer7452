@@ -1,11 +1,9 @@
-// discord.js - Sistema de autenticación con Discord
-
 // Configuración de la aplicación Discord
 const DISCORD_CONFIG = {
-    clientId: "1419812333768933386", // Reemplaza con tu Client ID de Discord
-    redirectUri: window.location.origin + "/auth/discord/callback.html", // URL de callback
-    scope: "identify email", // Permisos solicitados
-    responseType: "token" // Tipo de respuesta
+    clientId: "1419812333768933386",
+    redirectUri: window.location.origin + "/auth/discord/callback.html",
+    scope: "identify email",
+    responseType: "token"
 };
 
 // URLs de la API de Discord
@@ -62,8 +60,15 @@ async function getUserInfo(token) {
         
         if (response.ok) {
             const userData = await response.json();
-            setUserSession(userData, token);
-            updateUI(userData);
+            
+            // Construir URL del avatar
+            let avatarUrl = null;
+            if (userData.avatar) {
+                avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png?size=128`;
+            }
+            
+            setUserSession(userData, token, avatarUrl);
+            updateUI(userData, avatarUrl);
             hideLoading();
             
             // Cerrar sidebar después de login exitoso
@@ -81,12 +86,12 @@ async function getUserInfo(token) {
 }
 
 // Función para establecer la sesión del usuario
-function setUserSession(userData, token) {
+function setUserSession(userData, token, avatarUrl) {
     currentUser = {
         id: userData.id,
         username: userData.username,
         discriminator: userData.discriminator,
-        avatar: userData.avatar,
+        avatar: avatarUrl,
         email: userData.email,
         verified: userData.verified,
         premium_type: userData.premium_type || 0
@@ -100,7 +105,7 @@ function setUserSession(userData, token) {
 }
 
 // Función para actualizar la UI con la información del usuario
-function updateUI(userData) {
+function updateUI(userData, avatarUrl) {
     const userName = document.getElementById('userName');
     const userStatus = document.getElementById('userStatus');
     const userAvatar = document.querySelector('.user-avatar-sidebar .avatar-placeholder');
@@ -122,8 +127,7 @@ function updateUI(userData) {
         }
         
         // Actualizar avatar si está disponible
-        if (userData.avatar) {
-            const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png?size=128`;
+        if (avatarUrl) {
             userAvatar.innerHTML = `<img src="${avatarUrl}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
         } else {
             // Avatar por defecto basado en discriminator
@@ -135,9 +139,9 @@ function updateUI(userData) {
     // Actualizar avatar en la barra de navegación
     const navAvatar = document.querySelector('.user-avatar .avatar-placeholder');
     if (navAvatar) {
-        if (userData.avatar) {
-            const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png?size=64`;
-            navAvatar.innerHTML = `<img src="${avatarUrl}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+        if (avatarUrl) {
+            const smallAvatarUrl = avatarUrl.replace('size=128', 'size=64');
+            navAvatar.innerHTML = `<img src="${smallAvatarUrl}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
         } else {
             const defaultAvatar = userData.discriminator % 5;
             navAvatar.innerHTML = `<img src="https://cdn.discordapp.com/embed/avatars/${defaultAvatar}.png" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
@@ -189,7 +193,7 @@ function checkAuthStatus() {
     if (token && userData) {
         try {
             currentUser = JSON.parse(userData);
-            updateUI(currentUser);
+            updateUI(currentUser, currentUser.avatar);
         } catch (e) {
             console.error('Error al parsear datos de usuario:', e);
             logout();
@@ -249,39 +253,6 @@ function closeSidebar() {
         document.body.style.overflow = '';
     }
 }
-
-// Añadir estilos CSS para animaciones de notificación
-const notificationStyles = document.createElement('style');
-notificationStyles.textContent = `
-    @keyframes slideInRight {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    
-    @keyframes slideOutRight {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-    }
-    
-    .notification-content {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-`;
-document.head.appendChild(notificationStyles);
 
 // Inicializar sistema de Discord
 document.addEventListener('DOMContentLoaded', function() {

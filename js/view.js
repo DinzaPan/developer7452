@@ -77,17 +77,19 @@ async function renderAddonDetails(addon) {
 
 // Función para renderizar el formulario de reseña
 function renderReviewForm(addonId, userReview) {
+    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+    
     if (userReview) {
         return `
             <div class="user-review">
                 <div class="user-review-header">
                     <div class="user-review-info">
-                        <div class="user-avatar-sidebar">
-                            <div class="avatar-placeholder">
-                                <i class="fas fa-user"></i>
-                            </div>
-                        </div>
+                        <img src="${userReview.avatar || getDefaultAvatar()}" 
+                             alt="Foto de perfil de ${userReview.username}" 
+                             class="profile-picture"
+                             onerror="this.src='${getDefaultAvatar()}'">
                         <div>
+                            <div class="review-user">${userReview.username}</div>
                             <div class="user-review-rating">
                                 <span>Tu calificación:</span>
                                 ${renderStars(userReview.rating)}
@@ -154,11 +156,10 @@ function renderReviewsList(reviews, userReview) {
                     <div class="review-item">
                         <div class="review-header">
                             <div class="review-user-info">
-                                <div class="user-avatar-sidebar">
-                                    <div class="avatar-placeholder">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                </div>
+                                <img src="${review.avatar || getDefaultAvatar()}" 
+                                     alt="Foto de perfil de ${review.username}" 
+                                     class="profile-picture"
+                                     onerror="this.src='${getDefaultAvatar()}'">
                                 <div class="review-user">${review.username}</div>
                             </div>
                             <div class="review-rating">
@@ -227,52 +228,6 @@ async function deleteUserReview(addonId) {
     }
 }
 
-// Función para eliminar una reseña
-async function deleteReview(addonId) {
-    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
-    
-    if (!currentUser) {
-        alert('Debes iniciar sesión para eliminar una reseña');
-        return false;
-    }
-    
-    try {
-        showLoading();
-        
-        // Obtener reseñas actuales
-        const allReviews = await getAllReviews();
-        
-        // Filtrar la reseña del usuario actual
-        if (allReviews[addonId]) {
-            allReviews[addonId] = allReviews[addonId].filter(
-                review => review.userId !== currentUser.id
-            );
-        }
-        
-        // Guardar en JSONBin.io
-        const result = await saveReviewsToAPI(allReviews);
-        
-        // Actualizar cache
-        reviewsCache = allReviews;
-        lastFetchTime = Date.now();
-        
-        hideLoading();
-        
-        if (result.success === false) {
-            console.warn('Review deletion saved locally due to API error');
-        }
-        
-        showNotification('¡Reseña eliminada correctamente!', 'success');
-        return true;
-        
-    } catch (error) {
-        console.error('Error deleting review:', error);
-        hideLoading();
-        showNotification('Error al eliminar la reseña', 'error');
-        return false;
-    }
-}
-
 // Función para descargar el addon
 function downloadAddon(addonId) {
     const addon = getAddonById(addonId);
@@ -301,14 +256,90 @@ function downloadAddon(addonId) {
     }
 }
 
+// Función para formatear fechas
+function formatDate(dateString) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('es-ES', options);
+}
+
+// Renderizar estrellas
+function renderStars(rating, interactive = false, size = 'medium') {
+    const numericRating = parseFloat(rating) || 0;
+    const starSize = size === 'small' ? '0.9rem' : '1.5rem';
+    let starsHtml = '';
+    
+    for (let i = 1; i <= 5; i++) {
+        const isActive = i <= numericRating;
+        if (interactive) {
+            starsHtml += `
+                <span class="star ${isActive ? 'active' : ''}" data-rating="${i}">
+                    <i class="fas fa-star" style="font-size: ${starSize}"></i>
+                </span>
+            `;
+        } else {
+            starsHtml += `
+                <span class="star ${isActive ? 'active' : ''}">
+                    <i class="fas fa-star" style="font-size: ${starSize}"></i>
+                </span>
+            `;
+        }
+    }
+    
+    return `<div class="stars ${interactive ? 'interactive' : ''} ${size}">${starsHtml}</div>`;
+}
+
+// Configurar sidebar
+function setupSidebar() {
+    const userAvatar = document.getElementById('userAvatar');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const closeSidebar = document.getElementById('closeSidebar');
+    
+    function toggleSidebar() {
+        const isActive = sidebar.classList.contains('active');
+        
+        if (isActive) {
+            closeSidebarFunction();
+        } else {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            document.body.classList.add('menu-open');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+    
+    function closeSidebarFunction() {
+        sidebar.classList.remove('active');
+        sidebarOverlay.classList.remove('active');
+        document.body.classList.remove('menu-open');
+        document.body.style.overflow = '';
+    }
+    
+    if (userAvatar) {
+        userAvatar.addEventListener('click', toggleSidebar);
+    }
+    
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', closeSidebarFunction);
+    }
+    
+    if (closeSidebar) {
+        closeSidebar.addEventListener('click', closeSidebarFunction);
+    }
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && sidebar && sidebar.classList.contains('active')) {
+            closeSidebarFunction();
+        }
+    });
+}
+
 // Inicializar la página de detalles
 document.addEventListener('DOMContentLoaded', function() {
     showLoading();
     
     // Configurar sidebar
-    if (typeof setupSidebar === 'function') {
-        setupSidebar();
-    }
+    setupSidebar();
     
     const urlParams = new URLSearchParams(window.location.search);
     const addonId = urlParams.get('id');
@@ -327,3 +358,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // Exportar funciones para uso global
 window.deleteUserReview = deleteUserReview;
 window.downloadAddon = downloadAddon;
+window.formatDate = formatDate;
+window.renderStars = renderStars;
+window.getDefaultAvatar = getDefaultAvatar;

@@ -1,4 +1,4 @@
-// Datos de ejemplo para los addons
+// Datos de ejemplo para los addons 
 const addonsData = [
     {
         id: 1,
@@ -21,30 +21,20 @@ const addonsData = [
         tags: ["Tienda", "UI", "Economía"],
         last_updated: "2024-01-10",
         file_size: "1.8 MB"
-    },
-    {
-        id: 3,
-        title: "Sistema de Rangos Premium",
-        description: "Addon completo para gestión de rangos y permisos en servidores de Minecraft.",
-        cover_image: "./img/addon3.jpg",
-        version: "1.21.111",
-        download_link: "https://example.com/download/3",
-        tags: ["Rangos", "Permisos", "Admin"],
-        last_updated: "2024-01-08",
-        file_size: "3.2 MB"
-    },
-    {
-        id: 4,
-        title: "Módulo de Protección",
-        description: "Sistema avanzado de protección de territorios y claims para servidores survival.",
-        cover_image: "./img/addon4.jpg",
-        version: "1.21.111",
-        download_link: "https://example.com/download/4",
-        tags: ["Protección", "Survival", "Claims"],
-        last_updated: "2024-01-05",
-        file_size: "2.1 MB"
     }
 ];
+
+// Configuración de JSONBin.io
+const JSONBIN_CONFIG = {
+    binId: "68e7e731d0ea881f409b5f77",
+    apiKey: "$2a$10$bsdEXJ8oDvQGTbuxPZiNMOCLEIKIvezOL3SmZeRBqYnW5q9Oh08ru",
+    baseUrl: "https://api.jsonbin.io/v3/b"
+};
+
+// Almacenamiento local para reseñas (cache)
+let reviewsCache = null;
+let lastFetchTime = 0;
+const CACHE_DURATION = 300000; // 5 minutos en milisegundos
 
 // Función para obtener un addon por ID
 function getAddonById(id) {
@@ -81,29 +71,155 @@ function hideLoading() {
     console.log("Ocultando loading...");
 }
 
-// Sistema de reseñas (simulado)
-async function getReviewsForAddon(addonId) {
-    // Datos de ejemplo para reseñas
-    const reviewsData = {
-        1: [
-            { userId: "user1", rating: 5, comment: "Excelente addon", timestamp: "2024-01-10" },
-            { userId: "user2", rating: 4, comment: "Muy útil", timestamp: "2024-01-08" },
-            { userId: "user3", rating: 5, comment: "Funciona perfecto", timestamp: "2024-01-12" }
-        ],
-        2: [
-            { userId: "user1", rating: 4, comment: "Buen diseño", timestamp: "2024-01-12" },
-            { userId: "user4", rating: 5, comment: "Muy profesional", timestamp: "2024-01-09" }
-        ],
-        3: [
-            { userId: "user2", rating: 5, comment: "Imprescindible", timestamp: "2024-01-11" }
-        ],
-        4: [
-            { userId: "user3", rating: 4, comment: "Muy útil para survival", timestamp: "2024-01-07" },
-            { userId: "user1", rating: 5, comment: "Protección excelente", timestamp: "2024-01-06" }
-        ]
-    };
+// Obtener reseñas desde JSONBin.io con cache local
+async function fetchReviewsFromAPI() {
+    try {
+        const response = await fetch(`${JSONBIN_CONFIG.baseUrl}/${JSONBIN_CONFIG.binId}/latest`, {
+            method: 'GET',
+            headers: {
+                'X-Master-Key': JSONBIN_CONFIG.apiKey,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        return data.record || {};
+    } catch (error) {
+        console.error('Error fetching reviews from JSONBin:', error);
+        // Si hay error, intentar cargar desde localStorage
+        const localReviews = localStorage.getItem('reviews_backup');
+        return localReviews ? JSON.parse(localReviews) : {};
+    }
+}
+
+// Guardar reseñas en JSONBin.io
+async function saveReviewsToAPI(reviewsData) {
+    try {
+        const response = await fetch(`${JSONBIN_CONFIG.baseUrl}/${JSONBIN_CONFIG.binId}`, {
+            method: 'PUT',
+            headers: {
+                'X-Master-Key': JSONBIN_CONFIG.apiKey,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(reviewsData)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error saving reviews to JSONBin:', error);
+        // Guardar en localStorage como backup
+        localStorage.setItem('reviews_backup', JSON.stringify(reviewsData));
+        return { success: false, error: error.message };
+    }
+}
+
+// Obtener todas las reseñas (con cache)
+async function getAllReviews() {
+    const now = Date.now();
     
-    return reviewsData[addonId] || [];
+    // Usar cache si está disponible y no ha expirado
+    if (reviewsCache && (now - lastFetchTime) < CACHE_DURATION) {
+        return reviewsCache;
+    }
+    
+    try {
+        showLoading();
+        const reviews = await fetchReviewsFromAPI();
+        reviewsCache = reviews;
+        lastFetchTime = now;
+        hideLoading();
+        return reviews;
+    } catch (error) {
+        console.error('Error getting all reviews:', error);
+        hideLoading();
+        return {};
+    }
+}
+
+// Obtener reseñas para un addon específico
+async function getReviewsForAddon(addonId) {
+    const allReviews = await getAllReviews();
+    return allReviews[addonId] || [];
+}
+
+// Añadir una nueva reseña
+async function addReview(addonId, rating, comment = '') {
+    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+    
+    if (!currentUser) {
+        alert('Debes iniciar sesión para añadir una reseña');
+        return false;
+    }
+    
+    if (rating < 1 || rating > 5) {
+        alert('La puntuación debe estar entre 1 y 5 estrellas');
+        return false;
+    }
+    
+    try {
+        showLoading();
+        
+        // Obtener reseñas actuales
+        const allReviews = await getAllReviews();
+        
+        // Crear nueva reseña
+        const newReview = {
+            userId: currentUser.id,
+            username: currentUser.username,
+            rating: parseInt(rating),
+            comment: comment.trim(),
+            timestamp: new Date().toISOString()
+        };
+        
+        // Inicializar array si no existe
+        if (!allReviews[addonId]) {
+            allReviews[addonId] = [];
+        }
+        
+        // Verificar si el usuario ya tiene una reseña para este addon
+        const existingReviewIndex = allReviews[addonId].findIndex(
+            review => review.userId === currentUser.id
+        );
+        
+        if (existingReviewIndex !== -1) {
+            // Actualizar reseña existente
+            allReviews[addonId][existingReviewIndex] = newReview;
+        } else {
+            // Añadir nueva reseña
+            allReviews[addonId].push(newReview);
+        }
+        
+        // Guardar en JSONBin.io
+        const result = await saveReviewsToAPI(allReviews);
+        
+        // Actualizar cache
+        reviewsCache = allReviews;
+        lastFetchTime = Date.now();
+        
+        hideLoading();
+        
+        if (result.success === false) {
+            console.warn('Review saved locally due to API error');
+            // Aún así consideramos éxito porque se guardó localmente
+        }
+        
+        showNotification('¡Reseña añadida correctamente!', 'success');
+        return true;
+        
+    } catch (error) {
+        console.error('Error adding review:', error);
+        hideLoading();
+        showNotification('Error al añadir la reseña', 'error');
+        return false;
+    }
 }
 
 // Calcular promedio de calificaciones
@@ -113,3 +229,47 @@ function calculateAverageRating(reviews) {
     const sum = reviews.reduce((total, review) => total + review.rating, 0);
     return (sum / reviews.length).toFixed(1);
 }
+
+// Obtener la reseña del usuario actual para un addon
+async function getUserReviewForAddon(addonId) {
+    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+    if (!currentUser) return null;
+    
+    const reviews = await getReviewsForAddon(addonId);
+    return reviews.find(review => review.userId === currentUser.id) || null;
+}
+
+// Función para mostrar notificaciones
+function showNotification(message, type = 'info') {
+    if (window.showNotification) {
+        window.showNotification(message, type);
+    } else {
+        // Fallback básico
+        alert(message);
+    }
+}
+
+// Inicializar datos de reseñas si no existen
+async function initializeReviewsData() {
+    const currentReviews = await getAllReviews();
+    
+    // Crear estructura inicial si no existe
+    let needsUpdate = false;
+    addonsData.forEach(addon => {
+        if (!currentReviews[addon.id]) {
+            currentReviews[addon.id] = [];
+            needsUpdate = true;
+        }
+    });
+    
+    if (needsUpdate) {
+        await saveReviewsToAPI(currentReviews);
+    }
+}
+
+// Llamar a la inicialización cuando se carga la página
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        initializeReviewsData();
+    }, 1000);
+});

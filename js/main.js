@@ -15,24 +15,39 @@ async function renderAddons(addons) {
         addons.map(async (addon) => {
             const reviews = await getReviewsForAddon(addon.id);
             const averageRating = calculateAverageRating(reviews);
+            const userReview = await getUserReviewForAddon(addon.id);
+            
             return {
                 ...addon,
                 averageRating,
-                reviewsCount: reviews.length
+                reviewsCount: reviews.length,
+                userRating: userReview ? userReview.rating : 0
             };
         })
     );
     
     container.innerHTML = addonsWithRatings.map(addon => `
-        <div class="addon-card" onclick="viewAddon(${addon.id})">
+        <div class="addon-card" data-addon-id="${addon.id}">
             <img src="${addon.cover_image}" alt="Portada del addon" class="addon-cover">
             <div class="addon-info">
                 <h3 class="addon-title">${addon.title}</h3>
+                
                 <div class="addon-rating">
                     ${renderStars(addon.averageRating, false, 'small')}
                     <span class="rating-value">${addon.averageRating}</span>
-                    <span class="reviews-count">(${addon.reviewsCount})</span>
+                    <span class="reviews-count">(${addon.reviewsCount} reseñas)</span>
                 </div>
+                
+                <div class="user-rating-section" style="margin: 0.5rem 0;">
+                    <p style="font-size: 0.875rem; color: #94a3b8; margin-bottom: 0.5rem;">
+                        Tu puntuación: 
+                        <span class="user-rating-display">${addon.userRating ? addon.userRating + ' estrellas' : 'Sin calificar'}</span>
+                    </p>
+                    <div class="rating-input">
+                        ${renderStars(addon.userRating || 0, true, 'small')}
+                    </div>
+                </div>
+                
                 <p class="addon-description">${addon.description}</p>
                 
                 <div class="addon-footer">
@@ -42,6 +57,53 @@ async function renderAddons(addons) {
             </div>
         </div>
     `).join('');
+    
+    // Añadir event listeners para las estrellas interactivas
+    addInteractiveRatingListeners();
+}
+
+// Función para añadir event listeners a las estrellas de rating
+function addInteractiveRatingListeners() {
+    document.querySelectorAll('.stars.interactive .star').forEach(star => {
+        star.addEventListener('click', async function() {
+            const rating = parseInt(this.getAttribute('data-rating'));
+            const addonCard = this.closest('.addon-card');
+            const addonId = parseInt(addonCard.getAttribute('data-addon-id'));
+            
+            const success = await addReview(addonId, rating);
+            
+            if (success) {
+                // Actualizar la visualización localmente
+                const userRatingDisplay = addonCard.querySelector('.user-rating-display');
+                const ratingStars = addonCard.querySelector('.rating-input .stars');
+                
+                if (userRatingDisplay) {
+                    userRatingDisplay.textContent = `${rating} estrellas`;
+                }
+                
+                if (ratingStars) {
+                    ratingStars.innerHTML = renderStars(rating, true, 'small');
+                }
+                
+                // Recargar las reseñas para actualizar el promedio
+                setTimeout(async () => {
+                    const reviews = await getReviewsForAddon(addonId);
+                    const averageRating = calculateAverageRating(reviews);
+                    
+                    const averageRatingElement = addonCard.querySelector('.rating-value');
+                    const reviewsCountElement = addonCard.querySelector('.reviews-count');
+                    const averageStarsElement = addonCard.querySelector('.addon-rating .stars');
+                    
+                    if (averageRatingElement) averageRatingElement.textContent = averageRating;
+                    if (reviewsCountElement) reviewsCountElement.textContent = `(${reviews.length} reseñas)`;
+                    if (averageStarsElement) averageStarsElement.innerHTML = renderStars(averageRating, false, 'small');
+                    
+                    // Re-añadir event listeners
+                    addInteractiveRatingListeners();
+                }, 500);
+            }
+        });
+    });
 }
 
 // Función para navegar a la página de detalles del addon
@@ -219,3 +281,4 @@ window.viewAddon = viewAddon;
 window.downloadAddon = downloadAddon;
 window.renderStars = renderStars;
 window.formatDate = formatDate;
+window.addReview = addReview;

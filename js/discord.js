@@ -51,7 +51,6 @@ function checkForToken() {
 // Función para obtener información del usuario
 async function getUserInfo(token) {
     try {
-        showLoading();
         const response = await fetch(DISCORD_API.user, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -69,19 +68,16 @@ async function getUserInfo(token) {
             
             setUserSession(userData, token, avatarUrl);
             updateUI(userData, avatarUrl);
-            hideLoading();
             
             // Cerrar sidebar después de login exitoso
             closeSidebar();
         } else {
             console.error('Error al obtener información del usuario');
             logout();
-            hideLoading();
         }
     } catch (error) {
         console.error('Error en la conexión:', error);
         logout();
-        hideLoading();
     }
 }
 

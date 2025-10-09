@@ -381,6 +381,21 @@ body {
     flex-grow: 1;
 }
 
+.profile-picture {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-color);
+    flex-shrink: 0;
+}
+
+.review-user {
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 0.25rem;
+}
+
 .user-review-rating {
     display: flex;
     align-items: center;
@@ -429,11 +444,6 @@ body {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-}
-
-.review-user {
-    font-weight: 600;
-    color: var(--dark-text);
 }
 
 .review-rating {
@@ -671,5 +681,10 @@ body {
     
     .error-message {
         padding: 2rem 1rem;
+    }
+    
+    .profile-picture {
+        width: 2.5rem;
+        height: 2.5rem;
     }
 }

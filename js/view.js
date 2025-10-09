@@ -24,7 +24,7 @@ async function renderAddonDetails(addon) {
     
     container.innerHTML = `
         <div class="addon-header">
-            <img src="${addon.cover_image}" alt="Portada del addon" class="addon-cover">
+            <img src="${addon.cover_image}" alt="Portada del addon" class="addon-cover" onerror="this.src='./img/addon/default.jpg'">
             <h1 class="addon-title">${addon.title}</h1>
             
             <div class="addon-meta">
@@ -86,14 +86,14 @@ async function renderAddonDetails(addon) {
 
 // Función para renderizar el formulario de reseña
 function renderReviewForm(addonId, userReview) {
-    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+    const currentUser = getCurrentUser();
     
     if (userReview) {
         return `
             <div class="user-review">
                 <div class="user-review-header">
                     <div class="user-review-info">
-                        <img src="${userReview.avatar || getUserProfilePicture()}" alt="Tu foto de perfil" class="profile-picture">
+                        <img src="${userReview.avatar || getUserProfilePicture()}" alt="Tu foto de perfil" class="profile-picture" onerror="this.src='./img/default-avatar.png'">
                         <div>
                             <div class="user-review-rating">
                                 <span>Tu calificación:</span>
@@ -106,7 +106,7 @@ function renderReviewForm(addonId, userReview) {
                         Eliminar reseña
                     </button>
                 </div>
-                <p class="user-review-comment">${userReview.comment}</p>
+                <p class="user-review-comment">${userReview.comment || 'Sin comentario'}</p>
             </div>
         `;
     } else if (currentUser) {
@@ -171,7 +171,7 @@ function renderReviewsList(reviews, userReview) {
                     <div class="review-item">
                         <div class="review-header">
                             <div class="review-user-info">
-                                <img src="${review.avatar || getUserProfilePicture()}" alt="Foto de perfil" class="profile-picture">
+                                <img src="${review.avatar || getUserProfilePicture()}" alt="Foto de perfil" class="profile-picture" onerror="this.src='./img/default-avatar.png'">
                                 <div class="review-user">${review.username || 'Usuario'}</div>
                             </div>
                             <div class="review-rating">
@@ -179,7 +179,7 @@ function renderReviewsList(reviews, userReview) {
                                 <span class="review-date">${formatDate(review.timestamp)}</span>
                             </div>
                         </div>
-                        <p class="review-comment">${review.comment}</p>
+                        <p class="review-comment">${review.comment || 'Sin comentario'}</p>
                     </div>
                 `).join('')}
             </div>
@@ -257,19 +257,18 @@ function downloadAddon(addonId) {
 
 // Inicializar la página de detalles
 document.addEventListener('DOMContentLoaded', function() {
-    showLoading();
-    
     const urlParams = new URLSearchParams(window.location.search);
     const addonId = urlParams.get('id');
     
     if (addonId) {
         const addon = getAddonById(addonId);
-        renderAddonDetails(addon).then(() => {
-            hideLoading();
-        });
+        if (addon) {
+            renderAddonDetails(addon);
+        } else {
+            renderAddonDetails(null);
+        }
     } else {
         renderAddonDetails(null);
-        hideLoading();
     }
 });
 
@@ -278,23 +277,98 @@ function addOrUpdateReview(addonId, rating, comment) {
     return addReview(addonId, rating, comment);
 }
 
-function deleteReview(addonId) {
-    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
-    
-    if (!currentUser) {
-        alert('Debes iniciar sesión para eliminar una reseña');
-        return false;
-    }
-    
-    // Esta función necesitaría implementarse en complement.js
-    console.log('Eliminar reseña para addon:', addonId);
-    alert('Función de eliminar reseña no implementada completamente');
-    return Promise.resolve();
+function getUserProfilePicture() {
+    const currentUser = getCurrentUser();
+    return currentUser && currentUser.avatar ? currentUser.avatar : './img/default-avatar.png';
 }
 
-function getUserProfilePicture() {
-    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
-    return currentUser && currentUser.avatar ? currentUser.avatar : './img/default-avatar.png';
+// =============================================
+// SISTEMA DE AUTENTICACIÓN CON DISCORD
+// =============================================
+
+// Obtener usuario actual
+function getCurrentUser() {
+    const userData = localStorage.getItem('discordUser');
+    return userData ? JSON.parse(userData) : null;
+}
+
+// Actualizar la interfaz de usuario con la información del usuario
+function updateUserInterface() {
+    const currentUser = getCurrentUser();
+    const userAvatar = document.getElementById('userAvatar');
+    const userName = document.getElementById('userName');
+    const userStatus = document.getElementById('userStatus');
+    const userInfoSidebar = document.getElementById('userInfoSidebar');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    if (currentUser) {
+        // Actualizar avatar
+        if (userAvatar) {
+            userAvatar.innerHTML = `
+                <img src="${currentUser.avatar}" alt="${currentUser.username}" class="profile-picture" onerror="this.src='./img/default-avatar.png'">
+            `;
+        }
+
+        // Actualizar sidebar
+        if (userName) userName.textContent = currentUser.username;
+        if (userStatus) {
+            userStatus.textContent = currentUser.global_name || currentUser.username;
+            userStatus.style.color = '#10B981';
+        }
+
+        // Mostrar botón de logout
+        if (logoutBtn) logoutBtn.style.display = 'flex';
+
+        // Añadir clase de usuario conectado
+        if (userInfoSidebar) userInfoSidebar.classList.add('user-connected');
+    } else {
+        // Restablecer a estado por defecto
+        if (userAvatar) {
+            userAvatar.innerHTML = `
+                <div class="avatar-placeholder">
+                    <i class="fas fa-user"></i>
+                </div>
+            `;
+        }
+        if (userName) userName.textContent = 'Iniciar Sesión';
+        if (userStatus) {
+            userStatus.textContent = 'Haz clic para conectar';
+            userStatus.style.color = '#94a3b8';
+        }
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (userInfoSidebar) userInfoSidebar.classList.remove('user-connected');
+    }
+}
+
+// Login con Discord - USA EL CALLBACK QUE YA EXISTE
+function loginWithDiscord() {
+    // Guardar la URL actual para redirigir después del login
+    localStorage.setItem('returnUrl', window.location.href);
+    
+    // Redirigir al callback de Discord que ya existe y funciona
+    window.location.href = './auth/discord/callback.html';
+}
+
+// Logout
+function logout() {
+    localStorage.removeItem('discordUser');
+    localStorage.removeItem('discordToken');
+    updateUserInterface();
+    showNotification('Sesión cerrada correctamente', 'success');
+}
+
+// Procesar callback de Discord (se llama desde callback.html existente)
+function processDiscordCallback(userData) {
+    if (userData && userData.id) {
+        localStorage.setItem('discordUser', JSON.stringify(userData));
+        updateUserInterface();
+        showNotification('¡Sesión iniciada correctamente!', 'success');
+        
+        // Redirigir de vuelta a la página principal o a la página actual
+        const returnUrl = localStorage.getItem('returnUrl') || 'index.html';
+        localStorage.removeItem('returnUrl');
+        window.location.href = returnUrl;
+    }
 }
 
 // Configuración del sidebar
@@ -303,6 +377,8 @@ function setupSidebar() {
     const sidebar = document.getElementById('sidebar');
     const sidebarOverlay = document.getElementById('sidebarOverlay');
     const closeSidebar = document.getElementById('closeSidebar');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const userInfoSidebar = document.getElementById('userInfoSidebar');
     
     function toggleSidebar() {
         const isActive = sidebar.classList.contains('active');
@@ -336,6 +412,24 @@ function setupSidebar() {
         closeSidebar.addEventListener('click', closeSidebarFunction);
     }
     
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            logout();
+            closeSidebarFunction();
+        });
+    }
+    
+    if (userInfoSidebar) {
+        userInfoSidebar.addEventListener('click', function() {
+            const currentUser = getCurrentUser();
+            if (!currentUser) {
+                loginWithDiscord();
+            }
+            closeSidebarFunction();
+        });
+    }
+    
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && sidebar && sidebar.classList.contains('active')) {
             closeSidebarFunction();
@@ -343,5 +437,30 @@ function setupSidebar() {
     });
 }
 
-// Inicializar sidebar
+// Verificar autenticación al cargar la página
+function checkAuth() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const userData = urlParams.get('user');
+    
+    if (userData) {
+        // Procesar datos de usuario desde Discord callback
+        try {
+            const user = JSON.parse(decodeURIComponent(userData));
+            processDiscordCallback(user);
+        } catch (error) {
+            console.error('Error procesando datos de usuario:', error);
+        }
+    }
+    
+    updateUserInterface();
+}
+
+// Inicializar sidebar y autenticación
 setupSidebar();
+checkAuth();
+
+// Exportar funciones para uso global
+window.loginWithDiscord = loginWithDiscord;
+window.logout = logout;
+window.getCurrentUser = getCurrentUser;
+window.processDiscordCallback = processDiscordCallback;

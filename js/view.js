@@ -245,12 +245,10 @@ function downloadAddon(addonId) {
         }
         
         // Simular descarga
-        showLoading();
         setTimeout(() => {
-            hideLoading();
             window.open(addon.download_link, '_blank');
             showNotification(`¡Addon "${addon.title}" descargado correctamente!`, 'success');
-        }, 1500);
+        }, 500);
     } else {
         alert('Error: No se pudo encontrar el enlace de descarga para este addon.');
     }
@@ -336,8 +334,6 @@ function setupSidebar() {
 
 // Inicializar la página de detalles
 document.addEventListener('DOMContentLoaded', function() {
-    showLoading();
-    
     // Configurar sidebar
     setupSidebar();
     
@@ -346,12 +342,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (addonId) {
         const addon = getAddonById(addonId);
-        renderAddonDetails(addon).then(() => {
-            hideLoading();
-        });
+        renderAddonDetails(addon);
     } else {
         renderAddonDetails(null);
-        hideLoading();
     }
 });
 

@@ -19,7 +19,7 @@ const addonsData = [
         version: "1.21.111",
         download_link: "https://example.com/download/2",
         tags: ["Tienda", "UI", "Economía"],
-        last_updated: "2024-10-9",
+        last_updated: "2025-10-9",
         file_size: "1.8 MB"
     }
 ];

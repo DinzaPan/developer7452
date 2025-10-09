@@ -742,50 +742,6 @@ body.menu-open {
     transform: scale(1.1);
 }
 
-/* Sistema de carga */
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--dark-bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.loading-overlay.hidden {
-    opacity: 0;
-    visibility: hidden;
-}
-
-.loading-spinner {
-    text-align: center;
-    color: var(--dark-text);
-}
-
-.spinner {
-    width: 3rem;
-    height: 3rem;
-    border: 3px solid rgba(139, 92, 246, 0.3);
-    border-radius: 50%;
-    border-top-color: var(--primary-color);
-    animation: spin 1s ease-in-out infinite;
-    margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-.loading-spinner p {
-    font-size: 1rem;
-    color: var(--dark-text);
-}
-
 /* Foto de perfil circular */
 .profile-picture {
     width: 2.5rem;

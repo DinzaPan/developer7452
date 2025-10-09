@@ -60,25 +60,13 @@ function searchAddons(query) {
     );
 }
 
-// Sistema de carga
+// Sistema de carga (eliminado)
 function showLoading() {
-    const loadingOverlay = document.createElement('div');
-    loadingOverlay.className = 'loading-overlay';
-    loadingOverlay.id = 'loadingOverlay';
-    loadingOverlay.innerHTML = `
-        <div class="loading-spinner">
-            <div class="spinner"></div>
-            <p>Cargando...</p>
-        </div>
-    `;
-    document.body.appendChild(loadingOverlay);
+    // No hacer nada
 }
 
 function hideLoading() {
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    if (loadingOverlay) {
-        loadingOverlay.remove();
-    }
+    // No hacer nada
 }
 
 // Obtener reseñas desde JSONBin.io con cache local
@@ -141,15 +129,12 @@ async function getAllReviews() {
     }
     
     try {
-        showLoading();
         const reviews = await fetchReviewsFromAPI();
         reviewsCache = reviews;
         lastFetchTime = now;
-        hideLoading();
         return reviews;
     } catch (error) {
         console.error('Error getting all reviews:', error);
-        hideLoading();
         return {};
     }
 }
@@ -175,8 +160,6 @@ async function addReview(addonId, rating, comment = '') {
     }
     
     try {
-        showLoading();
-        
         // Obtener reseñas actuales
         const allReviews = await getAllReviews();
         
@@ -215,8 +198,6 @@ async function addReview(addonId, rating, comment = '') {
         reviewsCache = allReviews;
         lastFetchTime = Date.now();
         
-        hideLoading();
-        
         if (result.success === false) {
             console.warn('Review saved locally due to API error');
             // Aún así consideramos éxito porque se guardó localmente
@@ -227,7 +208,6 @@ async function addReview(addonId, rating, comment = '') {
         
     } catch (error) {
         console.error('Error adding review:', error);
-        hideLoading();
         showNotification('Error al añadir la reseña', 'error');
         return false;
     }
@@ -243,8 +223,6 @@ async function deleteReview(addonId) {
     }
     
     try {
-        showLoading();
-        
         // Obtener reseñas actuales
         const allReviews = await getAllReviews();
         
@@ -262,8 +240,6 @@ async function deleteReview(addonId) {
         reviewsCache = allReviews;
         lastFetchTime = Date.now();
         
-        hideLoading();
-        
         if (result.success === false) {
             console.warn('Review deletion saved locally due to API error');
         }
@@ -273,7 +249,6 @@ async function deleteReview(addonId) {
         
     } catch (error) {
         console.error('Error deleting review:', error);
-        hideLoading();
         showNotification('Error al eliminar la reseña', 'error');
         return false;
     }

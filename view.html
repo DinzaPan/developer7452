@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer7452 - Detalles del Addon</title>
+    <link rel="stylesheet" href="./css/view.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="./img/logo.png" alt="Developer7452 Logo" class="site-logo">
+            <h1 class="site-title">Developer7452</h1>
+        </div>
+        
+        <!-- Menú de usuario -->
+        <div class="user-menu-container">
+            <div class="user-avatar" id="userAvatar">
+                <div class="avatar-placeholder">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar lateral -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info-sidebar" id="userInfoSidebar">
+                    <div class="user-avatar-sidebar">
+                        <div class="avatar-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="user-details">
+                        <h3 class="user-name" id="userName">Iniciar Sesión</h3>
+                        <p class="user-status" id="userStatus">Haz clic para conectar</p>
+                    </div>
+                </div>
+                <button class="close-sidebar" id="closeSidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="sidebar-items">
+                <a href="index.html" class="sidebar-item">
+                    <i class="fas fa-home menu-icon"></i>
+                    Inicio
+                </a>
+                <a href="#" class="sidebar-item">
+                    <i class="fas fa-user menu-icon"></i>
+                    Sobre Mí
+                </a>
+                <a href="#" class="sidebar-item">
+                    <i class="fas fa-paint-brush menu-icon"></i>
+                    Comisiones
+                </a>
+                <a href="#" class="sidebar-item">
+                    <i class="fas fa-project-diagram menu-icon"></i>
+                    Proyectos
+                </a>
+                <a href="#" class="sidebar-item">
+                    <i class="fas fa-globe menu-icon"></i>
+                    Páginas Web
+                </a>
+                <a href="#" class="sidebar-item" id="logoutBtn" style="display: none;">
+                    <i class="fas fa-sign-out-alt menu-icon"></i>
+                    Cerrar Sesión
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="social-links">
+                    <a href="https://discord.com" target="_blank" class="social-link discord">
+                        <i class="fab fa-discord"></i>
+                    </a>
+                    <a href="https://tiktok.com" target="_blank" class="social-link tiktok">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                    <a href="https://twitter.com" target="_blank" class="social-link twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </div>
+                <p class="copyright">© 2025 Developer7452</p>
+            </div>
+        </div>
+        
+        <!-- Overlay para cerrar sidebar -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <!-- Botón para volver al inicio -->
+        <a href="index.html" class="back-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Volver al inicio
+        </a>
+
+        <div id="addonDetails" class="addon-details">
+            <!-- Los detalles del addon se cargarán aquí dinámicamente -->
+        </div>
+    </div>
+
+    <script src="./js/complement.js"></script>
+    <script src="./js/discord.js"></script>
+    <script src="./js/functions.js"></script>
+    <script src="./js/view.js"></script>
+</body>
+</html>

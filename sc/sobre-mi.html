@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Mí - Developer7452</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="../img/logo.png" alt="Developer7452 Logo" class="site-logo">
+            <h1 class="site-title">Developer7452</h1>
+        </div>
+        
+        <!-- Menú de usuario -->
+        <div class="user-menu-container">
+            <div class="user-avatar" id="userAvatar">
+                <div class="avatar-placeholder">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar lateral -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info-sidebar" id="userInfoSidebar">
+                    <div class="user-avatar-sidebar">
+                        <div class="avatar-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="user-details">
+                        <h3 class="user-name" id="userName">Iniciar Sesión</h3>
+                        <p class="user-status" id="userStatus">Haz clic para conectar</p>
+                    </div>
+                </div>
+                <button class="close-sidebar" id="closeSidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="sidebar-items">
+                <a href="../index.html" class="sidebar-item">
+                    <i class="fas fa-home menu-icon"></i>
+                    Inicio
+                </a>
+                <a href="sobre-mi.html" class="sidebar-item active">
+                    <i class="fas fa-user menu-icon"></i>
+                    Sobre Mí
+                </a>
+                <a href="comisiones.html" class="sidebar-item">
+                    <i class="fas fa-paint-brush menu-icon"></i>
+                    Comisiones
+                </a>
+                <a href="proyectos.html" class="sidebar-item">
+                    <i class="fas fa-project-diagram menu-icon"></i>
+                    Proyectos
+                </a>
+                <a href="paginas-web.html" class="sidebar-item">
+                    <i class="fas fa-globe menu-icon"></i>
+                    Páginas Web
+                </a>
+                <a href="#" class="sidebar-item" id="logoutBtn" style="display: none;">
+                    <i class="fas fa-sign-out-alt menu-icon"></i>
+                    Cerrar Sesión
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="social-links">
+                    <a href="https://discord.com" target="_blank" class="social-link discord">
+                        <i class="fab fa-discord"></i>
+                    </a>
+                    <a href="https://tiktok.com" target="_blank" class="social-link tiktok">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                    <a href="https://twitter.com" target="_blank" class="social-link twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </div>
+                <p class="copyright">© 2025 Developer7452</p>
+            </div>
+        </div>
+        
+        <!-- Overlay para cerrar sidebar -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <h1 class="page-title">Sobre Mí</h1>
+        
+        <div class="about-content">
+            <div class="about-card">
+                <div class="about-header">
+                    <div class="profile-image-container">
+                        <img src="../img/profile.jpg" alt="Developer7452" class="profile-image">
+                        <div class="online-status"></div>
+                    </div>
+                    <div class="profile-info">
+                        <h2 class="profile-name">Developer7452</h2>
+                        <p class="profile-title">Desarrollador de Addons para Minecraft</p>
+                        <div class="profile-tags">
+                            <span class="profile-tag">Addons</span>
+                            <span class="profile-tag">Minecraft</span>
+                            <span class="profile-tag">Desarrollo</span>
+                            <span class="profile-tag">Creatividad</span>
+                        </div>
+                        <div class="profile-stats">
+                            <div class="stat">
+                                <span class="stat-number">50+</span>
+                                <span class="stat-label">Addons Creados</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">10K+</span>
+                                <span class="stat-label">Descargas</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">3+</span>
+                                <span class="stat-label">Años de Experiencia</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-body">
+                    <div class="about-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-rocket section-icon"></i>
+                            Mi Historia
+                        </h3>
+                        <p class="section-content">
+                            Hola, soy Developer7452, un apasionado desarrollador de addons para Minecraft con más de 3 años de experiencia 
+                            en la creación de contenido personalizado para la comunidad. Comencé mi viaje en el desarrollo de addons como 
+                            un hobby y rápidamente se convirtió en mi pasión principal.
+                        </p>
+                        <p class="section-content">
+                            Mi objetivo es crear addons únicos y de alta calidad que mejoren la experiencia de juego de Minecraft, 
+                            añadiendo nuevas mecánicas, elementos y funcionalidades que expandan las posibilidades del juego.
+                        </p>
+                    </div>
+                    
+                    <div class="about-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-tools section-icon"></i>
+                            Habilidades y Especialidades
+                        </h3>
+                        <div class="skills-grid">
+                            <div class="skill-item">
+                                <div class="skill-icon">
+                                    <i class="fas fa-cube"></i>
+                                </div>
+                                <div class="skill-info">
+                                    <h4 class="skill-name">Desarrollo de Addons</h4>
+                                    <p class="skill-description">Creación de addons personalizados para Minecraft Bedrock Edition</p>
+                                    <div class="skill-level">
+                                        <div class="skill-bar">
+                                            <div class="skill-progress" style="width: 95%"></div>
+                                        </div>
+                                        <span class="skill-percentage">95%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-icon">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <div class="skill-info">
+                                    <h4 class="skill-name">Programación</h4>
+                                    <p class="skill-description">JavaScript, JSON y scripting para comportamientos personalizados</p>
+                                    <div class="skill-level">
+                                        <div class="skill-bar">
+                                            <div class="skill-progress" style="width: 88%"></div>
+                                        </div>
+                                        <span class="skill-percentage">88%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-icon">
+                                    <i class="fas fa-paint-brush"></i>
+                                </div>
+                                <div class="skill-info">
+                                    <h4 class="skill-name">Diseño de Texturas</h4>
+                                    <p class="skill-description">Creación de texturas y modelos 3D personalizados</p>
+                                    <div class="skill-level">
+                                        <div class="skill-bar">
+                                            <div class="skill-progress" style="width: 82%"></div>
+                                        </div>
+                                        <span class="skill-percentage">82%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-icon">
+                                    <i class="fas fa-gamepad"></i>
+                                </div>
+                                <div class="skill-info">
+                                    <h4 class="skill-name">Mecánicas de Juego</h4>
+                                    <p class="skill-description">Diseño e implementación de nuevas mecánicas y sistemas</p>
+                                    <div class="skill-level">
+                                        <div class="skill-bar">
+                                            <div class="skill-progress" style="width: 90%"></div>
+                                        </div>
+                                        <span class="skill-percentage">90%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="about-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-heart section-icon"></i>
+                            Mi Filosofía
+                        </h3>
+                        <p class="section-content">
+                            Creo firmemente en el poder de la comunidad y en la importancia de crear contenido accesible para todos. 
+                            Todos mis addons son completamente gratuitos y de código abierto cuando es posible, permitiendo a otros 
+                            aprender de mi trabajo y contribuir al ecosistema de Minecraft.
+                        </p>
+                        <p class="section-content">
+                            Mi enfoque se centra en la calidad, la estabilidad y la compatibilidad, asegurando que mis addons 
+                            funcionen correctamente y no causen conflictos con otros mods o addons populares.
+                        </p>
+                        <div class="philosophy-points">
+                            <div class="philosophy-point">
+                                <i class="fas fa-check philosophy-icon"></i>
+                                <span>Calidad sobre cantidad</span>
+                            </div>
+                            <div class="philosophy-point">
+                                <i class="fas fa-check philosophy-icon"></i>
+                                <span>Comunidad primero</span>
+                            </div>
+                            <div class="philosophy-point">
+                                <i class="fas fa-check philosophy-icon"></i>
+                                <span>Aprendizaje continuo</span>
+                            </div>
+                            <div class="philosophy-point">
+                                <i class="fas fa-check philosophy-icon"></i>
+                                <span>Innovación constante</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="about-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-envelope section-icon"></i>
+                            Contacto
+                        </h3>
+                        <p class="section-content">
+                            ¿Tienes preguntas, sugerencias o quieres colaborar en un proyecto? ¡Me encantaría escucharte!
+                        </p>
+                        <div class="contact-links">
+                            <a href="https://discord.com" target="_blank" class="contact-link discord">
+                                <i class="fab fa-discord"></i>
+                                Discord
+                            </a>
+                            <a href="https://twitter.com" target="_blank" class="contact-link twitter">
+                                <i class="fab fa-twitter"></i>
+                                Twitter
+                            </a>
+                            <a href="mailto:developer7452@example.com" class="contact-link email">
+                                <i class="fas fa-envelope"></i>
+                                Email
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/complement.js"></script>
+    <script src="../js/discord.js"></script>
+    <script>
+        // Funcionalidad del sidebar lateral
+        function setupSidebar() {
+            const userAvatar = document.getElementById('userAvatar');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            const closeSidebar = document.getElementById('closeSidebar');
+            
+            function toggleSidebar() {
+                const isActive = sidebar.classList.contains('active');
+                
+                if (isActive) {
+                    closeSidebarFunction();
+                } else {
+                    sidebar.classList.add('active');
+                    sidebarOverlay.classList.add('active');
+                    document.body.classList.add('menu-open');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+            
+            function closeSidebarFunction() {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                document.body.classList.remove('menu-open');
+                document.body.style.overflow = '';
+            }
+            
+            if (userAvatar) {
+                userAvatar.addEventListener('click', toggleSidebar);
+            }
+            
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', closeSidebarFunction);
+            }
+            
+            if (closeSidebar) {
+                closeSidebar.addEventListener('click', closeSidebarFunction);
+            }
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && sidebar && sidebar.classList.contains('active')) {
+                    closeSidebarFunction();
+                }
+            });
+        }
+
+        // Inicializar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            setupSidebar();
+        });
+    </script>
+    
+    <style>
+        /* Estilos específicos para la página Sobre Mí */
+        .about-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .about-card {
+            background-color: var(--dark-card);
+            border-radius: var(--rounded-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--dark-border);
+        }
+        
+        .about-header {
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(16, 185, 129, 0.1));
+            border-bottom: 1px solid var(--dark-border);
+        }
+        
+        .profile-image-container {
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-color);
+            box-shadow: var(--shadow);
+        }
+        
+        .online-status {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--success-color);
+            border: 3px solid var(--dark-card);
+        }
+        
+        .profile-info {
+            flex-grow: 1;
+        }
+        
+        .profile-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .profile-title {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+        
+        .profile-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .profile-tag {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        .profile-stats {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            display: block;
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-top: 0.25rem;
+        }
+        
+        .about-body {
+            padding: 2rem;
+        }
+        
+        .about-section {
+            margin-bottom: 2.5rem;
+        }
+        
+        .about-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark-text);
+        }
+        
+        .section-icon {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+        }
+        
+        .section-content {
+            color: #94a3b8;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+        
+        .section-content:last-child {
+            margin-bottom: 0;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .skill-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.25rem;
+            background-color: rgba(139, 92, 246, 0.05);
+            border-radius: var(--rounded);
+            border: 1px solid var(--dark-border);
+            transition: var(--transition);
+        }
+        
+        .skill-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary-color);
+        }
+        
+        .skill-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: var(--rounded);
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .skill-info {
+            flex-grow: 1;
+        }
+        
+        .skill-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-text);
+        }
+        
+        .skill-description {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        
+        .skill-level {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .skill-bar {
+            flex-grow: 1;
+            height: 6px;
+            background-color: var(--dark-border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 3px;
+            transition: width 1s ease-in-out;
+        }
+        
+        .skill-percentage {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            min-width: 2.5rem;
+        }
+        
+        .philosophy-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .philosophy-point {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background-color: rgba(16, 185, 129, 0.1);
+            border-radius: var(--rounded);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .philosophy-icon {
+            color: var(--success-color);
+            font-size: 0.9rem;
+        }
+        
+        .philosophy-point span {
+            color: var(--dark-text);
+            font-weight: 500;
+        }
+        
+        .contact-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .contact-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+        
+        .contact-link.discord {
+            background-color: #5865F2;
+            color: white;
+        }
+        
+        .contact-link.twitter {
+            background-color: #1DA1F2;
+            color: white;
+        }
+        
+        .contact-link.email {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .contact-link:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* Estilos responsivos */
+        @media (max-width: 768px) {
+            .about-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+            }
+            
+            .profile-stats {
+                justify-content: center;
+            }
+            
+            .about-body {
+                padding: 1.5rem;
+            }
+            
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-links {
+                justify-content: center;
+            }
+            
+            .philosophy-points {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .profile-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .contact-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .contact-link {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .skill-level {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+            }
+            
+            .skill-percentage {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</body>
+</html>

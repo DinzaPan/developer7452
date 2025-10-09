@@ -3,25 +3,37 @@ async function renderAddonDetails(addon) {
     const container = document.getElementById('addonDetails');
     const pageTitle = document.getElementById('pageTitle');
     
+    console.log('Renderizando addon:', addon);
+    
     if (!addon) {
         container.innerHTML = `
             <div class="error-message">
                 <div class="error-icon">!</div>
                 <h3 class="error-text">Addon no encontrado</h3>
                 <p class="error-details">El addon que buscas no existe o ha sido eliminado.</p>
-                <a href="index.html" class="clear-search">Volver al inicio</a>
+                <a href="index.html" class="back-btn">Volver al inicio</a>
             </div>
         `;
         return;
     }
     
-    const reviews = await getReviewsForAddon(addon.id);
-    const averageRating = calculateAverageRating(reviews);
-    const userReview = await getUserReviewForAddon(addon.id);
+    // Obtener reseñas
+    let reviews = [];
+    let averageRating = 0;
+    let userReview = null;
+    
+    try {
+        reviews = await getReviewsForAddon(addon.id);
+        averageRating = calculateAverageRating(reviews);
+        userReview = await getUserReviewForAddon(addon.id);
+    } catch (error) {
+        console.error('Error cargando reseñas:', error);
+    }
     
     // Actualizar título de la página
     pageTitle.textContent = `${addon.title} - Developer7452`;
     
+    // Renderizar el contenido del addon
     container.innerHTML = `
         <div class="addon-header">
             <img src="${addon.cover_image}" alt="Portada del addon" class="addon-cover" onerror="this.src='./img/addon/default.jpg'">
@@ -81,6 +93,7 @@ async function renderAddonDetails(addon) {
         </div>
     `;
     
+    // Configurar el formulario de reseñas si existe
     setupReviewForm(addon.id);
 }
 
@@ -116,7 +129,13 @@ function renderReviewForm(addonId, userReview) {
                 <form id="reviewForm">
                     <div class="rating-input">
                         <label>Calificación:</label>
-                        ${renderStars(0, true)}
+                        <div class="stars interactive">
+                            <span class="star" data-rating="1"><i class="fas fa-star"></i></span>
+                            <span class="star" data-rating="2"><i class="fas fa-star"></i></span>
+                            <span class="star" data-rating="3"><i class="fas fa-star"></i></span>
+                            <span class="star" data-rating="4"><i class="fas fa-star"></i></span>
+                            <span class="star" data-rating="5"><i class="fas fa-star"></i></span>
+                        </div>
                     </div>
                     <div class="comment-input">
                         <label for="reviewComment">Comentario:</label>
@@ -190,13 +209,17 @@ function renderReviewsList(reviews, userReview) {
 // Configurar el formulario de reseña
 function setupReviewForm(addonId) {
     const reviewForm = document.getElementById('reviewForm');
+    if (!reviewForm) return;
+    
     const stars = document.querySelectorAll('.stars.interactive .star');
     let selectedRating = 0;
     
+    // Configurar estrellas interactivas
     stars.forEach(star => {
         star.addEventListener('click', function() {
             selectedRating = parseInt(this.getAttribute('data-rating'));
             
+            // Actualizar visualización de estrellas
             stars.forEach((s, index) => {
                 if (index < selectedRating) {
                     s.classList.add('active');
@@ -207,30 +230,29 @@ function setupReviewForm(addonId) {
         });
     });
     
-    if (reviewForm) {
-        reviewForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const comment = document.getElementById('reviewComment').value.trim();
-            
-            if (selectedRating === 0) {
-                alert('Por favor, selecciona una calificación');
-                return;
-            }
-            
-            if (!comment) {
-                alert('Por favor, escribe un comentario');
-                return;
-            }
-            
-            try {
-                await addOrUpdateReview(addonId, selectedRating, comment);
-                location.reload();
-            } catch (error) {
-                alert('Error al enviar la reseña. Inténtalo de nuevo.');
-            }
-        });
-    }
+    // Configurar envío del formulario
+    reviewForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const comment = document.getElementById('reviewComment').value.trim();
+        
+        if (selectedRating === 0) {
+            alert('Por favor, selecciona una calificación');
+            return;
+        }
+        
+        if (!comment) {
+            alert('Por favor, escribe un comentario');
+            return;
+        }
+        
+        try {
+            await addReview(addonId, selectedRating, comment);
+            location.reload();
+        } catch (error) {
+            alert('Error al enviar la reseña. Inténtalo de nuevo.');
+        }
+    });
 }
 
 // Eliminar reseña del usuario
@@ -255,35 +277,8 @@ function downloadAddon(addonId) {
     }
 }
 
-// Inicializar la página de detalles
-document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const addonId = urlParams.get('id');
-    
-    if (addonId) {
-        const addon = getAddonById(addonId);
-        if (addon) {
-            renderAddonDetails(addon);
-        } else {
-            renderAddonDetails(null);
-        }
-    } else {
-        renderAddonDetails(null);
-    }
-});
-
-// Funciones auxiliares para compatibilidad
-function addOrUpdateReview(addonId, rating, comment) {
-    return addReview(addonId, rating, comment);
-}
-
-function getUserProfilePicture() {
-    const currentUser = getCurrentUser();
-    return currentUser && currentUser.avatar ? currentUser.avatar : './img/default-avatar.png';
-}
-
 // =============================================
-// SISTEMA DE AUTENTICACIÓN CON DISCORD
+// SISTEMA DE AUTENTICACIÓN
 // =============================================
 
 // Obtener usuario actual
@@ -292,37 +287,49 @@ function getCurrentUser() {
     return userData ? JSON.parse(userData) : null;
 }
 
-// Actualizar la interfaz de usuario con la información del usuario
+// Función para obtener la foto de perfil
+function getUserProfilePicture() {
+    const currentUser = getCurrentUser();
+    return currentUser && currentUser.avatar ? currentUser.avatar : './img/default-avatar.png';
+}
+
+// Login con Discord
+function loginWithDiscord() {
+    localStorage.setItem('returnUrl', window.location.href);
+    window.location.href = './auth/discord/callback.html';
+}
+
+// Logout
+function logout() {
+    localStorage.removeItem('discordUser');
+    localStorage.removeItem('discordToken');
+    updateUserInterface();
+    showNotification('Sesión cerrada correctamente', 'success');
+}
+
+// Actualizar interfaz de usuario
 function updateUserInterface() {
     const currentUser = getCurrentUser();
     const userAvatar = document.getElementById('userAvatar');
     const userName = document.getElementById('userName');
     const userStatus = document.getElementById('userStatus');
-    const userInfoSidebar = document.getElementById('userInfoSidebar');
     const logoutBtn = document.getElementById('logoutBtn');
 
     if (currentUser) {
-        // Actualizar avatar
+        // Usuario conectado
         if (userAvatar) {
             userAvatar.innerHTML = `
                 <img src="${currentUser.avatar}" alt="${currentUser.username}" class="profile-picture" onerror="this.src='./img/default-avatar.png'">
             `;
         }
-
-        // Actualizar sidebar
         if (userName) userName.textContent = currentUser.username;
         if (userStatus) {
-            userStatus.textContent = currentUser.global_name || currentUser.username;
+            userStatus.textContent = 'Conectado';
             userStatus.style.color = '#10B981';
         }
-
-        // Mostrar botón de logout
         if (logoutBtn) logoutBtn.style.display = 'flex';
-
-        // Añadir clase de usuario conectado
-        if (userInfoSidebar) userInfoSidebar.classList.add('user-connected');
     } else {
-        // Restablecer a estado por defecto
+        // Usuario no conectado
         if (userAvatar) {
             userAvatar.innerHTML = `
                 <div class="avatar-placeholder">
@@ -336,60 +343,27 @@ function updateUserInterface() {
             userStatus.style.color = '#94a3b8';
         }
         if (logoutBtn) logoutBtn.style.display = 'none';
-        if (userInfoSidebar) userInfoSidebar.classList.remove('user-connected');
     }
 }
 
-// Login con Discord - USA EL CALLBACK QUE YA EXISTE
-function loginWithDiscord() {
-    // Guardar la URL actual para redirigir después del login
-    localStorage.setItem('returnUrl', window.location.href);
-    
-    // Redirigir al callback de Discord que ya existe y funciona
-    window.location.href = './auth/discord/callback.html';
-}
-
-// Logout
-function logout() {
-    localStorage.removeItem('discordUser');
-    localStorage.removeItem('discordToken');
-    updateUserInterface();
-    showNotification('Sesión cerrada correctamente', 'success');
-}
-
-// Procesar callback de Discord (se llama desde callback.html existente)
-function processDiscordCallback(userData) {
-    if (userData && userData.id) {
-        localStorage.setItem('discordUser', JSON.stringify(userData));
-        updateUserInterface();
-        showNotification('¡Sesión iniciada correctamente!', 'success');
-        
-        // Redirigir de vuelta a la página principal o a la página actual
-        const returnUrl = localStorage.getItem('returnUrl') || 'index.html';
-        localStorage.removeItem('returnUrl');
-        window.location.href = returnUrl;
-    }
-}
-
-// Configuración del sidebar
+// Configurar sidebar
 function setupSidebar() {
     const userAvatar = document.getElementById('userAvatar');
     const sidebar = document.getElementById('sidebar');
     const sidebarOverlay = document.getElementById('sidebarOverlay');
     const closeSidebar = document.getElementById('closeSidebar');
     const logoutBtn = document.getElementById('logoutBtn');
-    const userInfoSidebar = document.getElementById('userInfoSidebar');
+    
+    if (!userAvatar || !sidebar) return;
     
     function toggleSidebar() {
         const isActive = sidebar.classList.contains('active');
-        
         if (isActive) {
             closeSidebarFunction();
         } else {
             sidebar.classList.add('active');
             sidebarOverlay.classList.add('active');
             document.body.classList.add('menu-open');
-            document.body.style.overflow = 'hidden';
         }
     }
     
@@ -397,20 +371,11 @@ function setupSidebar() {
         sidebar.classList.remove('active');
         sidebarOverlay.classList.remove('active');
         document.body.classList.remove('menu-open');
-        document.body.style.overflow = '';
     }
     
-    if (userAvatar) {
-        userAvatar.addEventListener('click', toggleSidebar);
-    }
-    
-    if (sidebarOverlay) {
-        sidebarOverlay.addEventListener('click', closeSidebarFunction);
-    }
-    
-    if (closeSidebar) {
-        closeSidebar.addEventListener('click', closeSidebarFunction);
-    }
+    userAvatar.addEventListener('click', toggleSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebarFunction);
+    closeSidebar.addEventListener('click', closeSidebarFunction);
     
     if (logoutBtn) {
         logoutBtn.addEventListener('click', function(e) {
@@ -420,30 +385,31 @@ function setupSidebar() {
         });
     }
     
-    if (userInfoSidebar) {
-        userInfoSidebar.addEventListener('click', function() {
-            const currentUser = getCurrentUser();
-            if (!currentUser) {
-                loginWithDiscord();
-            }
-            closeSidebarFunction();
-        });
-    }
-    
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && sidebar && sidebar.classList.contains('active')) {
+        if (e.key === 'Escape' && sidebar.classList.contains('active')) {
             closeSidebarFunction();
         }
     });
 }
 
-// Verificar autenticación al cargar la página
+// Procesar callback de Discord
+function processDiscordCallback(userData) {
+    if (userData && userData.id) {
+        localStorage.setItem('discordUser', JSON.stringify(userData));
+        updateUserInterface();
+        
+        const returnUrl = localStorage.getItem('returnUrl') || 'index.html';
+        localStorage.removeItem('returnUrl');
+        window.location.href = returnUrl;
+    }
+}
+
+// Verificar autenticación al cargar
 function checkAuth() {
     const urlParams = new URLSearchParams(window.location.search);
     const userData = urlParams.get('user');
     
     if (userData) {
-        // Procesar datos de usuario desde Discord callback
         try {
             const user = JSON.parse(decodeURIComponent(userData));
             processDiscordCallback(user);
@@ -455,12 +421,37 @@ function checkAuth() {
     updateUserInterface();
 }
 
-// Inicializar sidebar y autenticación
-setupSidebar();
-checkAuth();
+// =============================================
+// INICIALIZACIÓN
+// =============================================
 
-// Exportar funciones para uso global
+// Inicializar la página
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Inicializando view.html');
+    
+    // Configurar autenticación
+    setupSidebar();
+    checkAuth();
+    
+    // Obtener ID del addon desde la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const addonId = urlParams.get('id');
+    
+    console.log('Addon ID desde URL:', addonId);
+    
+    if (addonId) {
+        const addon = getAddonById(addonId);
+        console.log('Addon encontrado:', addon);
+        renderAddonDetails(addon);
+    } else {
+        console.log('No se encontró ID de addon en la URL');
+        renderAddonDetails(null);
+    }
+});
+
+// Exportar funciones globales
 window.loginWithDiscord = loginWithDiscord;
 window.logout = logout;
-window.getCurrentUser = getCurrentUser;
+window.downloadAddon = downloadAddon;
+window.deleteUserReview = deleteUserReview;
 window.processDiscordCallback = processDiscordCallback;

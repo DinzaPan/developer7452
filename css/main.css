@@ -640,6 +640,115 @@ body.menu-open {
     background-color: rgba(239, 68, 68, 0.1);
 }
 
+/* Estilos para el sistema de reseñas mejorado */
+.user-rating-section {
+    background: rgba(139, 92, 246, 0.05);
+    padding: 0.75rem;
+    border-radius: var(--rounded);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    margin: 0.75rem 0;
+}
+
+.user-rating-display {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.rating-input {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.rating-input .stars.interactive .star {
+    cursor: pointer;
+    transition: var(--transition);
+    padding: 0.125rem;
+}
+
+.rating-input .stars.interactive .star:hover {
+    transform: scale(1.2);
+    color: #f59e0b;
+}
+
+.rating-input .stars.interactive .star.active {
+    color: #f59e0b;
+}
+
+/* Mejoras para las tarjetas de addons */
+.addon-card {
+    position: relative;
+}
+
+.addon-info {
+    position: relative;
+}
+
+/* Loading states */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Notificaciones */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--success-color);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: var(--rounded);
+    box-shadow: var(--shadow-lg);
+    z-index: 10000;
+    animation: slideInRight 0.3s ease-out;
+    max-width: 300px;
+}
+
+.notification.error {
+    background: var(--error-color);
+}
+
+.notification.info {
+    background: var(--primary-color);
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Estilos para animaciones de notificación */
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Estilos responsivos mejorados */
 @media (max-width: 768px) {
     .container {
         padding: 0 1rem 1rem;
@@ -698,6 +807,14 @@ body.menu-open {
     .site-title {
         font-size: 1.25rem;
     }
+    
+    .user-rating-section {
+        padding: 0.5rem;
+    }
+    
+    .rating-input .stars.interactive .star {
+        padding: 0.0625rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -743,4 +860,108 @@ body.menu-open {
         width: 260px;
         left: -260px;
     }
+    
+    .addon-info {
+        padding: 1rem;
+    }
+    
+    .user-rating-section {
+        margin: 0.5rem 0;
+    }
+    
+    .notification {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
+/* Estilos para estados de carga mejorados */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+}
+
+.loading-spinner {
+    width: 3rem;
+    height: 3rem;
+    border: 3px solid transparent;
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus styles para mejor accesibilidad */
+button:focus-visible,
+a:focus-visible,
+.star:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Mejoras para modo oscuro (ya está en modo oscuro por defecto) */
+@media (prefers-color-scheme: light) {
+    body {
+        background-color: var(--light-bg);
+        color: var(--light-text);
+    }
+    
+    .navbar {
+        background-color: var(--light-card);
+    }
+    
+    .sidebar {
+        background-color: var(--light-card);
+    }
+    
+    .addon-card {
+        background-color: var(--light-card);
+    }
+    
+    .search-input {
+        background-color: var(--light-card);
+        color: var(--light-text);
+        border-color: var(--light-border);
+    }
+}
+
+/* Estilos para scrollbar personalizado */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--dark-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--dark-border);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
 }

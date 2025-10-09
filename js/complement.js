@@ -8,7 +8,7 @@ const addonsData = [
         version: "1.21.111",
         download_link: "https://example.com/download/1",
         tags: ["Comandos", "Personalizado", "Servidores"],
-        last_updated: "2025-10-9",
+        last_updated: "2025-10-09",
         file_size: "2.5 MB"
     },
     {
@@ -19,8 +19,19 @@ const addonsData = [
         version: "1.21.111",
         download_link: "https://example.com/download/2",
         tags: ["Tienda", "UI", "Economía"],
-        last_updated: "2025-10-9",
+        last_updated: "2025-10-09",
         file_size: "1.8 MB"
+    },
+    {
+        id: 3,
+        title: "Paquete de Texturas HD",
+        description: "Texturas en alta definición para mejorar los gráficos de Minecraft Bedrock Edition.",
+        cover_image: "./img/addon/prueba.jpg",
+        version: "1.20.0",
+        download_link: "https://example.com/download/3",
+        tags: ["Texturas", "HD", "Gráficos"],
+        last_updated: "2025-09-15",
+        file_size: "15.2 MB"
     }
 ];
 
@@ -38,7 +49,8 @@ const CACHE_DURATION = 300000; // 5 minutos en milisegundos
 
 // Función para obtener un addon por ID
 function getAddonById(id) {
-    return addonsData.find(addon => addon.id === parseInt(id));
+    const addonId = parseInt(id);
+    return addonsData.find(addon => addon.id === addonId);
 }
 
 // Función para obtener todos los addons
@@ -60,34 +72,13 @@ function searchAddons(query) {
     );
 }
 
-// Sistema de carga
+// Sistema de carga - ELIMINADO
 function showLoading() {
-    let loadingOverlay = document.getElementById('loadingOverlay');
-    if (!loadingOverlay) {
-        loadingOverlay = document.createElement('div');
-        loadingOverlay.id = 'loadingOverlay';
-        loadingOverlay.className = 'loading-overlay';
-        loadingOverlay.innerHTML = `
-            <div class="loading-spinner">
-                <div class="spinner"></div>
-                <p>Cargando...</p>
-            </div>
-        `;
-        document.body.appendChild(loadingOverlay);
-    }
-    loadingOverlay.classList.remove('hidden');
+    // No hacer nada - sistema eliminado
 }
 
 function hideLoading() {
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    if (loadingOverlay) {
-        loadingOverlay.classList.add('hidden');
-        setTimeout(() => {
-            if (loadingOverlay.parentNode) {
-                loadingOverlay.parentNode.removeChild(loadingOverlay);
-            }
-        }, 300);
-    }
+    // No hacer nada - sistema eliminado
 }
 
 // Obtener reseñas desde JSONBin.io con cache local
@@ -150,15 +141,12 @@ async function getAllReviews() {
     }
     
     try {
-        showLoading();
         const reviews = await fetchReviewsFromAPI();
         reviewsCache = reviews;
         lastFetchTime = now;
-        hideLoading();
         return reviews;
     } catch (error) {
         console.error('Error getting all reviews:', error);
-        hideLoading();
         return {};
     }
 }
@@ -184,8 +172,6 @@ async function addReview(addonId, rating, comment = '') {
     }
     
     try {
-        showLoading();
-        
         // Obtener reseñas actuales
         const allReviews = await getAllReviews();
         
@@ -224,8 +210,6 @@ async function addReview(addonId, rating, comment = '') {
         reviewsCache = allReviews;
         lastFetchTime = Date.now();
         
-        hideLoading();
-        
         if (result.success === false) {
             console.warn('Review saved locally due to API error');
             // Aún así consideramos éxito porque se guardó localmente
@@ -236,7 +220,6 @@ async function addReview(addonId, rating, comment = '') {
         
     } catch (error) {
         console.error('Error adding review:', error);
-        hideLoading();
         showNotification('Error al añadir la reseña', 'error');
         return false;
     }
@@ -257,8 +240,6 @@ async function deleteReview(addonId) {
     }
     
     try {
-        showLoading();
-        
         // Obtener reseñas actuales
         const allReviews = await getAllReviews();
         
@@ -279,8 +260,6 @@ async function deleteReview(addonId) {
                 reviewsCache = allReviews;
                 lastFetchTime = Date.now();
                 
-                hideLoading();
-                
                 if (result.success === false) {
                     console.warn('Review deletion saved locally due to API error');
                 }
@@ -290,13 +269,11 @@ async function deleteReview(addonId) {
             }
         }
         
-        hideLoading();
         showNotification('No se encontró una reseña para eliminar', 'error');
         return false;
         
     } catch (error) {
         console.error('Error deleting review:', error);
-        hideLoading();
         showNotification('Error al eliminar la reseña', 'error');
         return false;
     }
@@ -351,28 +328,15 @@ function getUserProfilePicture() {
     return currentUser && currentUser.avatar ? currentUser.avatar : './img/default-avatar.png';
 }
 
-// Inicializar datos de reseñas si no existen
-async function initializeReviewsData() {
-    const currentReviews = await getAllReviews();
-    
-    // Crear estructura inicial si no existe
-    let needsUpdate = false;
-    addonsData.forEach(addon => {
-        if (!currentReviews[addon.id]) {
-            currentReviews[addon.id] = [];
-            needsUpdate = true;
-        }
-    });
-    
-    if (needsUpdate) {
-        await saveReviewsToAPI(currentReviews);
-    }
-}
-
 // Función para formatear fechas
 function formatDate(dateString) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('es-ES', options);
+    try {
+        const date = new Date(dateString);
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString('es-ES', options);
+    } catch (error) {
+        return dateString;
+    }
 }
 
 // Renderizar estrellas
@@ -401,11 +365,27 @@ function renderStars(rating, interactive = false, size = 'medium') {
     return `<div class="stars ${interactive ? 'interactive' : ''} ${size}">${starsHtml}</div>`;
 }
 
+// Inicializar datos de reseñas si no existen
+async function initializeReviewsData() {
+    const currentReviews = await getAllReviews();
+    
+    // Crear estructura inicial si no existe
+    let needsUpdate = false;
+    addonsData.forEach(addon => {
+        if (!currentReviews[addon.id]) {
+            currentReviews[addon.id] = [];
+            needsUpdate = true;
+        }
+    });
+    
+    if (needsUpdate) {
+        await saveReviewsToAPI(currentReviews);
+    }
+}
+
 // Llamar a la inicialización cuando se carga la página
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-        initializeReviewsData();
-    }, 1000);
+    initializeReviewsData();
 });
 
 // Exportar funciones para uso global

@@ -8,7 +8,7 @@ const addonsData = [
         version: "1.21.111",
         download_link: "https://example.com/download/1",
         tags: ["Comandos", "Personalizado", "Servidores"],
-        last_updated: "2025-10-09",
+        last_updated: "2025-10-9",
         file_size: "2.5 MB"
     },
     {
@@ -19,19 +19,8 @@ const addonsData = [
         version: "1.21.111",
         download_link: "https://example.com/download/2",
         tags: ["Tienda", "UI", "Economía"],
-        last_updated: "2025-10-09",
+        last_updated: "2025-10-9",
         file_size: "1.8 MB"
-    },
-    {
-        id: 3,
-        title: "Paquete de Texturas HD",
-        description: "Texturas en alta definición para mejorar los gráficos de Minecraft Bedrock Edition.",
-        cover_image: "./img/addon/prueba.jpg",
-        version: "1.20.0",
-        download_link: "https://example.com/download/3",
-        tags: ["Texturas", "HD", "Gráficos"],
-        last_updated: "2025-09-15",
-        file_size: "15.2 MB"
     }
 ];
 
@@ -49,8 +38,7 @@ const CACHE_DURATION = 300000; // 5 minutos en milisegundos
 
 // Función para obtener un addon por ID
 function getAddonById(id) {
-    const addonId = parseInt(id);
-    return addonsData.find(addon => addon.id === addonId);
+    return addonsData.find(addon => addon.id === parseInt(id));
 }
 
 // Función para obtener todos los addons
@@ -72,13 +60,25 @@ function searchAddons(query) {
     );
 }
 
-// Sistema de carga - ELIMINADO
+// Sistema de carga
 function showLoading() {
-    // No hacer nada - sistema eliminado
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.className = 'loading-overlay';
+    loadingOverlay.id = 'loadingOverlay';
+    loadingOverlay.innerHTML = `
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Cargando...</p>
+        </div>
+    `;
+    document.body.appendChild(loadingOverlay);
 }
 
 function hideLoading() {
-    // No hacer nada - sistema eliminado
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+        loadingOverlay.remove();
+    }
 }
 
 // Obtener reseñas desde JSONBin.io con cache local
@@ -141,12 +141,15 @@ async function getAllReviews() {
     }
     
     try {
+        showLoading();
         const reviews = await fetchReviewsFromAPI();
         reviewsCache = reviews;
         lastFetchTime = now;
+        hideLoading();
         return reviews;
     } catch (error) {
         console.error('Error getting all reviews:', error);
+        hideLoading();
         return {};
     }
 }
@@ -172,14 +175,16 @@ async function addReview(addonId, rating, comment = '') {
     }
     
     try {
+        showLoading();
+        
         // Obtener reseñas actuales
         const allReviews = await getAllReviews();
         
-        // Crear nueva reseña
+        // Crear nueva reseña con foto de perfil
         const newReview = {
             userId: currentUser.id,
             username: currentUser.username,
-            avatar: currentUser.avatar,
+            avatar: currentUser.avatar || null,
             rating: parseInt(rating),
             comment: comment.trim(),
             timestamp: new Date().toISOString()
@@ -210,6 +215,8 @@ async function addReview(addonId, rating, comment = '') {
         reviewsCache = allReviews;
         lastFetchTime = Date.now();
         
+        hideLoading();
+        
         if (result.success === false) {
             console.warn('Review saved locally due to API error');
             // Aún así consideramos éxito porque se guardó localmente
@@ -220,17 +227,13 @@ async function addReview(addonId, rating, comment = '') {
         
     } catch (error) {
         console.error('Error adding review:', error);
+        hideLoading();
         showNotification('Error al añadir la reseña', 'error');
         return false;
     }
 }
 
-// Función para actualizar la reseña del usuario
-async function addOrUpdateReview(addonId, rating, comment) {
-    return await addReview(addonId, rating, comment);
-}
-
-// Función para eliminar reseña
+// Eliminar una reseña
 async function deleteReview(addonId) {
     const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
     
@@ -240,40 +243,37 @@ async function deleteReview(addonId) {
     }
     
     try {
+        showLoading();
+        
         // Obtener reseñas actuales
         const allReviews = await getAllReviews();
         
-        // Verificar si el usuario tiene una reseña para este addon
+        // Filtrar la reseña del usuario actual
         if (allReviews[addonId]) {
-            const reviewIndex = allReviews[addonId].findIndex(
-                review => review.userId === currentUser.id
+            allReviews[addonId] = allReviews[addonId].filter(
+                review => review.userId !== currentUser.id
             );
-            
-            if (reviewIndex !== -1) {
-                // Eliminar la reseña
-                allReviews[addonId].splice(reviewIndex, 1);
-                
-                // Guardar en JSONBin.io
-                const result = await saveReviewsToAPI(allReviews);
-                
-                // Actualizar cache
-                reviewsCache = allReviews;
-                lastFetchTime = Date.now();
-                
-                if (result.success === false) {
-                    console.warn('Review deletion saved locally due to API error');
-                }
-                
-                showNotification('¡Reseña eliminada correctamente!', 'success');
-                return true;
-            }
         }
         
-        showNotification('No se encontró una reseña para eliminar', 'error');
-        return false;
+        // Guardar en JSONBin.io
+        const result = await saveReviewsToAPI(allReviews);
+        
+        // Actualizar cache
+        reviewsCache = allReviews;
+        lastFetchTime = Date.now();
+        
+        hideLoading();
+        
+        if (result.success === false) {
+            console.warn('Review deletion saved locally due to API error');
+        }
+        
+        showNotification('¡Reseña eliminada correctamente!', 'success');
+        return true;
         
     } catch (error) {
         console.error('Error deleting review:', error);
+        hideLoading();
         showNotification('Error al eliminar la reseña', 'error');
         return false;
     }
@@ -300,7 +300,7 @@ async function getUserReviewForAddon(addonId) {
 function showNotification(message, type = 'info') {
     // Crear elemento de notificación
     const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
+    notification.className = `notification notification-${type}`;
     notification.innerHTML = `
         <div class="notification-content">
             <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
@@ -308,61 +308,37 @@ function showNotification(message, type = 'info') {
         </div>
     `;
     
-    // Añadir al cuerpo del documento
+    // Estilos para la notificación
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? 'var(--success-color)' : type === 'error' ? 'var(--error-color)' : 'var(--primary-color)'};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: var(--rounded);
+        box-shadow: var(--shadow-lg);
+        z-index: 10000;
+        animation: slideInRight 0.3s ease-out;
+        max-width: 300px;
+    `;
+    
     document.body.appendChild(notification);
     
-    // Remover después de 5 segundos
+    // Remover después de 3 segundos
     setTimeout(() => {
-        notification.style.animation = 'slideOutRight 0.3s ease-out';
+        notification.style.animation = 'slideOutRight 0.3s ease-in';
         setTimeout(() => {
             if (notification.parentNode) {
                 notification.parentNode.removeChild(notification);
             }
         }, 300);
-    }, 5000);
+    }, 3000);
 }
 
-// Función para obtener la foto de perfil del usuario
-function getUserProfilePicture() {
-    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
-    return currentUser && currentUser.avatar ? currentUser.avatar : './img/default-avatar.png';
-}
-
-// Función para formatear fechas
-function formatDate(dateString) {
-    try {
-        const date = new Date(dateString);
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return date.toLocaleDateString('es-ES', options);
-    } catch (error) {
-        return dateString;
-    }
-}
-
-// Renderizar estrellas
-function renderStars(rating, interactive = false, size = 'medium') {
-    const numericRating = parseFloat(rating) || 0;
-    const starSize = size === 'small' ? '0.9rem' : '1.5rem';
-    let starsHtml = '';
-    
-    for (let i = 1; i <= 5; i++) {
-        const isActive = i <= numericRating;
-        if (interactive) {
-            starsHtml += `
-                <span class="star ${isActive ? 'active' : ''}" data-rating="${i}">
-                    <i class="fas fa-star" style="font-size: ${starSize}"></i>
-                </span>
-            `;
-        } else {
-            starsHtml += `
-                <span class="star ${isActive ? 'active' : ''}">
-                    <i class="fas fa-star" style="font-size: ${starSize}"></i>
-                </span>
-            `;
-        }
-    }
-    
-    return `<div class="stars ${interactive ? 'interactive' : ''} ${size}">${starsHtml}</div>`;
+// Función para avatar por defecto
+function getDefaultAvatar() {
+    return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM2NDc0OEIiLz4KPHBhdGggZD0iTTIwIDIyQzIzLjMxMzcgMjIgMjYgMTkuMzEzNyAyNiAxNkMyNiAxMi42ODYzIDIzLjMxMzcgMTAgMjAgMTBDMTYuNjg2MyAxMCAxNCAxMi42ODYzIDE0IDE2QzE0IDE5LjMxMzcgMTYuNjg2MyAyMiAyMCAyMloiIGZpbGw9IiNGOEZCRkMiLz4KPHBhdGggZD0iTTI2IDI2QzI2IDIzLjIzODUgMjMuMzEzNyAyMSAyMCAyMUMxNi42ODYzIDIxIDE0IDIzLjIzODUgMTQgMjZWMjhIMjZWMjZaIiBmaWxsPSIjRjhGQkZDIi8+Cjwvc3ZnPgo=';
 }
 
 // Inicializar datos de reseñas si no existen
@@ -385,22 +361,40 @@ async function initializeReviewsData() {
 
 // Llamar a la inicialización cuando se carga la página
 document.addEventListener('DOMContentLoaded', function() {
-    initializeReviewsData();
+    setTimeout(() => {
+        initializeReviewsData();
+    }, 1000);
 });
 
-// Exportar funciones para uso global
-window.getAddonById = getAddonById;
-window.getAllAddons = getAllAddons;
-window.searchAddons = searchAddons;
-window.getReviewsForAddon = getReviewsForAddon;
-window.addReview = addReview;
-window.addOrUpdateReview = addOrUpdateReview;
-window.deleteReview = deleteReview;
-window.calculateAverageRating = calculateAverageRating;
-window.getUserReviewForAddon = getUserReviewForAddon;
-window.getUserProfilePicture = getUserProfilePicture;
-window.formatDate = formatDate;
-window.renderStars = renderStars;
-window.showNotification = showNotification;
-window.showLoading = showLoading;
-window.hideLoading = hideLoading;
+// Añadir estilos CSS para animaciones de notificación
+const notificationStyles = document.createElement('style');
+notificationStyles.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+    
+    .notification-content {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+`;
+document.head.appendChild(notificationStyles);

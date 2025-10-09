@@ -62,13 +62,32 @@ function searchAddons(query) {
 
 // Sistema de carga
 function showLoading() {
-    // Implementación básica de loading
-    console.log("Mostrando loading...");
+    let loadingOverlay = document.getElementById('loadingOverlay');
+    if (!loadingOverlay) {
+        loadingOverlay = document.createElement('div');
+        loadingOverlay.id = 'loadingOverlay';
+        loadingOverlay.className = 'loading-overlay';
+        loadingOverlay.innerHTML = `
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Cargando...</p>
+            </div>
+        `;
+        document.body.appendChild(loadingOverlay);
+    }
+    loadingOverlay.classList.remove('hidden');
 }
 
 function hideLoading() {
-    // Implementación básica de loading
-    console.log("Ocultando loading...");
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+        loadingOverlay.classList.add('hidden');
+        setTimeout(() => {
+            if (loadingOverlay.parentNode) {
+                loadingOverlay.parentNode.removeChild(loadingOverlay);
+            }
+        }, 300);
+    }
 }
 
 // Obtener reseñas desde JSONBin.io con cache local
@@ -174,6 +193,7 @@ async function addReview(addonId, rating, comment = '') {
         const newReview = {
             userId: currentUser.id,
             username: currentUser.username,
+            avatar: currentUser.avatar,
             rating: parseInt(rating),
             comment: comment.trim(),
             timestamp: new Date().toISOString()
@@ -222,6 +242,66 @@ async function addReview(addonId, rating, comment = '') {
     }
 }
 
+// Función para actualizar la reseña del usuario
+async function addOrUpdateReview(addonId, rating, comment) {
+    return await addReview(addonId, rating, comment);
+}
+
+// Función para eliminar reseña
+async function deleteReview(addonId) {
+    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+    
+    if (!currentUser) {
+        alert('Debes iniciar sesión para eliminar una reseña');
+        return false;
+    }
+    
+    try {
+        showLoading();
+        
+        // Obtener reseñas actuales
+        const allReviews = await getAllReviews();
+        
+        // Verificar si el usuario tiene una reseña para este addon
+        if (allReviews[addonId]) {
+            const reviewIndex = allReviews[addonId].findIndex(
+                review => review.userId === currentUser.id
+            );
+            
+            if (reviewIndex !== -1) {
+                // Eliminar la reseña
+                allReviews[addonId].splice(reviewIndex, 1);
+                
+                // Guardar en JSONBin.io
+                const result = await saveReviewsToAPI(allReviews);
+                
+                // Actualizar cache
+                reviewsCache = allReviews;
+                lastFetchTime = Date.now();
+                
+                hideLoading();
+                
+                if (result.success === false) {
+                    console.warn('Review deletion saved locally due to API error');
+                }
+                
+                showNotification('¡Reseña eliminada correctamente!', 'success');
+                return true;
+            }
+        }
+        
+        hideLoading();
+        showNotification('No se encontró una reseña para eliminar', 'error');
+        return false;
+        
+    } catch (error) {
+        console.error('Error deleting review:', error);
+        hideLoading();
+        showNotification('Error al eliminar la reseña', 'error');
+        return false;
+    }
+}
+
 // Calcular promedio de calificaciones
 function calculateAverageRating(reviews) {
     if (!reviews || reviews.length === 0) return 0;
@@ -241,12 +321,34 @@ async function getUserReviewForAddon(addonId) {
 
 // Función para mostrar notificaciones
 function showNotification(message, type = 'info') {
-    if (window.showNotification) {
-        window.showNotification(message, type);
-    } else {
-        // Fallback básico
-        alert(message);
-    }
+    // Crear elemento de notificación
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    // Añadir al cuerpo del documento
+    document.body.appendChild(notification);
+    
+    // Remover después de 5 segundos
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 5000);
+}
+
+// Función para obtener la foto de perfil del usuario
+function getUserProfilePicture() {
+    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+    return currentUser && currentUser.avatar ? currentUser.avatar : './img/default-avatar.png';
 }
 
 // Inicializar datos de reseñas si no existen
@@ -267,9 +369,58 @@ async function initializeReviewsData() {
     }
 }
 
+// Función para formatear fechas
+function formatDate(dateString) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('es-ES', options);
+}
+
+// Renderizar estrellas
+function renderStars(rating, interactive = false, size = 'medium') {
+    const numericRating = parseFloat(rating) || 0;
+    const starSize = size === 'small' ? '0.9rem' : '1.5rem';
+    let starsHtml = '';
+    
+    for (let i = 1; i <= 5; i++) {
+        const isActive = i <= numericRating;
+        if (interactive) {
+            starsHtml += `
+                <span class="star ${isActive ? 'active' : ''}" data-rating="${i}">
+                    <i class="fas fa-star" style="font-size: ${starSize}"></i>
+                </span>
+            `;
+        } else {
+            starsHtml += `
+                <span class="star ${isActive ? 'active' : ''}">
+                    <i class="fas fa-star" style="font-size: ${starSize}"></i>
+                </span>
+            `;
+        }
+    }
+    
+    return `<div class="stars ${interactive ? 'interactive' : ''} ${size}">${starsHtml}</div>`;
+}
+
 // Llamar a la inicialización cuando se carga la página
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         initializeReviewsData();
     }, 1000);
 });
+
+// Exportar funciones para uso global
+window.getAddonById = getAddonById;
+window.getAllAddons = getAllAddons;
+window.searchAddons = searchAddons;
+window.getReviewsForAddon = getReviewsForAddon;
+window.addReview = addReview;
+window.addOrUpdateReview = addOrUpdateReview;
+window.deleteReview = deleteReview;
+window.calculateAverageRating = calculateAverageRating;
+window.getUserReviewForAddon = getUserReviewForAddon;
+window.getUserProfilePicture = getUserProfilePicture;
+window.formatDate = formatDate;
+window.renderStars = renderStars;
+window.showNotification = showNotification;
+window.showLoading = showLoading;
+window.hideLoading = hideLoading;

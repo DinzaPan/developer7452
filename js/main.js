@@ -27,13 +27,13 @@ async function renderAddons(addons) {
         <div class="addon-card" onclick="viewAddon(${addon.id})">
             <img src="${addon.cover_image}" alt="Portada del addon" class="addon-cover">
             <div class="addon-info">
-                <h3 class="addon-title">${addon.title}</h3>
+                <h3 class="addon-title">${replaceEmojis(addon.title)}</h3>
                 <div class="addon-rating">
                     ${renderStars(addon.averageRating, false, 'small')}
                     <span class="rating-value">${addon.averageRating}</span>
                     <span class="reviews-count">(${addon.reviewsCount})</span>
                 </div>
-                <p class="addon-description">${addon.description}</p>
+                <p class="addon-description">${replaceEmojis(addon.description)}</p>
                 
                 <div class="addon-footer">
                     <span class="addon-version">${addon.version}</span>
@@ -53,7 +53,6 @@ function viewAddon(id) {
 function downloadAddon(id) {
     const addon = getAddonById(id);
     if (addon) {
-        // Verificar si el usuario está autenticado
         const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
         
         if (!currentUser) {
@@ -65,7 +64,6 @@ function downloadAddon(id) {
             return;
         }
         
-        // Simular descarga
         showLoading();
         setTimeout(() => {
             hideLoading();
@@ -190,7 +188,6 @@ function setupSearch() {
         }
     });
     
-    // Búsqueda en tiempo real
     searchInput.addEventListener('input', function() {
         const query = this.value.trim();
         if (query.length >= 2 || query.length === 0) {
@@ -204,12 +201,10 @@ function setupSearch() {
 document.addEventListener('DOMContentLoaded', function() {
     showLoading();
     
-    // Renderizar addons iniciales
     renderAddons(getAllAddons()).then(() => {
         hideLoading();
     });
     
-    // Configurar funcionalidades
     setupSidebar();
     setupSearch();
 });

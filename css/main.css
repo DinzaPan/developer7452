@@ -903,3 +903,38 @@ a:focus-visible,
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-color);
 }
+/* Estilos para emojis */
+.emoji {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin: 0 2px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    pointer-events: none;
+}
+
+.addon-title .emoji,
+.addon-description .emoji {
+    width: 18px;
+    height: 18px;
+}
+
+/* Protección adicional para imágenes */
+img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
+
+img::selection {
+    background: transparent;
+}
+
+img::-moz-selection {
+    background: transparent;
+}

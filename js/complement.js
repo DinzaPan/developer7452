@@ -5,10 +5,10 @@ const addonsData = [
         description: "Addon que añade comandos personalizados para mejorar la experiencia de juego en servidores de Minecraft.",
         cover_image: "./img/addon/20250718_164538-1.png",
         version: "1.21.111",
-        download_link: "https://example.com/download/1",
+        download_link: "https://link-hub.net/1209581/IrYcT1rJySMV",
         tags: ["Api-Beta", "JS", "Servidores"],
-        last_updated: "2025-10-9",
-        file_size: "2.5 MB"
+        last_updated: "2025-10-12",
+        file_size: "1.59 MB"
     },
     {
         id: 2,

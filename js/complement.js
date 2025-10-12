@@ -1,7 +1,7 @@
 const addonsData = [
     {
         id: 1,
-        title: "$1 Better Commands $fuego",
+        title: "$1 Better Commands",
         description: "Addon que añade comandos personalizados para mejorar la experiencia de juego en servidores de Minecraft.",
         cover_image: "./img/addon/20250718_164538-1.png",
         version: "1.21.111",
@@ -12,8 +12,8 @@ const addonsData = [
     },
     {
         id: 2,
-        title: "Interfaz de Tienda Moderna $corazon",
-        description: "Sistema de tienda con interfaz UI moderna $like para servidores de Minecraft Bedrock.",
+        title: "Interfaz de Tienda Moderna",
+        description: "Sistema de tienda con interfaz UI moderna para servidores de Minecraft Bedrock.",
         cover_image: "./img/addon/prueba.jpg",
         version: "1.21.111",
         download_link: "https://example.com/download/2",

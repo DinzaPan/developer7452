@@ -6,6 +6,168 @@
     <title>Páginas Web - Developer7452</title>
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para la página de Páginas Web */
+        .webpages-intro {
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto 3rem;
+            color: #94a3b8;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .webpages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .webpage-card {
+            background-color: var(--dark-card);
+            border-radius: var(--rounded-lg);
+            padding: 2rem;
+            border: 1px solid var(--dark-border);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .webpage-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+        
+        .webpage-icon {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .webpage-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark-text);
+        }
+        
+        .webpage-description {
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .webpage-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        
+        .feature-tag {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        /* Estilos para el contador regresivo */
+        .countdown-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--rounded-lg);
+            z-index: 10;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .countdown-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .countdown-timer {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-family: monospace;
+        }
+        
+        .countdown-progress {
+            width: 100%;
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        
+        .countdown-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            width: 100%;
+            transition: width 1s linear;
+        }
+        
+        .countdown-message {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+        
+        .webpage-card.unlocked .countdown-overlay {
+            display: none;
+        }
+        
+        .webpage-card.unlocked {
+            cursor: pointer;
+        }
+        
+        .webpage-card.locked {
+            cursor: not-allowed;
+        }
+        
+        .webpage-card.locked:hover {
+            transform: none;
+            box-shadow: var(--shadow);
+            border-color: var(--dark-border);
+        }
+        
+        /* Estilos responsivos */
+        @media (max-width: 768px) {
+            .webpages-grid {
+                grid-template-columns: 1fr;
+                max-width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Barra de navegación -->
@@ -100,7 +262,16 @@
         
         <div class="webpages-grid">
             <!-- Editor HUD Screen -->
-            <div class="webpage-card" onclick="location.href='web/index_dev.html'">
+            <div class="webpage-card locked" id="hudEditorCard">
+                <div class="countdown-overlay" id="countdownOverlay">
+                    <h3 class="countdown-title">Disponible en:</h3>
+                    <div class="countdown-timer" id="countdownTimer">5d, 2h, 3m, 50s</div>
+                    <div class="countdown-progress">
+                        <div class="countdown-progress-bar" id="countdownProgressBar"></div>
+                    </div>
+                    <p class="countdown-message">Esta herramienta estará disponible una vez que el contador llegue a cero</p>
+                </div>
+                
                 <div class="webpage-icon">
                     <i class="fas fa-code"></i>
                 </div>
@@ -168,98 +339,139 @@
             });
         }
 
+        // Sistema de contador regresivo
+        function setupCountdown() {
+            const countdownTimer = document.getElementById('countdownTimer');
+            const countdownProgressBar = document.getElementById('countdownProgressBar');
+            const hudEditorCard = document.getElementById('hudEditorCard');
+            
+            // Tiempo inicial: 5 días, 2 horas, 3 minutos y 50 segundos
+            let totalSeconds = (5 * 24 * 60 * 60) + (2 * 60 * 60) + (3 * 60) + 50;
+            const initialTotalSeconds = totalSeconds;
+            
+            // Verificar si ya ha expirado (para cuando se recarga la página)
+            const savedEndTime = localStorage.getItem('countdownEndTime');
+            let endTime;
+            
+            if (savedEndTime) {
+                endTime = parseInt(savedEndTime);
+                const now = Math.floor(Date.now() / 1000);
+                const timeLeft = endTime - now;
+                
+                if (timeLeft <= 0) {
+                    // El contador ya expiró
+                    unlockCard();
+                    return;
+                } else {
+                    totalSeconds = timeLeft;
+                }
+            } else {
+                // Primera vez - establecer tiempo de finalización
+                endTime = Math.floor(Date.now() / 1000) + totalSeconds;
+                localStorage.setItem('countdownEndTime', endTime.toString());
+            }
+            
+            // Función para actualizar el contador
+            function updateCountdown() {
+                if (totalSeconds <= 0) {
+                    unlockCard();
+                    return;
+                }
+                
+                // Calcular días, horas, minutos y segundos
+                const days = Math.floor(totalSeconds / (24 * 60 * 60));
+                const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
+                const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+                const seconds = totalSeconds % 60;
+                
+                // Actualizar el texto del contador
+                countdownTimer.textContent = `${days}d, ${hours}h, ${minutes}m, ${seconds}s`;
+                
+                // Actualizar la barra de progreso
+                const progressPercentage = (totalSeconds / initialTotalSeconds) * 100;
+                countdownProgressBar.style.width = `${progressPercentage}%`;
+                
+                // Reducir el tiempo
+                totalSeconds--;
+            }
+            
+            // Función para desbloquear la tarjeta
+            function unlockCard() {
+                hudEditorCard.classList.remove('locked');
+                hudEditorCard.classList.add('unlocked');
+                
+                // Permitir clic en la tarjeta
+                hudEditorCard.onclick = function() {
+                    window.location.href = 'web/index_dev.html';
+                };
+                
+                // Limpiar el intervalo
+                clearInterval(countdownInterval);
+                
+                // Eliminar el tiempo guardado
+                localStorage.removeItem('countdownEndTime');
+            }
+            
+            // Actualizar el contador inmediatamente y luego cada segundo
+            updateCountdown();
+            const countdownInterval = setInterval(updateCountdown, 1000);
+            
+            // Inicialmente, la tarjeta está bloqueada
+            hudEditorCard.onclick = function(e) {
+                if (hudEditorCard.classList.contains('locked')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // Mostrar mensaje de que aún no está disponible
+                    showNotification('Esta herramienta aún no está disponible. Por favor, espera a que el contador llegue a cero.', 'info');
+                }
+            };
+        }
+        
+        // Función para mostrar notificaciones
+        function showNotification(message, type = 'info') {
+            // Crear elemento de notificación
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Estilos para la notificación
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                z-index: 10000;
+                animation: slideInRight 0.3s ease-out;
+                max-width: 300px;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remover después de 3 segundos
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease-in';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
         // Inicializar la página
         document.addEventListener('DOMContentLoaded', function() {
             setupSidebar();
+            setupCountdown();
         });
     </script>
-    
-    <style>
-        /* Estilos específicos para la página de Páginas Web */
-        .webpages-intro {
-            text-align: center;
-            max-width: 500px;
-            margin: 0 auto 3rem;
-            color: #94a3b8;
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-        
-        .webpages-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-        
-        .webpage-card {
-            background-color: var(--dark-card);
-            border-radius: var(--rounded-lg);
-            padding: 2rem;
-            border: 1px solid var(--dark-border);
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            cursor: pointer;
-            text-align: center;
-        }
-        
-        .webpage-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary-color);
-        }
-        
-        .webpage-icon {
-            width: 4rem;
-            height: 4rem;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            color: white;
-            font-size: 1.5rem;
-        }
-        
-        .webpage-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--dark-text);
-        }
-        
-        .webpage-description {
-            color: #94a3b8;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-        }
-        
-        .webpage-features {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            justify-content: center;
-        }
-        
-        .feature-tag {
-            background-color: rgba(139, 92, 246, 0.1);
-            color: var(--primary-color);
-            padding: 0.25rem 0.75rem;
-            border-radius: 2rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            border: 1px solid rgba(139, 92, 246, 0.3);
-        }
-        
-        /* Estilos responsivos */
-        @media (max-width: 768px) {
-            .webpages-grid {
-                grid-template-columns: 1fr;
-                max-width: 100%;
-            }
-        }
-    </style>
 </body>
 </html>

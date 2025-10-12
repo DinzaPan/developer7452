@@ -26,8 +26,8 @@ async function renderAddonDetails(addon) {
     container.innerHTML = `
         <div class="addon-header">
             <img src="${addon.cover_image}" alt="Portada del addon" class="addon-cover-large">
-            <h1 class="addon-title-large">${addon.title}</h1>
-            <p class="addon-description-large">${addon.description}</p>
+            <h1 class="addon-title-large">${replaceEmojis(addon.title)}</h1>
+            <p class="addon-description-large">${replaceEmojis(addon.description)}</p>
             
             <div class="addon-meta">
                 <div class="meta-item">
@@ -102,7 +102,7 @@ function renderReviewForm(addonId, userReview) {
                         Eliminar
                     </button>
                 </div>
-                <p class="user-review-comment">${userReview.comment}</p>
+                <p class="user-review-comment">${replaceEmojis(userReview.comment)}</p>
             </div>
         `;
     } else {
@@ -167,7 +167,7 @@ function renderReviewsList(reviews, userReview) {
                                 <span class="review-date">${formatDate(review.timestamp)}</span>
                             </div>
                         </div>
-                        <p class="review-comment">${review.comment}</p>
+                        <p class="review-comment">${replaceEmojis(review.comment)}</p>
                     </div>
                 `).join('')}
             </div>
@@ -175,6 +175,7 @@ function renderReviewsList(reviews, userReview) {
     `;
 }
 
+// El resto del código de view.js permanece igual...
 // Configurar el formulario de reseña
 function setupReviewForm(addonId) {
     const reviewForm = document.getElementById('reviewForm');

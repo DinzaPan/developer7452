@@ -1,9 +1,8 @@
-// Datos de ejemplo para los addons 
 const addonsData = [
     {
         id: 1,
-        title: "Better Commands",
-        description: "Addon que añade comandos personalizados para mejorar la experiencia de juego en servidores de Minecraft.",
+        title: "Better Commands $fuego",
+        description: "Addon que añade comandos personalizados $risa para mejorar la experiencia de juego en servidores de Minecraft $estrella.",
         cover_image: "./img/addon/20250718_164538-1.png",
         version: "1.21.111",
         download_link: "https://example.com/download/1",
@@ -13,8 +12,8 @@ const addonsData = [
     },
     {
         id: 2,
-        title: "Interfaz de Tienda Moderna",
-        description: "Sistema de tienda con interfaz UI moderna para servidores de Minecraft Bedrock.",
+        title: "Interfaz de Tienda Moderna $corazon",
+        description: "Sistema de tienda con interfaz UI moderna $like para servidores de Minecraft Bedrock.",
         cover_image: "./img/addon/prueba.jpg",
         version: "1.21.111",
         download_link: "https://example.com/download/2",
@@ -24,29 +23,24 @@ const addonsData = [
     }
 ];
 
-// Configuración de JSONBin.io
 const JSONBIN_CONFIG = {
     binId: "68e7e731d0ea881f409b5f77",
     apiKey: "$2a$10$bsdEXJ8oDvQGTbuxPZiNMOCLEIKIvezOL3SmZeRBqYnW5q9Oh08ru",
     baseUrl: "https://api.jsonbin.io/v3/b"
 };
 
-// Almacenamiento local para reseñas (cache)
 let reviewsCache = null;
 let lastFetchTime = 0;
-const CACHE_DURATION = 300000; // 5 minutos en milisegundos
+const CACHE_DURATION = 300000;
 
-// Función para obtener un addon por ID
 function getAddonById(id) {
     return addonsData.find(addon => addon.id === parseInt(id));
 }
 
-// Función para obtener todos los addons
 function getAllAddons() {
     return addonsData;
 }
 
-// Función para buscar addons
 function searchAddons(query) {
     if (!query) {
         return addonsData;
@@ -60,7 +54,6 @@ function searchAddons(query) {
     );
 }
 
-// Sistema de carga (eliminado)
 function showLoading() {
     // No hacer nada
 }
@@ -88,7 +81,6 @@ async function fetchReviewsFromAPI() {
         return data.record || {};
     } catch (error) {
         console.error('Error fetching reviews from JSONBin:', error);
-        // Si hay error, intentar cargar desde localStorage
         const localReviews = localStorage.getItem('reviews_backup');
         return localReviews ? JSON.parse(localReviews) : {};
     }
@@ -113,7 +105,6 @@ async function saveReviewsToAPI(reviewsData) {
         return await response.json();
     } catch (error) {
         console.error('Error saving reviews to JSONBin:', error);
-        // Guardar en localStorage como backup
         localStorage.setItem('reviews_backup', JSON.stringify(reviewsData));
         return { success: false, error: error.message };
     }
@@ -123,7 +114,6 @@ async function saveReviewsToAPI(reviewsData) {
 async function getAllReviews() {
     const now = Date.now();
     
-    // Usar cache si está disponible y no ha expirado
     if (reviewsCache && (now - lastFetchTime) < CACHE_DURATION) {
         return reviewsCache;
     }
@@ -160,10 +150,8 @@ async function addReview(addonId, rating, comment = '') {
     }
     
     try {
-        // Obtener reseñas actuales
         const allReviews = await getAllReviews();
         
-        // Crear nueva reseña con foto de perfil
         const newReview = {
             userId: currentUser.id,
             username: currentUser.username,
@@ -173,34 +161,27 @@ async function addReview(addonId, rating, comment = '') {
             timestamp: new Date().toISOString()
         };
         
-        // Inicializar array si no existe
         if (!allReviews[addonId]) {
             allReviews[addonId] = [];
         }
         
-        // Verificar si el usuario ya tiene una reseña para este addon
         const existingReviewIndex = allReviews[addonId].findIndex(
             review => review.userId === currentUser.id
         );
         
         if (existingReviewIndex !== -1) {
-            // Actualizar reseña existente
             allReviews[addonId][existingReviewIndex] = newReview;
         } else {
-            // Añadir nueva reseña
             allReviews[addonId].push(newReview);
         }
         
-        // Guardar en JSONBin.io
         const result = await saveReviewsToAPI(allReviews);
         
-        // Actualizar cache
         reviewsCache = allReviews;
         lastFetchTime = Date.now();
         
         if (result.success === false) {
             console.warn('Review saved locally due to API error');
-            // Aún así consideramos éxito porque se guardó localmente
         }
         
         showNotification('¡Reseña añadida correctamente!', 'success');
@@ -223,20 +204,16 @@ async function deleteReview(addonId) {
     }
     
     try {
-        // Obtener reseñas actuales
         const allReviews = await getAllReviews();
         
-        // Filtrar la reseña del usuario actual
         if (allReviews[addonId]) {
             allReviews[addonId] = allReviews[addonId].filter(
                 review => review.userId !== currentUser.id
             );
         }
         
-        // Guardar en JSONBin.io
         const result = await saveReviewsToAPI(allReviews);
         
-        // Actualizar cache
         reviewsCache = allReviews;
         lastFetchTime = Date.now();
         
@@ -273,7 +250,6 @@ async function getUserReviewForAddon(addonId) {
 
 // Función para mostrar notificaciones
 function showNotification(message, type = 'info') {
-    // Crear elemento de notificación
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.innerHTML = `
@@ -283,7 +259,6 @@ function showNotification(message, type = 'info') {
         </div>
     `;
     
-    // Estilos para la notificación
     notification.style.cssText = `
         position: fixed;
         top: 20px;
@@ -300,7 +275,6 @@ function showNotification(message, type = 'info') {
     
     document.body.appendChild(notification);
     
-    // Remover después de 3 segundos
     setTimeout(() => {
         notification.style.animation = 'slideOutRight 0.3s ease-in';
         setTimeout(() => {
@@ -320,7 +294,6 @@ function getDefaultAvatar() {
 async function initializeReviewsData() {
     const currentReviews = await getAllReviews();
     
-    // Crear estructura inicial si no existe
     let needsUpdate = false;
     addonsData.forEach(addon => {
         if (!currentReviews[addon.id]) {
@@ -341,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 1000);
 });
 
-// Añadir estilos CSS para animaciones de notificación
+// Añadir estilos CSS para animaciones de notificación y emojis
 const notificationStyles = document.createElement('style');
 notificationStyles.textContent = `
     @keyframes slideInRight {
@@ -370,6 +343,23 @@ notificationStyles.textContent = `
         display: flex;
         align-items: center;
         gap: 0.5rem;
+    }
+    
+    .emoji {
+        width: 20px;
+        height: 20px;
+        vertical-align: middle;
+        margin: 0 2px;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    }
+    
+    .addon-title .emoji,
+    .addon-description .emoji {
+        width: 18px;
+        height: 18px;
     }
 `;
 document.head.appendChild(notificationStyles);

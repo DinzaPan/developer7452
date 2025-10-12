@@ -2,12 +2,12 @@
 const addonsData = [
     {
         id: 1,
-        title: "Sistema de Comandos Avanzados",
+        title: "Better Commands",
         description: "Addon que añade comandos personalizados para mejorar la experiencia de juego en servidores de Minecraft.",
-        cover_image: "./img/addon/prueba.jpg",
+        cover_image: "./img/addon/20250718_164538-1.png",
         version: "1.21.111",
         download_link: "https://example.com/download/1",
-        tags: ["Comandos", "Personalizado", "Servidores"],
+        tags: ["Api-Beta", "JS", "Servidores"],
         last_updated: "2025-10-9",
         file_size: "2.5 MB"
     },

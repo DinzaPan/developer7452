@@ -1,7 +1,7 @@
 const addonsData = [
     {
         id: 1,
-        title: "Better Commands $fuego",
+        title: "$1 Better Commands $fuego",
         description: "Addon que añade comandos personalizados para mejorar la experiencia de juego en servidores de Minecraft.",
         cover_image: "./img/addon/20250718_164538-1.png",
         version: "1.21.111",

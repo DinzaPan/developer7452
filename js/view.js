@@ -117,6 +117,9 @@ function renderReviewForm(addonId, userReview) {
                     <div class="comment-input">
                         <label for="reviewComment">Comentario (opcional):</label>
                         <textarea id="reviewComment" placeholder="Comparte tu experiencia con este addon..."></textarea>
+                        <button type="button" class="emoji-picker-button" onclick="showEmojiPicker('reviewComment')">
+                            <i class="fas fa-smile"></i>
+                        </button>
                     </div>
                     <div class="review-actions">
                         <button type="submit" class="submit-review-btn">
@@ -175,7 +178,6 @@ function renderReviewsList(reviews, userReview) {
     `;
 }
 
-// El resto del código de view.js permanece igual...
 // Configurar el formulario de reseña
 function setupReviewForm(addonId) {
     const reviewForm = document.getElementById('reviewForm');

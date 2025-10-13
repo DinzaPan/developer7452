@@ -357,3 +357,7 @@ window.downloadAddon = downloadAddon;
 window.formatDate = formatDate;
 window.renderStars = renderStars;
 window.getDefaultAvatar = getDefaultAvatar;
+window.showEmojiPicker = showEmojiPicker;
+window.closeEmojiPicker = closeEmojiPicker;
+window.insertEmoji = insertEmoji;
+window.replaceEmojis = replaceEmojis;

@@ -340,6 +340,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Configurar sidebar
     setupSidebar();
     
+    // Crear el selector de emojis (solo para view.html)
+    createEmojiPicker();
+    
     const urlParams = new URLSearchParams(window.location.search);
     const addonId = urlParams.get('id');
     
@@ -357,7 +360,3 @@ window.downloadAddon = downloadAddon;
 window.formatDate = formatDate;
 window.renderStars = renderStars;
 window.getDefaultAvatar = getDefaultAvatar;
-window.showEmojiPicker = showEmojiPicker;
-window.closeEmojiPicker = closeEmojiPicker;
-window.insertEmoji = insertEmoji;
-window.replaceEmojis = replaceEmojis;

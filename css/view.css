@@ -298,6 +298,7 @@ body {
 .comment-input textarea {
     width: 100%;
     padding: 0.75rem;
+    padding-right: 3rem;
     border-radius: var(--rounded);
     border: 1px solid var(--dark-border);
     background-color: var(--dark-bg);
@@ -550,6 +551,184 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 1rem;
+}
+
+/* Estilos para el selector de emojis */
+.emoji-picker {
+    position: absolute;
+    background: var(--dark-card);
+    border: 1px solid var(--dark-border);
+    border-radius: var(--rounded);
+    box-shadow: var(--shadow-lg);
+    z-index: 10000;
+    padding: 0;
+    max-width: 300px;
+    display: none;
+    animation: emojiPickerFadeIn 0.2s ease-out;
+}
+
+.emoji-picker.active {
+    display: block;
+}
+
+.emoji-picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--dark-border);
+    background: rgba(30, 41, 59, 0.95);
+}
+
+.emoji-picker-header h4 {
+    margin: 0;
+    color: var(--dark-text);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.emoji-picker-close {
+    background: none;
+    border: none;
+    color: var(--dark-text);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: var(--rounded);
+    transition: var(--transition);
+}
+
+.emoji-picker-close:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error-color);
+}
+
+.emoji-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    padding: 1rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.emoji-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: var(--rounded);
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+
+.emoji-item:hover {
+    background: rgba(139, 92, 246, 0.1);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.emoji-picker-emoji {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.emoji-code {
+    font-size: 0.8rem;
+    color: var(--dark-text);
+    font-family: 'Courier New', monospace;
+    font-weight: 500;
+}
+
+/* Botón para abrir el selector de emojis */
+.emoji-picker-button {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--primary-color);
+    border: none;
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    color: white;
+    font-size: 0.9rem;
+}
+
+.emoji-picker-button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Animación para el selector de emojis */
+@keyframes emojiPickerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scrollbar personalizado para el selector de emojis */
+.emoji-picker-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.emoji-picker-grid::-webkit-scrollbar-track {
+    background: var(--dark-bg);
+    border-radius: 3px;
+}
+
+.emoji-picker-grid::-webkit-scrollbar-thumb {
+    background: var(--dark-border);
+    border-radius: 3px;
+}
+
+.emoji-picker-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+/* Estilos para emojis en el contenido */
+.emoji {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin: 0 2px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    pointer-events: none;
+}
+
+.addon-title-large .emoji,
+.addon-description-large .emoji,
+.user-review-comment .emoji,
+.review-comment .emoji {
+    width: 24px;
+    height: 24px;
+}
+
+/* Responsive para el selector de emojis */
+@media (max-width: 480px) {
+    .emoji-picker {
+        max-width: 250px;
+        left: 50% !important;
+        transform: translateX(-50%);
+    }
+    
+    .emoji-picker-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {

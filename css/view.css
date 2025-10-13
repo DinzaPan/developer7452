@@ -555,7 +555,7 @@ body {
 
 /* Estilos para el selector de emojis */
 .emoji-picker {
-    position: absolute;
+    position: fixed;
     background: var(--dark-card);
     border: 1px solid var(--dark-border);
     border-radius: var(--rounded);

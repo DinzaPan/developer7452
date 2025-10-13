@@ -10,7 +10,7 @@ const addonsData = [
         last_updated: "2025-10-12",
         file_size: "1.59 MB"
     },
-  /*  {
+    {
         id: 2,
         title: "Interfaz de Tienda Moderna",
         description: "Sistema de tienda con interfaz UI moderna para servidores de Minecraft Bedrock.",
@@ -20,7 +20,7 @@ const addonsData = [
         tags: ["Tienda", "UI", "Economía"],
         last_updated: "2025-10-9",
         file_size: "1.8 MB"
-    }*/
+    }
 ];
 
 const JSONBIN_CONFIG = {

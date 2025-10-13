@@ -34,8 +34,8 @@ function showEmojiPicker(textareaId) {
     
     // Posicionar el selector cerca del textarea
     const rect = textarea.getBoundingClientRect();
-    emojiPicker.style.top = `${rect.bottom + 5}px`;
-    emojiPicker.style.left = `${rect.left}px`;
+    emojiPicker.style.top = `${rect.bottom + window.scrollY + 5}px`;
+    emojiPicker.style.left = `${rect.left + window.scrollX}px`;
     
     // Mostrar selector
     emojiPicker.classList.add('active');
@@ -53,7 +53,7 @@ function closeEmojiPickerOnClickOutside(event) {
     
     if (emojiPicker && 
         !emojiPicker.contains(event.target) && 
-        !emojiButton.contains(event.target)) {
+        (!emojiButton || !emojiButton.contains(event.target))) {
         closeEmojiPicker();
     }
 }
@@ -92,6 +92,11 @@ function insertEmoji(emojiCode, textareaId) {
 
 // Función para crear el selector de emojis en el DOM
 function createEmojiPicker() {
+    // Evitar crear duplicados
+    if (document.getElementById('emojiPicker')) {
+        return;
+    }
+    
     const emojiPicker = document.createElement('div');
     emojiPicker.id = 'emojiPicker';
     emojiPicker.className = 'emoji-picker';

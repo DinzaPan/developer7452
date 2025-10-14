@@ -26,8 +26,8 @@ async function renderAddonDetails(addon) {
     container.innerHTML = `
         <div class="addon-header">
             <img src="${addon.cover_image}" alt="Portada del addon" class="addon-cover-large">
-            <h1 class="addon-title-large">${replaceEmojis(addon.title)}</h1>
-            <p class="addon-description-large">${replaceEmojis(addon.description)}</p>
+            <h1 class="addon-title-large emoji-content">${replaceEmojis(addon.title)}</h1>
+            <p class="addon-description-large emoji-content">${replaceEmojis(addon.description)}</p>
             
             <div class="addon-meta">
                 <div class="meta-item">
@@ -73,6 +73,10 @@ async function renderAddonDetails(addon) {
     `;
     
     setupReviewForm(addon.id);
+    // Procesar emojis después de renderizar
+    if (window.EmojiSystem) {
+        window.EmojiSystem.processAllEmojis();
+    }
 }
 
 // Función para renderizar el formulario de reseña
@@ -102,7 +106,7 @@ function renderReviewForm(addonId, userReview) {
                         Eliminar
                     </button>
                 </div>
-                <p class="user-review-comment">${replaceEmojis(userReview.comment)}</p>
+                <p class="user-review-comment emoji-content">${replaceEmojis(userReview.comment)}</p>
             </div>
         `;
     } else {
@@ -116,15 +120,18 @@ function renderReviewForm(addonId, userReview) {
                     </div>
                     <div class="comment-input">
                         <label for="reviewComment">Comentario (opcional):</label>
-                        <textarea id="reviewComment" placeholder="Comparte tu experiencia con este addon..."></textarea>
-                        <button type="button" class="emoji-picker-button" onclick="showEmojiPicker('reviewComment')">
-                            <i class="fas fa-smile"></i>
-                        </button>
+                        <textarea id="reviewComment" placeholder="Comparte tu experiencia con este addon... $1 $2"></textarea>
+                        <div class="emoji-help">
+                            <small>Usa $1, $2, $3, etc. para añadir emojis</small>
+                        </div>
                     </div>
                     <div class="review-actions">
                         <button type="submit" class="submit-review-btn">
                             <i class="fas fa-paper-plane"></i>
                             Enviar reseña
+                        </button>
+                        <button type="button" class="emoji-picker-toggle" onclick="toggleEmojiPicker('reviewComment')">
+                            😊 Añadir Emoji
                         </button>
                     </div>
                 </form>
@@ -170,7 +177,7 @@ function renderReviewsList(reviews, userReview) {
                                 <span class="review-date">${formatDate(review.timestamp)}</span>
                             </div>
                         </div>
-                        <p class="review-comment">${replaceEmojis(review.comment)}</p>
+                        <p class="review-comment emoji-content">${replaceEmojis(review.comment)}</p>
                     </div>
                 `).join('')}
             </div>
@@ -216,6 +223,11 @@ function setupReviewForm(addonId) {
                 alert('Error al enviar la reseña. Inténtalo de nuevo.');
             }
         });
+    }
+    
+    // Inicializar sistema de emojis para el textarea
+    if (window.EmojiSystem) {
+        window.EmojiSystem.initEmojisForElement('reviewComment');
     }
 }
 
@@ -335,22 +347,41 @@ function setupSidebar() {
     });
 }
 
+// Sistema de carga
+function showLoading() {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+        loadingOverlay.classList.remove('hidden');
+    }
+}
+
+function hideLoading() {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+        setTimeout(() => {
+            loadingOverlay.classList.add('hidden');
+        }, 500);
+    }
+}
+
 // Inicializar la página de detalles
 document.addEventListener('DOMContentLoaded', function() {
     // Configurar sidebar
     setupSidebar();
     
-    // Crear el selector de emojis (solo para view.html)
-    createEmojiPicker();
+    showLoading();
     
     const urlParams = new URLSearchParams(window.location.search);
     const addonId = urlParams.get('id');
     
     if (addonId) {
         const addon = getAddonById(addonId);
-        renderAddonDetails(addon);
+        renderAddonDetails(addon).then(() => {
+            hideLoading();
+        });
     } else {
         renderAddonDetails(null);
+        hideLoading();
     }
 });
 
@@ -360,8 +391,7 @@ window.downloadAddon = downloadAddon;
 window.formatDate = formatDate;
 window.renderStars = renderStars;
 window.getDefaultAvatar = getDefaultAvatar;
-window.showEmojiPicker = showEmojiPicker;
-window.closeEmojiPicker = closeEmojiPicker;
-window.insertEmoji = insertEmoji;
 window.replaceEmojis = replaceEmojis;
-window.createEmojiPicker = createEmojiPicker;
+window.toggleEmojiPicker = toggleEmojiPicker;
+window.showLoading = showLoading;
+window.hideLoading = hideLoading;

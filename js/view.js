@@ -280,6 +280,14 @@ function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString('es-ES', options);
 }
 
+// Función para calcular promedio de calificaciones
+function calculateAverageRating(reviews) {
+    if (!reviews || reviews.length === 0) return 0;
+    
+    const sum = reviews.reduce((total, review) => total + review.rating, 0);
+    return (sum / reviews.length).toFixed(1);
+}
+
 // Renderizar estrellas
 function renderStars(rating, interactive = false, size = 'medium') {
     const numericRating = parseFloat(rating) || 0;
@@ -373,3 +381,4 @@ window.deleteUserReview = deleteUserReview;
 window.downloadAddon = downloadAddon;
 window.formatDate = formatDate;
 window.renderStars = renderStars;
+window.calculateAverageRating = calculateAverageRating;

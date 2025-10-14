@@ -347,41 +347,19 @@ function setupSidebar() {
     });
 }
 
-// Sistema de carga
-function showLoading() {
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    if (loadingOverlay) {
-        loadingOverlay.classList.remove('hidden');
-    }
-}
-
-function hideLoading() {
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    if (loadingOverlay) {
-        setTimeout(() => {
-            loadingOverlay.classList.add('hidden');
-        }, 500);
-    }
-}
-
 // Inicializar la página de detalles
 document.addEventListener('DOMContentLoaded', function() {
     // Configurar sidebar
     setupSidebar();
-    
-    showLoading();
     
     const urlParams = new URLSearchParams(window.location.search);
     const addonId = urlParams.get('id');
     
     if (addonId) {
         const addon = getAddonById(addonId);
-        renderAddonDetails(addon).then(() => {
-            hideLoading();
-        });
+        renderAddonDetails(addon);
     } else {
         renderAddonDetails(null);
-        hideLoading();
     }
 });
 
@@ -393,5 +371,3 @@ window.renderStars = renderStars;
 window.getDefaultAvatar = getDefaultAvatar;
 window.replaceEmojis = replaceEmojis;
 window.toggleEmojiPicker = toggleEmojiPicker;
-window.showLoading = showLoading;
-window.hideLoading = hideLoading;

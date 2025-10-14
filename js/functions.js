@@ -1,7 +1,7 @@
 // Sistema de emojis
 const emojis = {
     "$1": "1.png",
-    "$2": "2.png",
+    "$2": "2.png", 
     "$3": "3.png",
     "$4": "4.png",
     "$5": "5.png",
@@ -10,6 +10,9 @@ const emojis = {
     "$8": "8.png",
     "$9": "9.png"
 };
+
+// Variable global para controlar el picker activo
+let activeEmojiPicker = null;
 
 // Función para reemplazar emojis en texto
 function replaceEmojis(text) {
@@ -25,129 +28,207 @@ function replaceEmojis(text) {
     return processedText;
 }
 
-// Función para mostrar el selector de emojis
-function showEmojiPicker(textareaId) {
-    console.log('showEmojiPicker llamado para:', textareaId);
-    
-    const emojiPicker = document.getElementById('emojiPicker');
-    const textarea = document.getElementById(textareaId);
-    
-    if (!emojiPicker) {
-        console.error('No se encontró el emojiPicker');
-        return;
-    }
-    
-    if (!textarea) {
-        console.error('No se encontró el textarea:', textareaId);
-        return;
-    }
-    
-    // Posicionar el selector cerca del textarea
-    const rect = textarea.getBoundingClientRect();
-    emojiPicker.style.top = `${rect.bottom + window.scrollY + 5}px`;
-    emojiPicker.style.left = `${rect.left + window.scrollX}px`;
-    
-    // Mostrar selector
-    emojiPicker.classList.add('active');
-    console.log('Emoji picker mostrado');
-    
-    // Configurar evento para cerrar al hacer clic fuera
-    setTimeout(() => {
-        document.addEventListener('click', closeEmojiPickerOnClickOutside);
-    }, 100);
+// Función para obtener la lista de emojis disponibles
+function getAvailableEmojis() {
+    return Object.keys(emojis).map(key => ({
+        code: key,
+        url: `./img/emojis/${emojis[key]}`,
+        preview: `./img/emojis/${emojis[key]}`
+    }));
 }
 
-// Función para cerrar el selector al hacer clic fuera
-function closeEmojiPickerOnClickOutside(event) {
-    const emojiPicker = document.getElementById('emojiPicker');
-    const emojiButtons = document.querySelectorAll('.emoji-picker-button');
-    
-    let isEmojiButton = false;
-    emojiButtons.forEach(button => {
-        if (button.contains(event.target)) {
-            isEmojiButton = true;
-        }
-    });
-    
-    if (emojiPicker && !emojiPicker.contains(event.target) && !isEmojiButton) {
-        closeEmojiPicker();
-    }
-}
-
-// Función para cerrar el selector
-function closeEmojiPicker() {
-    const emojiPicker = document.getElementById('emojiPicker');
-    if (emojiPicker) {
-        emojiPicker.classList.remove('active');
-    }
-    document.removeEventListener('click', closeEmojiPickerOnClickOutside);
-}
-
-// Función para insertar emoji en el textarea
-function insertEmoji(emojiCode, textareaId) {
-    const textarea = document.getElementById(textareaId);
-    if (!textarea) {
-        console.error('No se encontró el textarea para insertar emoji:', textareaId);
-        return;
-    }
-    
-    const startPos = textarea.selectionStart;
-    const endPos = textarea.selectionEnd;
+// Función para añadir un emoji al texto
+function addEmojiToText(textarea, emojiCode) {
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
     const text = textarea.value;
+    const emoji = ` ${emojiCode} `;
     
-    // Insertar el código del emoji en la posición del cursor
-    textarea.value = text.substring(0, startPos) + emojiCode + ' ' + text.substring(endPos);
-    
-    // Mover el cursor después del emoji insertado
-    const newPos = startPos + emojiCode.length + 1;
-    textarea.selectionStart = newPos;
-    textarea.selectionEnd = newPos;
-    
-    // Enfocar el textarea nuevamente
+    textarea.value = text.substring(0, start) + emoji + text.substring(end);
     textarea.focus();
+    textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
     
-    // Cerrar el selector
+    // Disparar evento de cambio
+    const event = new Event('input', { bubbles: true });
+    textarea.dispatchEvent(event);
+    
+    // Cerrar el picker después de añadir un emoji
     closeEmojiPicker();
 }
 
-// Función para crear el selector de emojis en el DOM
-function createEmojiPicker() {
-    // Evitar crear duplicados
-    if (document.getElementById('emojiPicker')) {
-        console.log('El emoji picker ya existe');
-        return;
-    }
+// Función para crear un selector de emojis
+function createEmojiPicker(textareaId) {
+    const emojisList = getAvailableEmojis();
+    const container = document.createElement('div');
+    container.className = 'emoji-picker';
+    container.id = `emoji-picker-${textareaId}`;
     
-    const emojiPicker = document.createElement('div');
-    emojiPicker.id = 'emojiPicker';
-    emojiPicker.className = 'emoji-picker';
+    const pickerHeader = document.createElement('div');
+    pickerHeader.className = 'emoji-picker-header';
+    pickerHeader.innerHTML = '<h4>Emojis Disponibles</h4>';
+    container.appendChild(pickerHeader);
     
-    let emojiListHTML = '';
-    Object.keys(emojis).forEach(emojiCode => {
-        const emojiPath = `./img/emojis/${emojis[emojiCode]}`;
-        emojiListHTML += `
-            <div class="emoji-item" onclick="insertEmoji('${emojiCode}', 'reviewComment')">
-                <img src="${emojiPath}" alt="${emojiCode}" class="emoji-picker-emoji">
-                <span class="emoji-code">${emojiCode}</span>
-            </div>
+    const emojisGrid = document.createElement('div');
+    emojisGrid.className = 'emojis-grid';
+    
+    emojisList.forEach(emoji => {
+        const emojiItem = document.createElement('div');
+        emojiItem.className = 'emoji-item';
+        emojiItem.innerHTML = `
+            <img src="${emoji.preview}" alt="${emoji.code}" class="emoji-preview">
+            <span class="emoji-code">${emoji.code}</span>
         `;
+        
+        emojiItem.addEventListener('click', () => {
+            const textarea = document.getElementById(textareaId);
+            if (textarea) {
+                addEmojiToText(textarea, emoji.code);
+            }
+        });
+        
+        emojisGrid.appendChild(emojiItem);
     });
     
-    emojiPicker.innerHTML = `
-        <div class="emoji-picker-header">
-            <h4>Emojis Disponibles</h4>
-            <button class="emoji-picker-close" onclick="closeEmojiPicker()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="emoji-picker-grid">
-            ${emojiListHTML}
-        </div>
-    `;
+    container.appendChild(emojisGrid);
     
-    document.body.appendChild(emojiPicker);
-    console.log('Emoji picker creado correctamente');
+    // Añadir evento para cerrar al hacer scroll fuera
+    container.addEventListener('scroll', function() {
+        // Mantener el picker abierto durante el scroll
+    });
+    
+    return container;
 }
+
+// Función para mostrar el selector de emojis
+function showEmojiPicker(textareaId) {
+    closeEmojiPicker(); // Cerrar cualquier picker abierto
+    
+    const textarea = document.getElementById(textareaId);
+    if (!textarea) return;
+    
+    const parent = textarea.parentElement;
+    const picker = createEmojiPicker(textareaId);
+    parent.appendChild(picker);
+    
+    activeEmojiPicker = {
+        element: picker,
+        textareaId: textareaId
+    };
+    
+    // Añadir evento para cerrar al hacer clic fuera
+    setTimeout(() => {
+        document.addEventListener('click', closeEmojiPickerOnClickOutside);
+    }, 10);
+}
+
+// Función para cerrar el selector de emojis
+function closeEmojiPicker() {
+    if (activeEmojiPicker) {
+        activeEmojiPicker.element.remove();
+        activeEmojiPicker = null;
+        document.removeEventListener('click', closeEmojiPickerOnClickOutside);
+    }
+}
+
+// Función para manejar clics fuera del selector
+function closeEmojiPickerOnClickOutside(event) {
+    if (activeEmojiPicker && !activeEmojiPicker.element.contains(event.target)) {
+        // Verificar si el clic no fue en el botón del emoji
+        const emojiButton = document.querySelector('.emoji-picker-toggle');
+        if (!emojiButton || !emojiButton.contains(event.target)) {
+            closeEmojiPicker();
+        }
+    }
+}
+
+// Función para alternar el selector de emojis
+function toggleEmojiPicker(textareaId) {
+    if (activeEmojiPicker && activeEmojiPicker.textareaId === textareaId) {
+        closeEmojiPicker();
+    } else {
+        showEmojiPicker(textareaId);
+    }
+}
+
+// Inicializar sistema de emojis en elementos específicos
+function initEmojisForElement(elementId) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    
+    // Procesar emojis en el contenido inicial
+    if (element.innerHTML) {
+        element.innerHTML = replaceEmojis(element.innerHTML);
+    }
+    
+    // Para textareas, añadir botón de emojis
+    if (element.tagName === 'TEXTAREA') {
+        const parent = element.parentElement;
+        if (parent && !parent.querySelector('.emoji-picker-toggle')) {
+            const toggleBtn = document.createElement('button');
+            toggleBtn.type = 'button';
+            toggleBtn.className = 'emoji-picker-toggle';
+            toggleBtn.innerHTML = '😊 Añadir Emoji';
+            toggleBtn.title = 'Añadir emoji';
+            
+            toggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevenir que se cierre inmediatamente
+                toggleEmojiPicker(elementId);
+            });
+            
+            parent.style.position = 'relative';
+            parent.appendChild(toggleBtn);
+        }
+    }
+}
+
+// Función para procesar todo el documento
+function processAllEmojis() {
+    // Procesar elementos con clase específica
+    const elements = document.querySelectorAll('.emoji-content, .addon-description-large, .review-comment, .user-review-comment');
+    
+    elements.forEach(element => {
+        if (element.innerHTML && !element.classList.contains('emoji-processed')) {
+            element.innerHTML = replaceEmojis(element.innerHTML);
+            element.classList.add('emoji-processed');
+        }
+    });
+    
+    // Procesar títulos
+    const titleElements = document.querySelectorAll('.addon-title-large');
+    
+    titleElements.forEach(element => {
+        if (element.innerHTML && !element.classList.contains('emoji-processed')) {
+            element.innerHTML = replaceEmojis(element.innerHTML);
+            element.classList.add('emoji-processed');
+        }
+    });
+}
+
+// Cerrar el picker cuando se presiona Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && activeEmojiPicker) {
+        closeEmojiPicker();
+    }
+});
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    processAllEmojis();
+    
+    // También procesar después de cargar contenido dinámico
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList') {
+                processAllEmojis();
+            }
+        });
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+});
 
 // Función para proteger imágenes contra descargas
 function protectImages() {
@@ -178,3 +259,16 @@ function protectImages() {
 document.addEventListener('DOMContentLoaded', function() {
     protectImages();
 });
+
+// Exportar funciones para uso global
+window.EmojiSystem = {
+    replaceEmojis,
+    getAvailableEmojis,
+    addEmojiToText,
+    createEmojiPicker,
+    showEmojiPicker,
+    closeEmojiPicker,
+    toggleEmojiPicker,
+    initEmojisForElement,
+    processAllEmojis
+};

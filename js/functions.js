@@ -91,11 +91,6 @@ function createEmojiPicker(textareaId) {
     
     container.appendChild(emojisGrid);
     
-    // Añadir evento para cerrar al hacer scroll fuera
-    container.addEventListener('scroll', function() {
-        // Mantener el picker abierto durante el scroll
-    });
-    
     return container;
 }
 

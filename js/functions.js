@@ -260,10 +260,65 @@ function getDefaultAvatar() {
     return './img/default-avatar.png';
 }
 
+// Funciones para el sistema de reseñas (simuladas)
+async function getReviewsForAddon(addonId) {
+    // Simular obtención de reseñas
+    return [];
+}
+
+async function getUserReviewForAddon(addonId) {
+    // Simular obtención de reseña del usuario
+    return null;
+}
+
+async function addReview(addonId, rating, comment) {
+    // Simular añadir reseña
+    console.log('Añadiendo reseña:', { addonId, rating, comment });
+    return Promise.resolve();
+}
+
+async function deleteReview(addonId) {
+    // Simular eliminar reseña
+    console.log('Eliminando reseña para addon:', addonId);
+    return Promise.resolve();
+}
+
+// Función para obtener addon por ID (simulada)
+function getAddonById(addonId) {
+    // Esto debería venir de tu base de datos o archivo JSON
+    const addons = [
+        {
+            id: 1,
+            title: "Addon Ejemplo $1",
+            description: "Este es un addon de ejemplo con emojis $2 $3",
+            cover_image: "./img/addons/example.jpg",
+            last_updated: "2024-01-15",
+            version: "1.19+",
+            file_size: "2.5 MB",
+            tags: ["RPG", "Armas", "Magia"],
+            download_link: "#"
+        }
+    ];
+    return addons.find(addon => addon.id === parseInt(addonId)) || null;
+}
+
+// Función para mostrar notificación
+function showNotification(message, type) {
+    console.log('Notificación:', message, type);
+    // Aquí iría tu código de notificaciones
+    alert(message);
+}
+
 // Exportar funciones para uso global
 window.replaceEmojis = replaceEmojis;
 window.toggleEmojiPicker = toggleEmojiPicker;
 window.getDefaultAvatar = getDefaultAvatar;
+window.getReviewsForAddon = getReviewsForAddon;
+window.getUserReviewForAddon = getUserReviewForAddon;
+window.addReview = addReview;
+window.deleteReview = deleteReview;
+window.getAddonById = getAddonById;
+window.showNotification = showNotification;
 window.EmojiSystem = {
     replaceEmojis,
     getAvailableEmojis,

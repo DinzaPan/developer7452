@@ -26,8 +26,8 @@ async function renderAddonDetails(addon) {
     container.innerHTML = `
         <div class="addon-header">
             <img src="${addon.cover_image}" alt="Portada del addon" class="addon-cover-large">
-            <h1 class="addon-title-large emoji-content">${replaceEmojis(addon.title)}</h1>
-            <p class="addon-description-large emoji-content">${replaceEmojis(addon.description)}</p>
+            <h1 class="addon-title-large emoji-content">${addon.title}</h1>
+            <p class="addon-description-large emoji-content">${addon.description}</p>
             
             <div class="addon-meta">
                 <div class="meta-item">
@@ -72,11 +72,14 @@ async function renderAddonDetails(addon) {
         </div>
     `;
     
+    // Procesar emojis después de renderizar el contenido
+    setTimeout(() => {
+        if (window.EmojiSystem && window.EmojiSystem.processAllEmojis) {
+            window.EmojiSystem.processAllEmojis();
+        }
+    }, 100);
+    
     setupReviewForm(addon.id);
-    // Procesar emojis después de renderizar
-    if (window.EmojiSystem) {
-        window.EmojiSystem.processAllEmojis();
-    }
 }
 
 // Función para renderizar el formulario de reseña
@@ -106,7 +109,7 @@ function renderReviewForm(addonId, userReview) {
                         Eliminar
                     </button>
                 </div>
-                <p class="user-review-comment emoji-content">${replaceEmojis(userReview.comment)}</p>
+                <p class="user-review-comment emoji-content">${userReview.comment || ''}</p>
             </div>
         `;
     } else {
@@ -177,7 +180,7 @@ function renderReviewsList(reviews, userReview) {
                                 <span class="review-date">${formatDate(review.timestamp)}</span>
                             </div>
                         </div>
-                        <p class="review-comment emoji-content">${replaceEmojis(review.comment)}</p>
+                        <p class="review-comment emoji-content">${review.comment || ''}</p>
                     </div>
                 `).join('')}
             </div>
@@ -191,19 +194,21 @@ function setupReviewForm(addonId) {
     const stars = document.querySelectorAll('.stars.interactive .star');
     let selectedRating = 0;
     
-    stars.forEach(star => {
-        star.addEventListener('click', function() {
-            selectedRating = parseInt(this.getAttribute('data-rating'));
-            
-            stars.forEach((s, index) => {
-                if (index < selectedRating) {
-                    s.classList.add('active');
-                } else {
-                    s.classList.remove('active');
-                }
+    if (stars.length > 0) {
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.getAttribute('data-rating'));
+                
+                stars.forEach((s, index) => {
+                    if (index < selectedRating) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
             });
         });
-    });
+    }
     
     if (reviewForm) {
         reviewForm.addEventListener('submit', async function(e) {
@@ -226,7 +231,7 @@ function setupReviewForm(addonId) {
     }
     
     // Inicializar sistema de emojis para el textarea
-    if (window.EmojiSystem) {
+    if (window.EmojiSystem && window.EmojiSystem.initEmojisForElement) {
         window.EmojiSystem.initEmojisForElement('reviewComment');
     }
 }
@@ -368,6 +373,3 @@ window.deleteUserReview = deleteUserReview;
 window.downloadAddon = downloadAddon;
 window.formatDate = formatDate;
 window.renderStars = renderStars;
-window.getDefaultAvatar = getDefaultAvatar;
-window.replaceEmojis = replaceEmojis;
-window.toggleEmojiPicker = toggleEmojiPicker;

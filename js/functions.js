@@ -8,16 +8,7 @@ const emojisConfig = {
     "$6": "./img/emojis/6.png",
     "$7": "./img/emojis/7.png",
     "$8": "./img/emojis/8.png",
-    "$9": "./img/emojis/9.png",
-    "$10": "./img/emojis/10.png",
-    "$11": "./img/emojis/11.png", 
-    "$12": "./img/emojis/12.png",
-    "$13": "./img/emojis/13.png",
-    "$14": "./img/emojis/14.png",
-    "$15": "./img/emojis/15.png",
-    "$16": "./img/emojis/16.png",
-    "$17": "./img/emojis/17.png",
-    "$18": "./img/emojis/18.png"
+    "$9": "./img/emojis/9.png"
 };
 
 // Variable global para controlar el picker activo
@@ -29,16 +20,17 @@ function processTextWithEmojis(text) {
     
     let processedText = text;
     
-    // Procesar cada código de emoji individualmente
-    for (const emojiCode in emojisConfig) {
+    // Ordenar los códigos de más largo a más corto para evitar conflictos
+    const emojiCodes = Object.keys(emojisConfig).sort((a, b) => b.length - a.length);
+    
+    emojiCodes.forEach(emojiCode => {
         const emojiUrl = emojisConfig[emojiCode];
         if (emojiUrl) {
-            // Crear expresión regular para coincidencia exacta
-            const escapedCode = emojiCode.replace(/\$/g, '\\$');
-            const regex = new RegExp(escapedCode, 'g');
-            processedText = processedText.replace(regex, `<img src="${emojiUrl}" alt="${emojiCode}" class="custom-emoji" data-emoji="${emojiCode.substring(1)}">`);
+            // Usar expresión regular con word boundary para coincidencias exactas
+            const regex = new RegExp(`\\${emojiCode}\\b`, 'g');
+            processedText = processedText.replace(regex, `<img src="${emojiUrl}" alt="${emojiCode}" class="custom-emoji">`);
         }
-    }
+    });
     
     return processedText;
 }
@@ -49,16 +41,17 @@ function processTextWithEmojisInTitles(text) {
     
     let processedText = text;
     
-    // Procesar cada código de emoji individualmente
-    for (const emojiCode in emojisConfig) {
+    // Ordenar los códigos de más largo a más corto para evitar conflictos
+    const emojiCodes = Object.keys(emojisConfig).sort((a, b) => b.length - a.length);
+    
+    emojiCodes.forEach(emojiCode => {
         const emojiUrl = emojisConfig[emojiCode];
         if (emojiUrl) {
-            // Crear expresión regular para coincidencia exacta
-            const escapedCode = emojiCode.replace(/\$/g, '\\$');
-            const regex = new RegExp(escapedCode, 'g');
-            processedText = processedText.replace(regex, `<img src="${emojiUrl}" alt="${emojiCode}" class="custom-emoji title-emoji" data-emoji="${emojiCode.substring(1)}">`);
+            // Usar expresión regular con word boundary para coincidencias exactas
+            const regex = new RegExp(`\\${emojiCode}\\b`, 'g');
+            processedText = processedText.replace(regex, `<img src="${emojiUrl}" alt="${emojiCode}" class="custom-emoji title-emoji">`);
         }
-    }
+    });
     
     return processedText;
 }

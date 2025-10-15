@@ -27,8 +27,6 @@ let activeEmojiPicker = null;
 function processTextWithEmojis(text) {
     if (!text) return '';
     
-    // Expresión regular mejorada para encontrar patrones $1, $2, $3, etc.
-    // Busca exactamente los códigos definidos en emojisConfig
     let processedText = text;
     
     // Ordenar los códigos de más largo a más corto para evitar conflictos
@@ -37,8 +35,8 @@ function processTextWithEmojis(text) {
     emojiCodes.forEach(emojiCode => {
         const emojiUrl = emojisConfig[emojiCode];
         if (emojiUrl) {
-            // Usar una expresión regular con word boundaries para coincidencias exactas
-            const regex = new RegExp(emojiCode.replace(/\$/g, '\\$'), 'g');
+            // Usar una expresión regular para coincidencias exactas
+            const regex = new RegExp(`\\${emojiCode}(?![0-9])`, 'g');
             processedText = processedText.replace(regex, `<img src="${emojiUrl}" alt="${emojiCode}" class="custom-emoji" data-emoji="${emojiCode}">`);
         }
     });
@@ -58,8 +56,8 @@ function processTextWithEmojisInTitles(text) {
     emojiCodes.forEach(emojiCode => {
         const emojiUrl = emojisConfig[emojiCode];
         if (emojiUrl) {
-            // Usar una expresión regular con word boundaries para coincidencias exactas
-            const regex = new RegExp(emojiCode.replace(/\$/g, '\\$'), 'g');
+            // Usar una expresión regular para coincidencias exactas
+            const regex = new RegExp(`\\${emojiCode}(?![0-9])`, 'g');
             processedText = processedText.replace(regex, `<img src="${emojiUrl}" alt="${emojiCode}" class="custom-emoji title-emoji" data-emoji="${emojiCode}">`);
         }
     });

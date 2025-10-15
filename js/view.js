@@ -1,303 +1,375 @@
-// Sistema de emojis
-const emojis = {
-    "$1": "1.png",
-    "$2": "2.png", 
-    "$3": "3.png",
-    "$4": "4.png",
-    "$5": "5.png",
-    "$6": "6.png",
-    "$7": "7.png",
-    "$8": "8.png",
-    "$9": "9.png"
-};
-
-// Variable global para controlar el picker activo
-let activeEmojiPicker = null;
-
-// Función para reemplazar emojis en texto
-function replaceEmojis(text) {
-    if (!text) return '';
+// Función para renderizar los detalles del addon
+async function renderAddonDetails(addon) {
+    const container = document.getElementById('addonDetails');
     
-    let processedText = text;
-    
-    // Reemplazar cada código de emoji por su imagen
-    Object.keys(emojis).forEach(emojiCode => {
-        const emojiPath = `./img/emojis/${emojis[emojiCode]}`;
-        const emojiImg = `<img src="${emojiPath}" alt="${emojiCode}" class="emoji" draggable="false">`;
-        
-        // Usar expresión regular para reemplazar todas las ocurrencias
-        const regex = new RegExp(emojiCode.replace(/\$/g, '\\$'), 'g');
-        processedText = processedText.replace(regex, emojiImg);
-    });
-    
-    return processedText;
-}
-
-// Función para obtener la lista de emojis disponibles
-function getAvailableEmojis() {
-    return Object.keys(emojis).map(key => ({
-        code: key,
-        url: `./img/emojis/${emojis[key]}`,
-        preview: `./img/emojis/${emojis[key]}`
-    }));
-}
-
-// Función para crear un selector de emojis
-function createEmojiPicker(textareaId) {
-    const emojisList = getAvailableEmojis();
-    const container = document.createElement('div');
-    container.className = 'emoji-picker';
-    container.id = `emoji-picker-${textareaId}`;
-    
-    const pickerHeader = document.createElement('div');
-    pickerHeader.className = 'emoji-picker-header';
-    pickerHeader.innerHTML = '<h4>Emojis Disponibles</h4>';
-    container.appendChild(pickerHeader);
-    
-    const emojisGrid = document.createElement('div');
-    emojisGrid.className = 'emojis-grid';
-    
-    emojisList.forEach(emoji => {
-        const emojiItem = document.createElement('div');
-        emojiItem.className = 'emoji-item';
-        emojiItem.innerHTML = `
-            <img src="${emoji.preview}" alt="${emoji.code}" class="emoji-preview">
-            <span class="emoji-code">${emoji.code}</span>
+    if (!addon) {
+        container.innerHTML = `
+            <div class="error-message">
+                <div class="error-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="error-text">Addon no encontrado</h3>
+                <p class="error-details">El addon que buscas no existe o ha sido eliminado.</p>
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver al inicio
+                </a>
+            </div>
         `;
-        
-        emojiItem.addEventListener('click', () => {
-            const textarea = document.getElementById(textareaId);
-            if (textarea) {
-                addEmojiToText(textarea, emoji.code);
-            }
-        });
-        
-        emojisGrid.appendChild(emojiItem);
-    });
-    
-    container.appendChild(emojisGrid);
-    return container;
-}
-
-// Función para añadir un emoji al texto
-function addEmojiToText(textarea, emojiCode) {
-    if (!textarea) return;
-    
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = textarea.value;
-    const emoji = ` ${emojiCode} `;
-    
-    textarea.value = text.substring(0, start) + emoji + text.substring(end);
-    textarea.focus();
-    textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
-    
-    // Disparar evento de cambio
-    const event = new Event('input', { bubbles: true });
-    textarea.dispatchEvent(event);
-    
-    // Cerrar el picker después de añadir un emoji
-    closeEmojiPicker();
-}
-
-// Función para mostrar el selector de emojis
-function showEmojiPicker(textareaId) {
-    closeEmojiPicker(); // Cerrar cualquier picker abierto
-    
-    const textarea = document.getElementById(textareaId);
-    if (!textarea) return;
-    
-    const parent = textarea.parentElement;
-    if (!parent) return;
-    
-    const picker = createEmojiPicker(textareaId);
-    parent.appendChild(picker);
-    
-    activeEmojiPicker = {
-        element: picker,
-        textareaId: textareaId
-    };
-    
-    // Añadir evento para cerrar al hacer clic fuera
-    setTimeout(() => {
-        document.addEventListener('click', closeEmojiPickerOnClickOutside);
-    }, 10);
-}
-
-// Función para cerrar el selector de emojis
-function closeEmojiPicker() {
-    if (activeEmojiPicker && activeEmojiPicker.element) {
-        activeEmojiPicker.element.remove();
-        activeEmojiPicker = null;
-        document.removeEventListener('click', closeEmojiPickerOnClickOutside);
-    }
-}
-
-// Función para manejar clics fuera del selector
-function closeEmojiPickerOnClickOutside(event) {
-    if (!activeEmojiPicker) return;
-    
-    const picker = activeEmojiPicker.element;
-    const emojiButton = document.querySelector('.emoji-picker-toggle');
-    
-    if (picker && !picker.contains(event.target) && 
-        (!emojiButton || !emojiButton.contains(event.target))) {
-        closeEmojiPicker();
-    }
-}
-
-// Función para alternar el selector de emojis
-function toggleEmojiPicker(textareaId) {
-    if (activeEmojiPicker && activeEmojiPicker.textareaId === textareaId) {
-        closeEmojiPicker();
-    } else {
-        showEmojiPicker(textareaId);
-    }
-}
-
-// Inicializar sistema de emojis para textarea específico
-function initEmojisForTextarea(textareaId) {
-    const textarea = document.getElementById(textareaId);
-    if (!textarea) return;
-    
-    const parent = textarea.parentElement;
-    if (!parent) return;
-    
-    // Verificar si ya existe el botón
-    if (parent.querySelector('.emoji-picker-toggle')) {
         return;
     }
     
-    const toggleBtn = document.createElement('button');
-    toggleBtn.type = 'button';
-    toggleBtn.className = 'emoji-picker-toggle';
-    toggleBtn.innerHTML = '😊 Añadir Emoji';
-    toggleBtn.title = 'Añadir emoji';
+    const reviews = await getReviewsForAddon(addon.id);
+    const averageRating = calculateAverageRating(reviews);
+    const userReview = await getUserReviewForAddon(addon.id);
     
-    toggleBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleEmojiPicker(textareaId);
-    });
+    container.innerHTML = `
+        <div class="addon-header">
+            <img src="${addon.cover_image}" alt="Portada del addon" class="addon-cover-large">
+            <h1 class="addon-title-large emoji-content">${addon.title}</h1>
+            <p class="addon-description-large emoji-content">${addon.description}</p>
+            
+            <div class="addon-meta">
+                <div class="meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Actualizado: ${formatDate(addon.last_updated)}</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-cube"></i>
+                    <span>Minecraft ${addon.version}</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-download"></i>
+                    <span>${addon.file_size}</span>
+                </div>
+            </div>
+            
+            <div class="addon-tags">
+                ${addon.tags.map(tag => `<span class="addon-tag">${tag}</span>`).join('')}
+            </div>
+            
+            <button class="download-btn-large" onclick="downloadAddon(${addon.id})">
+                <i class="fas fa-download"></i>
+                Descargar Addon
+            </button>
+        </div>
+        
+        <div class="reviews-section">
+            <h2 class="section-title">Reseñas y Calificaciones</h2>
+            
+            <div class="overall-rating">
+                <div class="rating-display">
+                    <div class="rating-stars">
+                        ${renderStars(averageRating)}
+                    </div>
+                    <div class="rating-score">${averageRating}</div>
+                    <div class="rating-count">${reviews.length} reseña${reviews.length !== 1 ? 's' : ''}</div>
+                </div>
+            </div>
+            
+            ${renderReviewForm(addon.id, userReview)}
+            ${renderReviewsList(reviews, userReview)}
+        </div>
+    `;
     
-    parent.style.position = 'relative';
-    parent.appendChild(toggleBtn);
+    // Procesar emojis y configurar formulario
+    setTimeout(() => {
+        processEmojisInElements();
+        setupReviewForm(addon.id);
+    }, 100);
 }
 
-// Función para procesar emojis en elementos específicos
-function processEmojisInElements() {
-    const elements = document.querySelectorAll('.emoji-content');
-    elements.forEach(element => {
-        if (element.innerHTML && !element.classList.contains('emoji-processed')) {
-            element.innerHTML = replaceEmojis(element.innerHTML);
-            element.classList.add('emoji-processed');
+// Función para renderizar el formulario de reseña
+function renderReviewForm(addonId, userReview) {
+    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+    
+    if (userReview) {
+        return `
+            <div class="user-review">
+                <div class="user-review-header">
+                    <div class="user-review-info">
+                        <img src="${userReview.avatar || getDefaultAvatar()}" 
+                             alt="Foto de perfil de ${userReview.username}" 
+                             class="profile-picture"
+                             onerror="this.src='${getDefaultAvatar()}'">
+                        <div>
+                            <div class="review-user">${userReview.username}</div>
+                            <div class="user-review-rating">
+                                <span>Tu calificación:</span>
+                                ${renderStars(userReview.rating)}
+                            </div>
+                            <div class="user-review-date">${formatDate(userReview.timestamp)}</div>
+                        </div>
+                    </div>
+                    <button class="delete-review-btn" onclick="deleteUserReview(${addonId})">
+                        <i class="fas fa-trash-alt"></i>
+                        Eliminar
+                    </button>
+                </div>
+                <p class="user-review-comment emoji-content">${userReview.comment || ''}</p>
+            </div>
+        `;
+    } else {
+        return `
+            <div class="add-review-form">
+                <h3 class="form-title">Añadir tu reseña</h3>
+                <form id="reviewForm">
+                    <div class="rating-input">
+                        <label>Tu calificación:</label>
+                        ${renderStars(0, true)}
+                    </div>
+                    <div class="comment-input">
+                        <label for="reviewComment">Comentario (opcional):</label>
+                        <textarea id="reviewComment" placeholder="Comparte tu experiencia con este addon... $1 $2"></textarea>
+                    </div>
+                    <div class="review-actions">
+                        <button type="submit" class="submit-review-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Enviar reseña
+                        </button>
+                    </div>
+                </form>
+            </div>
+        `;
+    }
+}
+
+// Función para renderizar la lista de reseñas
+function renderReviewsList(reviews, userReview) {
+    const otherReviews = reviews.filter(review => 
+        !userReview || review.userId !== userReview.userId
+    );
+    
+    if (otherReviews.length === 0) {
+        return `
+            <div class="all-reviews">
+                <h3 class="section-title">Todas las reseñas</h3>
+                <div class="no-reviews">
+                    <i class="fas fa-comment-slash"></i>
+                    <p>Aún no hay reseñas para este addon.</p>
+                </div>
+            </div>
+        `;
+    }
+    
+    return `
+        <div class="all-reviews">
+            <h3 class="section-title">Todas las reseñas</h3>
+            <div class="reviews-list">
+                ${otherReviews.map(review => `
+                    <div class="review-item">
+                        <div class="review-header">
+                            <div class="review-user-info">
+                                <img src="${review.avatar || getDefaultAvatar()}" 
+                                     alt="Foto de perfil de ${review.username}" 
+                                     class="profile-picture"
+                                     onerror="this.src='${getDefaultAvatar()}'">
+                                <div class="review-user">${review.username}</div>
+                            </div>
+                            <div class="review-rating">
+                                ${renderStars(review.rating, false, 'small')}
+                                <span class="review-date">${formatDate(review.timestamp)}</span>
+                            </div>
+                        </div>
+                        <p class="review-comment emoji-content">${review.comment || ''}</p>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+// Configurar el formulario de reseña
+function setupReviewForm(addonId) {
+    const reviewForm = document.getElementById('reviewForm');
+    const stars = document.querySelectorAll('.stars.interactive .star');
+    let selectedRating = 0;
+    
+    // Configurar estrellas interactivas
+    if (stars.length > 0) {
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.getAttribute('data-rating'));
+                
+                stars.forEach((s, index) => {
+                    if (index < selectedRating) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+        });
+    }
+    
+    // Configurar envío del formulario
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const comment = document.getElementById('reviewComment').value.trim();
+            
+            if (selectedRating === 0) {
+                alert('Por favor, selecciona una calificación');
+                return;
+            }
+            
+            try {
+                await addReview(addonId, selectedRating, comment);
+                location.reload();
+            } catch (error) {
+                alert('Error al enviar la reseña. Inténtalo de nuevo.');
+            }
+        });
+        
+        // Inicializar sistema de emojis para el textarea - SOLO UNA VEZ
+        initEmojisForTextarea('reviewComment');
+    }
+}
+
+// Eliminar reseña del usuario
+async function deleteUserReview(addonId) {
+    if (confirm('¿Estás seguro de que quieres eliminar tu reseña?')) {
+        try {
+            await deleteReview(addonId);
+            location.reload();
+        } catch (error) {
+            alert('Error al eliminar la reseña. Inténtalo de nuevo.');
+        }
+    }
+}
+
+// Función para descargar el addon
+function downloadAddon(addonId) {
+    const addon = getAddonById(addonId);
+    if (addon && addon.download_link) {
+        // Verificar si el usuario está autenticado
+        const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+        
+        if (!currentUser) {
+            if (confirm('Para descargar addons necesitas iniciar sesión con Discord. ¿Quieres iniciar sesión ahora?')) {
+                if (window.loginWithDiscord) {
+                    window.loginWithDiscord();
+                }
+            }
+            return;
+        }
+        
+        // Simular descarga
+        setTimeout(() => {
+            window.open(addon.download_link, '_blank');
+            showNotification(`¡Addon "${addon.title}" descargado correctamente!`, 'success');
+        }, 500);
+    } else {
+        alert('Error: No se pudo encontrar el enlace de descarga para este addon.');
+    }
+}
+
+// Función para formatear fechas
+function formatDate(dateString) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('es-ES', options);
+}
+
+// Función para calcular promedio de calificaciones
+function calculateAverageRating(reviews) {
+    if (!reviews || reviews.length === 0) return 0;
+    
+    const sum = reviews.reduce((total, review) => total + review.rating, 0);
+    return (sum / reviews.length).toFixed(1);
+}
+
+// Renderizar estrellas
+function renderStars(rating, interactive = false, size = 'medium') {
+    const numericRating = parseFloat(rating) || 0;
+    const starSize = size === 'small' ? '0.9rem' : '1.5rem';
+    let starsHtml = '';
+    
+    for (let i = 1; i <= 5; i++) {
+        const isActive = i <= numericRating;
+        if (interactive) {
+            starsHtml += `
+                <span class="star ${isActive ? 'active' : ''}" data-rating="${i}">
+                    <i class="fas fa-star" style="font-size: ${starSize}"></i>
+                </span>
+            `;
+        } else {
+            starsHtml += `
+                <span class="star ${isActive ? 'active' : ''}">
+                    <i class="fas fa-star" style="font-size: ${starSize}"></i>
+                </span>
+            `;
+        }
+    }
+    
+    return `<div class="stars ${interactive ? 'interactive' : ''} ${size}">${starsHtml}</div>`;
+}
+
+// Configurar sidebar
+function setupSidebar() {
+    const userAvatar = document.getElementById('userAvatar');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const closeSidebar = document.getElementById('closeSidebar');
+    
+    function toggleSidebar() {
+        const isActive = sidebar.classList.contains('active');
+        
+        if (isActive) {
+            closeSidebarFunction();
+        } else {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            document.body.classList.add('menu-open');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+    
+    function closeSidebarFunction() {
+        sidebar.classList.remove('active');
+        sidebarOverlay.classList.remove('active');
+        document.body.classList.remove('menu-open');
+        document.body.style.overflow = '';
+    }
+    
+    if (userAvatar) {
+        userAvatar.addEventListener('click', toggleSidebar);
+    }
+    
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', closeSidebarFunction);
+    }
+    
+    if (closeSidebar) {
+        closeSidebar.addEventListener('click', closeSidebarFunction);
+    }
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && sidebar && sidebar.classList.contains('active')) {
+            closeSidebarFunction();
         }
     });
 }
 
-// Cerrar el picker cuando se presiona Escape
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && activeEmojiPicker) {
-        closeEmojiPicker();
+// Inicializar la página de detalles
+document.addEventListener('DOMContentLoaded', function() {
+    // Configurar sidebar
+    setupSidebar();
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const addonId = urlParams.get('id');
+    
+    if (addonId) {
+        const addon = getAddonById(addonId);
+        renderAddonDetails(addon);
+    } else {
+        renderAddonDetails(null);
     }
 });
 
-// Inicializar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', function() {
-    processEmojisInElements();
-    
-    // Observar cambios en el DOM para procesar emojis en contenido dinámico
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.type === 'childList') {
-                setTimeout(processEmojisInElements, 50);
-            }
-        });
-    });
-    
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-});
-
-// Función para proteger imágenes contra descargas
-function protectImages() {
-    document.addEventListener('contextmenu', function(e) {
-        if (e.target.tagName === 'IMG') {
-            e.preventDefault();
-            return false;
-        }
-    });
-    
-    document.addEventListener('dragstart', function(e) {
-        if (e.target.tagName === 'IMG') {
-            e.preventDefault();
-            return false;
-        }
-    });
-}
-
-// Inicializar protección de imágenes
-document.addEventListener('DOMContentLoaded', protectImages);
-
-// Función para obtener avatar por defecto
-function getDefaultAvatar() {
-    return './img/default-avatar.png';
-}
-
-// Funciones para el sistema de reseñas (simuladas)
-async function getReviewsForAddon(addonId) {
-    return [];
-}
-
-async function getUserReviewForAddon(addonId) {
-    return null;
-}
-
-async function addReview(addonId, rating, comment) {
-    console.log('Añadiendo reseña:', { addonId, rating, comment });
-    return Promise.resolve();
-}
-
-async function deleteReview(addonId) {
-    console.log('Eliminando reseña para addon:', addonId);
-    return Promise.resolve();
-}
-
-// Función para obtener addon por ID (simulada)
-function getAddonById(addonId) {
-    const addons = [
-        {
-            id: 1,
-            title: "Addon Ejemplo $1",
-            description: "Este es un addon de ejemplo con emojis $2 $3",
-            cover_image: "./img/addons/example.jpg",
-            last_updated: "2024-01-15",
-            version: "1.19+",
-            file_size: "2.5 MB",
-            tags: ["RPG", "Armas", "Magia"],
-            download_link: "#"
-        }
-    ];
-    return addons.find(addon => addon.id === parseInt(addonId)) || null;
-}
-
-// Función para mostrar notificación
-function showNotification(message, type) {
-    console.log('Notificación:', message, type);
-    alert(message);
-}
-
 // Exportar funciones para uso global
-window.replaceEmojis = replaceEmojis;
-window.toggleEmojiPicker = toggleEmojiPicker;
-window.getDefaultAvatar = getDefaultAvatar;
-window.getReviewsForAddon = getReviewsForAddon;
-window.getUserReviewForAddon = getUserReviewForAddon;
-window.addReview = addReview;
-window.deleteReview = deleteReview;
-window.getAddonById = getAddonById;
-window.showNotification = showNotification;
-window.initEmojisForTextarea = initEmojisForTextarea;
-window.processEmojisInElements = processEmojisInElements;
+window.deleteUserReview = deleteUserReview;
+window.downloadAddon = downloadAddon;
+window.formatDate = formatDate;
+window.renderStars = renderStars;
+window.calculateAverageRating = calculateAverageRating;

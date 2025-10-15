@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer7452 - Proyectos</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .projects-section {
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark-text);
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+
+        .page-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 4rem;
+            height: 0.25rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 0.25rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .project-card {
+            background-color: var(--dark-card);
+            border-radius: var(--rounded-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--dark-border);
+            cursor: pointer;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card:hover {
+            transform: translateY(-0.5rem);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .project-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0 0 1rem 0;
+            color: var(--dark-text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .project-description {
+            font-size: 0.9375rem;
+            color: #94a3b8;
+            margin: 0 0 1.5rem 0;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .project-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--dark-border);
+        }
+
+        .project-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-in-progress {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .status-planned {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .project-date {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .project-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .project-tag {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--primary-color);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .read-more-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--rounded);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: var(--transition);
+            margin-top: auto;
+            align-self: flex-start;
+        }
+
+        .read-more-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .no-projects {
+            text-align: center;
+            padding: 3rem;
+            color: var(--dark-text);
+            grid-column: 1 / -1;
+            background-color: var(--dark-card);
+            border-radius: var(--rounded);
+            box-shadow: var(--shadow);
+        }
+
+        .no-projects i {
+            font-size: 3rem;
+            color: #64748b;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .project-content {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .projects-grid {
+                gap: 1rem;
+            }
+
+            .page-title {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="../img/logo.png" alt="Developer7452 Logo" class="site-logo">
+            <h1 class="site-title">Developer7452</h1>
+        </div>
+        
+        <!-- Menú de usuario -->
+        <div class="user-menu-container">
+            <div class="user-avatar" id="userAvatar">
+                <div class="avatar-placeholder">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar lateral -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info-sidebar" id="userInfoSidebar">
+                    <div class="user-avatar-sidebar">
+                        <div class="avatar-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="user-details">
+                        <h3 class="user-name" id="userName">Iniciar Sesión</h3>
+                        <p class="user-status" id="userStatus">Haz clic para conectar</p>
+                    </div>
+                </div>
+                <button class="close-sidebar" id="closeSidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="sidebar-items">
+                <a href="../index.html" class="sidebar-item">
+                    <i class="fas fa-home menu-icon"></i>
+                    Inicio
+                </a>
+                <a href="sobre-mi.html" class="sidebar-item">
+                    <i class="fas fa-user menu-icon"></i>
+                    Sobre Mí
+                </a>
+                <a href="comisiones.html" class="sidebar-item">
+                    <i class="fas fa-coins menu-icon"></i>
+                    Comisiones
+                </a>
+                <a href="proyectos.html" class="sidebar-item active">
+                    <i class="fas fa-project-diagram menu-icon"></i>
+                    Proyectos
+                </a>
+                <a href="paginas-web.html" class="sidebar-item">
+                    <i class="fas fa-globe menu-icon"></i>
+                    Páginas Web
+                </a>
+                <a href="#" class="sidebar-item" id="logoutBtn" style="display: none;">
+                    <i class="fas fa-sign-out-alt menu-icon"></i>
+                    Cerrar Sesión
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="social-links">
+                    <a href="https://discord.gg/Kag2a5YUYa" target="_blank" class="social-link discord">
+                        <i class="fab fa-discord"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@developer-7452" target="_blank" class="social-link tiktok">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://twitter.com" target="_blank" class="social-link twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </div>
+                <p class="copyright">© 2025 Developer7452</p>
+            </div>
+        </div>
+        
+        <!-- Overlay para cerrar sidebar -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <div class="projects-section">
+            <div class="page-header">
+                <h1 class="page-title">Mis Proyectos <span class="custom-emoji">🚀</span></h1>
+                <p class="page-subtitle">Descubre los proyectos en los que he estado trabajando, desde addons de Minecraft hasta aplicaciones web y herramientas de desarrollo.</p>
+            </div>
+
+            <div class="projects-grid" id="projectsContainer">
+                <!-- Los proyectos se cargarán aquí dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de proyectos
+        const projectsData = [
+            {
+                id: 1,
+                title: "Sistema de Rangos Avanzado",
+                shortDescription: "Sistema completo de rangos para servidores de Minecraft con interfaz moderna y funciones avanzadas.",
+                fullDescription: "Este proyecto es un sistema completo de rangos para servidores de Minecraft que incluye interfaz de usuario moderna, sistema de permisos avanzado, y integración con economías de servidor. Desarrollado con JavaScript y APIs de Minecraft Bedrock.",
+                image: "../img/projects/ranks-system.jpg",
+                status: "active",
+                tags: ["Minecraft", "JavaScript", "UI/UX", "Addon"],
+                date: "2025-01-15",
+                features: [
+                    "Interfaz de usuario moderna y responsive",
+                    "Sistema de permisos granular",
+                    "Integración con economía del servidor",
+                    "Sistema de progresión por niveles",
+                    "Compatibilidad con múltiples versiones"
+                ],
+                technologies: ["JavaScript", "Minecraft API", "HTML/CSS", "JSON"],
+                githubLink: "https://github.com/developer7452/ranks-system",
+                demoLink: "https://demo.ranks-system.com"
+            },
+            {
+                id: 2,
+                title: "E-commerce para Servidores",
+                shortDescription: "Plataforma de e-commerce especializada para tiendas de servidores de Minecraft.",
+                fullDescription: "Plataforma completa de e-commerce diseñada específicamente para servidores de Minecraft, incluyendo sistema de pagos, gestión de productos digitales, y panel de administración.",
+                image: "../img/projects/minecraft-shop.jpg",
+                status: "in-progress",
+                tags: ["Web", "E-commerce", "PHP", "MySQL"],
+                date: "2025-02-20",
+                features: [
+                    "Sistema de pagos integrado",
+                    "Panel de administración completo",
+                    "Gestión de productos digitales",
+                    "Sistema de cupones y descuentos",
+                    "Estadísticas y reportes"
+                ],
+                technologies: ["PHP", "MySQL", "JavaScript", "Bootstrap"],
+                githubLink: "https://github.com/developer7452/minecraft-shop",
+                demoLink: null
+            },
+            {
+                id: 3,
+                title: "API de Gestión de Addons",
+                shortDescription: "API RESTful para gestión y distribución de addons de Minecraft.",
+                fullDescription: "API completa para la gestión, distribución y actualización de addons de Minecraft. Incluye sistema de versionado, estadísticas de descargas, y gestión de dependencias.",
+                image: "../img/projects/api-addons.jpg",
+                status: "planned",
+                tags: ["API", "Node.js", "MongoDB", "REST"],
+                date: "2025-03-10",
+                features: [
+                    "Sistema de versionado semántico",
+                    "Estadísticas de descargas en tiempo real",
+                    "Gestión de dependencias entre addons",
+                    "Documentación automática",
+                    "Sistema de autenticación JWT"
+                ],
+                technologies: ["Node.js", "Express", "MongoDB", "JWT"],
+                githubLink: null,
+                demoLink: null
+            },
+            {
+                id: 4,
+                title: "Herramientas de Desarrollo",
+                shortDescription: "Suite de herramientas para desarrolladores de contenido de Minecraft.",
+                fullDescription: "Colección de herramientas y utilidades diseñadas para facilitar el desarrollo de contenido para Minecraft, incluyendo validadores, optimizadores y generadores de código.",
+                image: "../img/projects/dev-tools.jpg",
+                status: "active",
+                tags: ["Herramientas", "Python", "Automation", "DevOps"],
+                date: "2024-12-05",
+                features: [
+                    "Validador de archivos JSON",
+                    "Optimizador de texturas",
+                    "Generador de manifest automático",
+                    "Herramientas de debugging",
+                    "Integración con CI/CD"
+                ],
+                technologies: ["Python", "FastAPI", "React", "Docker"],
+                githubLink: "https://github.com/developer7452/mc-dev-tools",
+                demoLink: "https://tools.developer7452.com"
+            }
+        ];
+
+        // Función para renderizar proyectos
+        function renderProjects() {
+            const container = document.getElementById('projectsContainer');
+            
+            if (projectsData.length === 0) {
+                container.innerHTML = `
+                    <div class="no-projects">
+                        <i class="fas fa-folder-open"></i>
+                        <h3>No hay proyectos disponibles</h3>
+                        <p>Próximamente se agregarán nuevos proyectos.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = projectsData.map(project => `
+                <div class="project-card" onclick="viewProject(${project.id})">
+                    <img src="${project.image}" alt="${project.title}" class="project-image" onerror="this.src='../img/projects/default-project.jpg'">
+                    <div class="project-content">
+                        <h3 class="project-title">
+                            ${project.title}
+                            <span class="project-status status-${project.status}">
+                                <i class="fas fa-${getStatusIcon(project.status)}"></i>
+                                ${getStatusText(project.status)}
+                            </span>
+                        </h3>
+                        
+                        <div class="project-tags">
+                            ${project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('')}
+                        </div>
+                        
+                        <p class="project-description">${project.shortDescription}</p>
+                        
+                        <div class="project-meta">
+                            <span class="project-date">${formatDate(project.date)}</span>
+                            <a href="#" class="read-more-btn" onclick="event.stopPropagation(); viewProject(${project.id})">
+                                <i class="fas fa-arrow-right"></i>
+                                Ver más
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Función para obtener icono de estado
+        function getStatusIcon(status) {
+            const icons = {
+                'active': 'check-circle',
+                'in-progress': 'sync-alt',
+                'planned': 'clock'
+            };
+            return icons[status] || 'circle';
+        }
+
+        // Función para obtener texto de estado
+        function getStatusText(status) {
+            const texts = {
+                'active': 'Activo',
+                'in-progress': 'En Progreso',
+                'planned': 'Planificado'
+            };
+            return texts[status] || status;
+        }
+
+        // Función para formatear fecha
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('es-ES', options);
+        }
+
+        // Función para ver proyecto
+        function viewProject(id) {
+            window.location.href = `post.html?id=${id}`;
+        }
+
+        // Configurar sidebar
+        function setupSidebar() {
+            const userAvatar = document.getElementById('userAvatar');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            const closeSidebar = document.getElementById('closeSidebar');
+            
+            function toggleSidebar() {
+                const isActive = sidebar.classList.contains('active');
+                
+                if (isActive) {
+                    closeSidebarFunction();
+                } else {
+                    sidebar.classList.add('active');
+                    sidebarOverlay.classList.add('active');
+                    document.body.classList.add('menu-open');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+            
+            function closeSidebarFunction() {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                document.body.classList.remove('menu-open');
+                document.body.style.overflow = '';
+            }
+            
+            if (userAvatar) {
+                userAvatar.addEventListener('click', toggleSidebar);
+            }
+            
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', closeSidebarFunction);
+            }
+            
+            if (closeSidebar) {
+                closeSidebar.addEventListener('click', closeSidebarFunction);
+            }
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && sidebar && sidebar.classList.contains('active')) {
+                    closeSidebarFunction();
+                }
+            });
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            renderProjects();
+            setupSidebar();
+        });
+
+        // Exportar funciones globales
+        window.viewProject = viewProject;
+    </script>
+</body>
+</html>

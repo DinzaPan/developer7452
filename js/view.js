@@ -26,8 +26,7 @@ async function renderAddonDetails(addon) {
     container.innerHTML = `
         <div class="addon-header">
             <img src="${addon.cover_image}" alt="Portada del addon" class="addon-cover-large">
-            <h1 class="addon-title-large emoji-content">${addon.title}</h1>
-            <p class="addon-description-large emoji-content">${addon.description}</p>
+            <h1 class="addon-title-large emoji-content">${processTextWithEmojisInTitles(addon.title)}</h1>
             
             <div class="addon-meta">
                 <div class="meta-item">
@@ -47,6 +46,8 @@ async function renderAddonDetails(addon) {
             <div class="addon-tags">
                 ${addon.tags.map(tag => `<span class="addon-tag">${tag}</span>`).join('')}
             </div>
+            
+            <p class="addon-description-large emoji-content">${processTextWithEmojis(addon.description)}</p>
             
             <button class="download-btn-large" onclick="downloadAddon(${addon.id})">
                 <i class="fas fa-download"></i>
@@ -72,11 +73,8 @@ async function renderAddonDetails(addon) {
         </div>
     `;
     
-    // Procesar emojis y configurar formulario
-    setTimeout(() => {
-        processEmojisInElements();
-        setupReviewForm(addon.id);
-    }, 100);
+    setupReviewForm(addon.id);
+    processAllEmojis();
 }
 
 // Función para renderizar el formulario de reseña
@@ -106,7 +104,7 @@ function renderReviewForm(addonId, userReview) {
                         Eliminar
                     </button>
                 </div>
-                <p class="user-review-comment emoji-content">${userReview.comment || ''}</p>
+                <p class="user-review-comment emoji-content">${processTextWithEmojis(userReview.comment)}</p>
             </div>
         `;
     } else {
@@ -120,12 +118,18 @@ function renderReviewForm(addonId, userReview) {
                     </div>
                     <div class="comment-input">
                         <label for="reviewComment">Comentario (opcional):</label>
-                        <textarea id="reviewComment" placeholder="Comparte tu experiencia con este addon... $1 $2"></textarea>
+                        <textarea id="reviewComment" placeholder="Comparte tu experiencia con este addon... $1 $2 $3"></textarea>
+                        <div class="emoji-help">
+                            <small>Usa $1, $2, $3, etc. para añadir emojis</small>
+                        </div>
                     </div>
                     <div class="review-actions">
                         <button type="submit" class="submit-review-btn">
                             <i class="fas fa-paper-plane"></i>
                             Enviar reseña
+                        </button>
+                        <button type="button" class="emoji-picker-toggle" onclick="toggleEmojiPicker('reviewComment')">
+                            <i class="fas fa-smile"></i> Añadir Emoji
                         </button>
                     </div>
                 </form>
@@ -171,7 +175,7 @@ function renderReviewsList(reviews, userReview) {
                                 <span class="review-date">${formatDate(review.timestamp)}</span>
                             </div>
                         </div>
-                        <p class="review-comment emoji-content">${review.comment || ''}</p>
+                        <p class="review-comment emoji-content">${processTextWithEmojis(review.comment)}</p>
                     </div>
                 `).join('')}
             </div>
@@ -185,24 +189,20 @@ function setupReviewForm(addonId) {
     const stars = document.querySelectorAll('.stars.interactive .star');
     let selectedRating = 0;
     
-    // Configurar estrellas interactivas
-    if (stars.length > 0) {
-        stars.forEach(star => {
-            star.addEventListener('click', function() {
-                selectedRating = parseInt(this.getAttribute('data-rating'));
-                
-                stars.forEach((s, index) => {
-                    if (index < selectedRating) {
-                        s.classList.add('active');
-                    } else {
-                        s.classList.remove('active');
-                    }
-                });
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            selectedRating = parseInt(this.getAttribute('data-rating'));
+            
+            stars.forEach((s, index) => {
+                if (index < selectedRating) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
             });
         });
-    }
+    });
     
-    // Configurar envío del formulario
     if (reviewForm) {
         reviewForm.addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -221,9 +221,6 @@ function setupReviewForm(addonId) {
                 alert('Error al enviar la reseña. Inténtalo de nuevo.');
             }
         });
-        
-        // Inicializar sistema de emojis para el textarea - SOLO UNA VEZ
-        initEmojisForTextarea('reviewComment');
     }
 }
 
@@ -269,14 +266,6 @@ function downloadAddon(addonId) {
 function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('es-ES', options);
-}
-
-// Función para calcular promedio de calificaciones
-function calculateAverageRating(reviews) {
-    if (!reviews || reviews.length === 0) return 0;
-    
-    const sum = reviews.reduce((total, review) => total + review.rating, 0);
-    return (sum / reviews.length).toFixed(1);
 }
 
 // Renderizar estrellas
@@ -356,6 +345,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Configurar sidebar
     setupSidebar();
     
+    // Inicializar sistema de emojis
+    if (typeof window.EmojiSystem !== 'undefined') {
+        window.EmojiSystem.initEmojisForAll();
+    }
+    
     const urlParams = new URLSearchParams(window.location.search);
     const addonId = urlParams.get('id');
     
@@ -372,4 +366,8 @@ window.deleteUserReview = deleteUserReview;
 window.downloadAddon = downloadAddon;
 window.formatDate = formatDate;
 window.renderStars = renderStars;
-window.calculateAverageRating = calculateAverageRating;
+window.getDefaultAvatar = getDefaultAvatar;
+window.toggleEmojiPicker = toggleEmojiPicker;
+window.processTextWithEmojis = processTextWithEmojis;
+window.processTextWithEmojisInTitles = processTextWithEmojisInTitles;
+window.processAllEmojis = processAllEmojis;

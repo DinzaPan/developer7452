@@ -27,33 +27,44 @@ let activeEmojiPicker = null;
 function processTextWithEmojis(text) {
     if (!text) return '';
     
-    // Expresión regular para encontrar patrones $1, $2, $3, etc.
-    const emojiRegex = /\$([1-9])/g;
+    // Expresión regular mejorada para encontrar patrones $1, $2, $3, etc.
+    // Busca exactamente los códigos definidos en emojisConfig
+    let processedText = text;
     
-    return text.replace(emojiRegex, (match, emojiId) => {
-        const emojiCode = `$${emojiId}`;
+    // Ordenar los códigos de más largo a más corto para evitar conflictos
+    const emojiCodes = Object.keys(emojisConfig).sort((a, b) => b.length - a.length);
+    
+    emojiCodes.forEach(emojiCode => {
         const emojiUrl = emojisConfig[emojiCode];
         if (emojiUrl) {
-            return `<img src="${emojiUrl}" alt="Emoji ${emojiId}" class="custom-emoji" data-emoji="${emojiId}">`;
+            // Usar una expresión regular con word boundaries para coincidencias exactas
+            const regex = new RegExp(emojiCode.replace(/\$/g, '\\$'), 'g');
+            processedText = processedText.replace(regex, `<img src="${emojiUrl}" alt="${emojiCode}" class="custom-emoji" data-emoji="${emojiCode}">`);
         }
-        return match; // Si no encuentra el emoji, devuelve el texto original
     });
+    
+    return processedText;
 }
 
 // Función para procesar emojis en títulos (con tamaño diferente)
 function processTextWithEmojisInTitles(text) {
     if (!text) return '';
     
-    const emojiRegex = /\$([1-9])/g;
+    let processedText = text;
     
-    return text.replace(emojiRegex, (match, emojiId) => {
-        const emojiCode = `$${emojiId}`;
+    // Ordenar los códigos de más largo a más corto para evitar conflictos
+    const emojiCodes = Object.keys(emojisConfig).sort((a, b) => b.length - a.length);
+    
+    emojiCodes.forEach(emojiCode => {
         const emojiUrl = emojisConfig[emojiCode];
         if (emojiUrl) {
-            return `<img src="${emojiUrl}" alt="Emoji ${emojiId}" class="custom-emoji title-emoji" data-emoji="${emojiId}">`;
+            // Usar una expresión regular con word boundaries para coincidencias exactas
+            const regex = new RegExp(emojiCode.replace(/\$/g, '\\$'), 'g');
+            processedText = processedText.replace(regex, `<img src="${emojiUrl}" alt="${emojiCode}" class="custom-emoji title-emoji" data-emoji="${emojiCode}">`);
         }
-        return match;
     });
+    
+    return processedText;
 }
 
 // Función para obtener la lista de emojis disponibles
@@ -70,6 +81,8 @@ function addEmojiToText(textarea, emojiCode) {
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const text = textarea.value;
+    
+    // Insertar el código del emoji con espacios para evitar conflictos
     const emoji = ` ${emojiCode} `;
     
     textarea.value = text.substring(0, start) + emoji + text.substring(end);
@@ -212,21 +225,16 @@ function initEmojisForElement(elementId) {
 // Función para procesar todo el documento
 function processAllEmojis() {
     // Procesar elementos con clase específica
-    const elements = document.querySelectorAll('.emoji-content, .addon-description-large, .review-comment, .user-review-comment');
+    const elements = document.querySelectorAll('.emoji-content, .addon-description-large, .review-comment, .user-review-comment, .addon-title, .addon-description, .page-title');
     
     elements.forEach(element => {
         if (element.innerHTML && !element.classList.contains('emoji-processed')) {
-            element.innerHTML = processTextWithEmojis(element.innerHTML);
-            element.classList.add('emoji-processed');
-        }
-    });
-    
-    // Procesar títulos
-    const titleElements = document.querySelectorAll('.addon-title-large, .page-title');
-    
-    titleElements.forEach(element => {
-        if (element.innerHTML && !element.classList.contains('emoji-processed')) {
-            element.innerHTML = processTextWithEmojisInTitles(element.innerHTML);
+            // Determinar qué función de procesamiento usar según el tipo de elemento
+            if (element.classList.contains('addon-title-large') || element.classList.contains('page-title') || element.classList.contains('addon-title')) {
+                element.innerHTML = processTextWithEmojisInTitles(element.innerHTML);
+            } else {
+                element.innerHTML = processTextWithEmojis(element.innerHTML);
+            }
             element.classList.add('emoji-processed');
         }
     });
@@ -240,7 +248,8 @@ function initEmojisForAll() {
     const observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
             if (mutation.type === 'childList') {
-                processAllEmojis();
+                // Pequeño delay para asegurar que el contenido se haya renderizado
+                setTimeout(processAllEmojis, 50);
             }
         });
     });
@@ -311,4 +320,41 @@ window.EmojiSystem = {
 // Función para reemplazar emojis (compatibilidad con código antiguo)
 function replaceEmojis(text) {
     return processTextWithEmojis(text);
+}
+
+// Función auxiliar para mostrar notificaciones
+function showNotification(message, type = 'info') {
+    // Eliminar notificaciones existentes
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(notification => notification.remove());
+    
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-eliminar después de 5 segundos
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 300);
+        }
+    }, 5000);
+    
+    return notification;
+}
+
+// Función para obtener avatar por defecto
+function getDefaultAvatar() {
+    return './img/profile/default-avatar.png';
 }

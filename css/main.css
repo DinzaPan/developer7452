@@ -903,23 +903,76 @@ a:focus-visible,
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-color);
 }
-/* Estilos para emojis */
-.emoji {
-    width: 20px;
-    height: 20px;
+
+/* =============================================== */
+/* ESTILOS MEJORADOS PARA EMOJIS EN TARJETAS */
+/* =============================================== */
+
+/* Emojis en tarjetas del index - TAMAÑO CORREGIDO */
+.custom-emoji {
+    display: inline-block;
     vertical-align: middle;
-    margin: 0 2px;
+    object-fit: contain;
+    transition: var(--transition);
+    border-radius: 0.25rem;
     user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+    -webkit-user-drag: none;
     pointer-events: none;
 }
 
-.addon-title .emoji,
-.addon-description .emoji {
-    width: 18px;
-    height: 18px;
+/* Tamaño específico para emojis en títulos de tarjetas */
+.addon-title .custom-emoji {
+    width: 16px !important;
+    height: 16px !important;
+    margin: 0 2px;
+}
+
+/* Tamaño específico para emojis en descripciones de tarjetas */
+.addon-description .custom-emoji {
+    width: 14px !important;
+    height: 14px !important;
+    margin: 0 1px;
+}
+
+/* Tamaño para emojis en página de detalles (view.html) */
+.addon-title-large .custom-emoji {
+    width: 24px !important;
+    height: 24px !important;
+    margin: 0 3px;
+}
+
+.addon-description-large .custom-emoji {
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 2px;
+}
+
+/* Tamaño para emojis en comentarios de reseñas */
+.user-review-comment .custom-emoji,
+.review-comment .custom-emoji {
+    width: 16px !important;
+    height: 16px !important;
+    margin: 0 2px;
+}
+
+/* Efectos hover para emojis */
+.custom-emoji:hover {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+}
+
+/* Clase para emojis en títulos principales */
+.title-emoji {
+    width: 28px !important;
+    height: 28px !important;
+    margin: 0 4px;
+}
+
+/* Clase para emojis en contenido general */
+.emoji-content .custom-emoji {
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 2px;
 }
 
 /* Protección adicional para imágenes */
@@ -937,4 +990,49 @@ img::selection {
 
 img::-moz-selection {
     background: transparent;
+}
+
+/* Responsive para emojis en tarjetas */
+@media (max-width: 768px) {
+    .addon-title .custom-emoji {
+        width: 14px !important;
+        height: 14px !important;
+    }
+    
+    .addon-description .custom-emoji {
+        width: 12px !important;
+        height: 12px !important;
+    }
+    
+    .addon-title-large .custom-emoji {
+        width: 20px !important;
+        height: 20px !important;
+    }
+    
+    .addon-description-large .custom-emoji {
+        width: 16px !important;
+        height: 16px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .addon-title .custom-emoji {
+        width: 12px !important;
+        height: 12px !important;
+    }
+    
+    .addon-description .custom-emoji {
+        width: 10px !important;
+        height: 10px !important;
+    }
+    
+    .addon-title-large .custom-emoji {
+        width: 18px !important;
+        height: 18px !important;
+    }
+    
+    .addon-description-large .custom-emoji {
+        width: 14px !important;
+        height: 14px !important;
+    }
 }

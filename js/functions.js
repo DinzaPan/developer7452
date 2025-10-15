@@ -27,16 +27,16 @@ let activeEmojiPicker = null;
 function processTextWithEmojis(text) {
     if (!text) return '';
     
-    // Expresión regular para encontrar patrones $1, $2, $3, etc.
-    const emojiRegex = /\$([1-9])/g;
+    // Expresión regular mejorada para encontrar patrones $1, $2, $3, $10, $11, etc.
+    const emojiRegex = /\$(1[0-8]|[1-9])/g;
     
-    return text.replace(emojiRegex, (match, emojiId) => {
-        const emojiCode = `$${emojiId}`;
-        const emojiUrl = emojisConfig[emojiCode];
+    return text.replace(emojiRegex, (match) => {
+        const emojiUrl = emojisConfig[match];
         if (emojiUrl) {
+            const emojiId = match.replace('$', '');
             return `<img src="${emojiUrl}" alt="Emoji ${emojiId}" class="custom-emoji" data-emoji="${emojiId}">`;
         }
-        return match; // Si no encuentra el emoji, devuelve el texto original
+        return match;
     });
 }
 
@@ -44,12 +44,12 @@ function processTextWithEmojis(text) {
 function processTextWithEmojisInTitles(text) {
     if (!text) return '';
     
-    const emojiRegex = /\$([1-9])/g;
+    const emojiRegex = /\$(1[0-8]|[1-9])/g;
     
-    return text.replace(emojiRegex, (match, emojiId) => {
-        const emojiCode = `$${emojiId}`;
-        const emojiUrl = emojisConfig[emojiCode];
+    return text.replace(emojiRegex, (match) => {
+        const emojiUrl = emojisConfig[match];
         if (emojiUrl) {
+            const emojiId = match.replace('$', '');
             return `<img src="${emojiUrl}" alt="Emoji ${emojiId}" class="custom-emoji title-emoji" data-emoji="${emojiId}">`;
         }
         return match;
@@ -61,7 +61,8 @@ function getAvailableEmojis() {
     return Object.keys(emojisConfig).map(key => ({
         code: key,
         url: emojisConfig[key],
-        preview: emojisConfig[key]
+        preview: emojisConfig[key],
+        id: key.replace('$', '')
     }));
 }
 
@@ -293,6 +294,22 @@ document.addEventListener('DOMContentLoaded', function() {
     protectImages();
 });
 
+// Función para probar el sistema de emojis (útil para debugging)
+function testEmojiSystem() {
+    console.log('Probando sistema de emojis...');
+    
+    const testCases = [
+        'Texto con $1 y $11',
+        'Emojis $10 y $15',
+        'Todos los emojis: $1 $2 $3 $4 $5 $6 $7 $8 $9 $10 $11 $12 $13 $14 $15 $16 $17 $18'
+    ];
+    
+    testCases.forEach(test => {
+        console.log('Original:', test);
+        console.log('Procesado:', processTextWithEmojis(test));
+    });
+}
+
 // Exportar funciones para uso global
 window.EmojiSystem = {
     processTextWithEmojis,
@@ -305,7 +322,8 @@ window.EmojiSystem = {
     toggleEmojiPicker,
     initEmojisForElement,
     processAllEmojis,
-    initEmojisForAll
+    initEmojisForAll,
+    testEmojiSystem
 };
 
 // Función para reemplazar emojis (compatibilidad con código antiguo)

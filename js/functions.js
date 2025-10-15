@@ -14,7 +14,7 @@ const emojis = {
 // Variable global para controlar el picker activo
 let activeEmojiPicker = null;
 
-// Función para reemplazar emojis en texto - CORREGIDA
+// Función para reemplazar emojis en texto
 function replaceEmojis(text) {
     if (!text) return '';
     
@@ -42,27 +42,6 @@ function getAvailableEmojis() {
     }));
 }
 
-// Función para añadir un emoji al texto
-function addEmojiToText(textarea, emojiCode) {
-    if (!textarea) return;
-    
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = textarea.value;
-    const emoji = ` ${emojiCode} `;
-    
-    textarea.value = text.substring(0, start) + emoji + text.substring(end);
-    textarea.focus();
-    textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
-    
-    // Disparar evento de cambio
-    const event = new Event('input', { bubbles: true });
-    textarea.dispatchEvent(event);
-    
-    // Cerrar el picker después de añadir un emoji
-    closeEmojiPicker();
-}
-
 // Función para crear un selector de emojis
 function createEmojiPicker(textareaId) {
     const emojisList = getAvailableEmojis();
@@ -88,7 +67,9 @@ function createEmojiPicker(textareaId) {
         
         emojiItem.addEventListener('click', () => {
             const textarea = document.getElementById(textareaId);
-            addEmojiToText(textarea, emoji.code);
+            if (textarea) {
+                addEmojiToText(textarea, emoji.code);
+            }
         });
         
         emojisGrid.appendChild(emojiItem);
@@ -96,6 +77,27 @@ function createEmojiPicker(textareaId) {
     
     container.appendChild(emojisGrid);
     return container;
+}
+
+// Función para añadir un emoji al texto
+function addEmojiToText(textarea, emojiCode) {
+    if (!textarea) return;
+    
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const emoji = ` ${emojiCode} `;
+    
+    textarea.value = text.substring(0, start) + emoji + text.substring(end);
+    textarea.focus();
+    textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+    
+    // Disparar evento de cambio
+    const event = new Event('input', { bubbles: true });
+    textarea.dispatchEvent(event);
+    
+    // Cerrar el picker después de añadir un emoji
+    closeEmojiPicker();
 }
 
 // Función para mostrar el selector de emojis
@@ -153,43 +155,38 @@ function toggleEmojiPicker(textareaId) {
     }
 }
 
-// Inicializar sistema de emojis en elementos específicos
-function initEmojisForElement(elementId) {
-    const element = document.getElementById(elementId);
-    if (!element) return;
+// Inicializar sistema de emojis para textarea específico
+function initEmojisForTextarea(textareaId) {
+    const textarea = document.getElementById(textareaId);
+    if (!textarea) return;
     
-    // Procesar emojis en el contenido inicial
-    if (element.innerHTML) {
-        element.innerHTML = replaceEmojis(element.innerHTML);
+    const parent = textarea.parentElement;
+    if (!parent) return;
+    
+    // Verificar si ya existe el botón
+    if (parent.querySelector('.emoji-picker-toggle')) {
+        return;
     }
     
-    // Para textareas, añadir botón de emojis
-    if (element.tagName === 'TEXTAREA') {
-        const parent = element.parentElement;
-        if (parent && !parent.querySelector('.emoji-picker-toggle')) {
-            const toggleBtn = document.createElement('button');
-            toggleBtn.type = 'button';
-            toggleBtn.className = 'emoji-picker-toggle';
-            toggleBtn.innerHTML = '😊 Añadir Emoji';
-            toggleBtn.title = 'Añadir emoji';
-            
-            toggleBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                toggleEmojiPicker(elementId);
-            });
-            
-            parent.style.position = 'relative';
-            parent.appendChild(toggleBtn);
-        }
-    }
+    const toggleBtn = document.createElement('button');
+    toggleBtn.type = 'button';
+    toggleBtn.className = 'emoji-picker-toggle';
+    toggleBtn.innerHTML = '😊 Añadir Emoji';
+    toggleBtn.title = 'Añadir emoji';
+    
+    toggleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleEmojiPicker(textareaId);
+    });
+    
+    parent.style.position = 'relative';
+    parent.appendChild(toggleBtn);
 }
 
-// Función para procesar todo el documento
-function processAllEmojis() {
-    // Procesar elementos con clase específica
-    const elements = document.querySelectorAll('.emoji-content, .addon-description-large, .review-comment, .user-review-comment, .addon-title-large');
-    
+// Función para procesar emojis en elementos específicos
+function processEmojisInElements() {
+    const elements = document.querySelectorAll('.emoji-content');
     elements.forEach(element => {
         if (element.innerHTML && !element.classList.contains('emoji-processed')) {
             element.innerHTML = replaceEmojis(element.innerHTML);
@@ -207,14 +204,13 @@ document.addEventListener('keydown', function(e) {
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
-    processAllEmojis();
+    processEmojisInElements();
     
-    // También procesar después de cargar contenido dinámico
+    // Observar cambios en el DOM para procesar emojis en contenido dinámico
     const observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
             if (mutation.type === 'childList') {
-                // Pequeño delay para asegurar que el contenido se haya renderizado
-                setTimeout(processAllEmojis, 100);
+                setTimeout(processEmojisInElements, 50);
             }
         });
     });
@@ -240,20 +236,10 @@ function protectImages() {
             return false;
         }
     });
-    
-    // Prevenir selección de imágenes
-    document.addEventListener('selectstart', function(e) {
-        if (e.target.tagName === 'IMG') {
-            e.preventDefault();
-            return false;
-        }
-    });
 }
 
-// Inicializar protección de imágenes cuando se carga la página
-document.addEventListener('DOMContentLoaded', function() {
-    protectImages();
-});
+// Inicializar protección de imágenes
+document.addEventListener('DOMContentLoaded', protectImages);
 
 // Función para obtener avatar por defecto
 function getDefaultAvatar() {
@@ -262,30 +248,25 @@ function getDefaultAvatar() {
 
 // Funciones para el sistema de reseñas (simuladas)
 async function getReviewsForAddon(addonId) {
-    // Simular obtención de reseñas
     return [];
 }
 
 async function getUserReviewForAddon(addonId) {
-    // Simular obtención de reseña del usuario
     return null;
 }
 
 async function addReview(addonId, rating, comment) {
-    // Simular añadir reseña
     console.log('Añadiendo reseña:', { addonId, rating, comment });
     return Promise.resolve();
 }
 
 async function deleteReview(addonId) {
-    // Simular eliminar reseña
     console.log('Eliminando reseña para addon:', addonId);
     return Promise.resolve();
 }
 
 // Función para obtener addon por ID (simulada)
 function getAddonById(addonId) {
-    // Esto debería venir de tu base de datos o archivo JSON
     const addons = [
         {
             id: 1,
@@ -305,7 +286,6 @@ function getAddonById(addonId) {
 // Función para mostrar notificación
 function showNotification(message, type) {
     console.log('Notificación:', message, type);
-    // Aquí iría tu código de notificaciones
     alert(message);
 }
 
@@ -319,14 +299,5 @@ window.addReview = addReview;
 window.deleteReview = deleteReview;
 window.getAddonById = getAddonById;
 window.showNotification = showNotification;
-window.EmojiSystem = {
-    replaceEmojis,
-    getAvailableEmojis,
-    addEmojiToText,
-    createEmojiPicker,
-    showEmojiPicker,
-    closeEmojiPicker,
-    toggleEmojiPicker,
-    initEmojisForElement,
-    processAllEmojis
-};
+window.initEmojisForTextarea = initEmojisForTextarea;
+window.processEmojisInElements = processEmojisInElements;

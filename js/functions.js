@@ -36,8 +36,8 @@ function processTextWithEmojis(text) {
         const emojiUrl = emojisConfig[emojiCode];
         if (emojiUrl) {
             // Usar una expresión regular para coincidencias exactas
-            const regex = new RegExp(`\\${emojiCode}(?![0-9])`, 'g');
-            processedText = processedText.replace(regex, `<img src="${emojiUrl}" alt="${emojiCode}" class="custom-emoji" data-emoji="${emojiCode}">`);
+            const regex = new RegExp(emojiCode.replace(/\$/g, '\\$') + '(?![0-9])', 'g');
+            processedText = processedText.replace(regex, `<img src="${emojiUrl}" alt="${emojiCode}" class="custom-emoji" data-emoji="${emojiCode.substring(1)}">`);
         }
     });
     
@@ -57,8 +57,8 @@ function processTextWithEmojisInTitles(text) {
         const emojiUrl = emojisConfig[emojiCode];
         if (emojiUrl) {
             // Usar una expresión regular para coincidencias exactas
-            const regex = new RegExp(`\\${emojiCode}(?![0-9])`, 'g');
-            processedText = processedText.replace(regex, `<img src="${emojiUrl}" alt="${emojiCode}" class="custom-emoji title-emoji" data-emoji="${emojiCode}">`);
+            const regex = new RegExp(emojiCode.replace(/\$/g, '\\$') + '(?![0-9])', 'g');
+            processedText = processedText.replace(regex, `<img src="${emojiUrl}" alt="${emojiCode}" class="custom-emoji title-emoji" data-emoji="${emojiCode.substring(1)}">`);
         }
     });
     

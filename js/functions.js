@@ -29,17 +29,16 @@ function processTextWithEmojis(text) {
     
     let processedText = text;
     
-    // Ordenar los códigos de más largo a más corto para evitar conflictos
-    const emojiCodes = Object.keys(emojisConfig).sort((a, b) => b.length - a.length);
-    
-    emojiCodes.forEach(emojiCode => {
+    // Procesar cada código de emoji individualmente
+    for (const emojiCode in emojisConfig) {
         const emojiUrl = emojisConfig[emojiCode];
         if (emojiUrl) {
-            // Usar una expresión regular para coincidencias exactas
-            const regex = new RegExp(emojiCode.replace(/\$/g, '\\$') + '(?![0-9])', 'g');
+            // Crear expresión regular para coincidencia exacta
+            const escapedCode = emojiCode.replace(/\$/g, '\\$');
+            const regex = new RegExp(escapedCode, 'g');
             processedText = processedText.replace(regex, `<img src="${emojiUrl}" alt="${emojiCode}" class="custom-emoji" data-emoji="${emojiCode.substring(1)}">`);
         }
-    });
+    }
     
     return processedText;
 }
@@ -50,17 +49,16 @@ function processTextWithEmojisInTitles(text) {
     
     let processedText = text;
     
-    // Ordenar los códigos de más largo a más corto para evitar conflictos
-    const emojiCodes = Object.keys(emojisConfig).sort((a, b) => b.length - a.length);
-    
-    emojiCodes.forEach(emojiCode => {
+    // Procesar cada código de emoji individualmente
+    for (const emojiCode in emojisConfig) {
         const emojiUrl = emojisConfig[emojiCode];
         if (emojiUrl) {
-            // Usar una expresión regular para coincidencias exactas
-            const regex = new RegExp(emojiCode.replace(/\$/g, '\\$') + '(?![0-9])', 'g');
+            // Crear expresión regular para coincidencia exacta
+            const escapedCode = emojiCode.replace(/\$/g, '\\$');
+            const regex = new RegExp(escapedCode, 'g');
             processedText = processedText.replace(regex, `<img src="${emojiUrl}" alt="${emojiCode}" class="custom-emoji title-emoji" data-emoji="${emojiCode.substring(1)}">`);
         }
-    });
+    }
     
     return processedText;
 }

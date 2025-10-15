@@ -8,16 +8,7 @@ const emojisConfig = {
     "$6": "./img/emojis/6.png",
     "$7": "./img/emojis/7.png",
     "$8": "./img/emojis/8.png",
-    "$9": "./img/emojis/9.png",
-    "$10": "./img/emojis/10.png",
-    "$11": "./img/emojis/11.png", 
-    "$12": "./img/emojis/12.png",
-    "$13": "./img/emojis/13.png",
-    "$14": "./img/emojis/14.png",
-    "$15": "./img/emojis/15.png",
-    "$16": "./img/emojis/16.png",
-    "$17": "./img/emojis/17.png",
-    "$18": "./img/emojis/18.png"
+    "$9": "./img/emojis/9.png"
 };
 
 // Variable global para controlar el picker activo
@@ -25,18 +16,17 @@ let activeEmojiPicker = null;
 
 // Función para procesar texto y convertir códigos de emojis en imágenes
 function processTextWithEmojis(text) {
-    if (!text) return '';
+    if (!text || typeof text !== 'string') return '';
     
     let processedText = text;
     
-    // Ordenar los códigos de más largo a más corto para evitar conflictos
-    const emojiCodes = Object.keys(emojisConfig).sort((a, b) => b.length - a.length);
-    
-    emojiCodes.forEach(emojiCode => {
+    // Procesar cada código de emoji individualmente
+    Object.keys(emojisConfig).forEach(emojiCode => {
         const emojiUrl = emojisConfig[emojiCode];
         if (emojiUrl) {
-            // Usar expresión regular con word boundary para coincidencias exactas
-            const regex = new RegExp(`\\${emojiCode}\\b`, 'g');
+            // Crear expresión regular para coincidencia exacta
+            const escapedCode = emojiCode.replace(/\$/g, '\\$');
+            const regex = new RegExp(escapedCode, 'g');
             processedText = processedText.replace(regex, `<img src="${emojiUrl}" alt="${emojiCode}" class="custom-emoji">`);
         }
     });
@@ -46,18 +36,17 @@ function processTextWithEmojis(text) {
 
 // Función para procesar emojis en títulos (con tamaño diferente)
 function processTextWithEmojisInTitles(text) {
-    if (!text) return '';
+    if (!text || typeof text !== 'string') return '';
     
     let processedText = text;
     
-    // Ordenar los códigos de más largo a más corto para evitar conflictos
-    const emojiCodes = Object.keys(emojisConfig).sort((a, b) => b.length - a.length);
-    
-    emojiCodes.forEach(emojiCode => {
+    // Procesar cada código de emoji individualmente
+    Object.keys(emojisConfig).forEach(emojiCode => {
         const emojiUrl = emojisConfig[emojiCode];
         if (emojiUrl) {
-            // Usar expresión regular con word boundary para coincidencias exactas
-            const regex = new RegExp(`\\${emojiCode}\\b`, 'g');
+            // Crear expresión regular para coincidencia exacta
+            const escapedCode = emojiCode.replace(/\$/g, '\\$');
+            const regex = new RegExp(escapedCode, 'g');
             processedText = processedText.replace(regex, `<img src="${emojiUrl}" alt="${emojiCode}" class="custom-emoji title-emoji">`);
         }
     });
@@ -76,6 +65,8 @@ function getAvailableEmojis() {
 
 // Función para añadir un emoji al texto
 function addEmojiToText(textarea, emojiCode) {
+    if (!textarea) return;
+    
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const text = textarea.value;
@@ -120,9 +111,7 @@ function createEmojiPicker(textareaId) {
         
         emojiItem.addEventListener('click', () => {
             const textarea = document.getElementById(textareaId);
-            if (textarea) {
-                addEmojiToText(textarea, emoji.code);
-            }
+            addEmojiToText(textarea, emoji.code);
         });
         
         emojisGrid.appendChild(emojiItem);
@@ -135,12 +124,14 @@ function createEmojiPicker(textareaId) {
 
 // Función para mostrar el selector de emojis
 function showEmojiPicker(textareaId) {
-    closeEmojiPicker(); // Cerrar cualquier picker abierto
+    closeEmojiPicker();
     
     const textarea = document.getElementById(textareaId);
     if (!textarea) return;
     
     const parent = textarea.parentElement;
+    if (!parent) return;
+    
     const picker = createEmojiPicker(textareaId);
     parent.appendChild(picker);
     
@@ -149,7 +140,6 @@ function showEmojiPicker(textareaId) {
         textareaId: textareaId
     };
     
-    // Añadir evento para cerrar al hacer clic fuera
     setTimeout(() => {
         document.addEventListener('click', closeEmojiPickerOnClickOutside);
     }, 10);
@@ -167,7 +157,6 @@ function closeEmojiPicker() {
 // Función para manejar clics fuera del selector
 function closeEmojiPickerOnClickOutside(event) {
     if (activeEmojiPicker && !activeEmojiPicker.element.contains(event.target)) {
-        // Verificar si el clic no fue en el botón del emoji
         const emojiButton = document.querySelector('.emoji-picker-toggle');
         if (!emojiButton || !emojiButton.contains(event.target)) {
             closeEmojiPicker();
@@ -189,9 +178,7 @@ function initEmojisForElement(elementId) {
     const element = document.getElementById(elementId);
     if (!element) return;
     
-    // Procesar emojis en el contenido inicial
     if (element.innerHTML) {
-        // Determinar si es un título para aplicar clase diferente
         if (element.classList.contains('addon-title-large') || element.classList.contains('page-title')) {
             element.innerHTML = processTextWithEmojisInTitles(element.innerHTML);
         } else {
@@ -199,7 +186,6 @@ function initEmojisForElement(elementId) {
         }
     }
     
-    // Para textareas, añadir botón de emojis
     if (element.tagName === 'TEXTAREA') {
         const parent = element.parentElement;
         if (parent && !parent.querySelector('.emoji-picker-toggle')) {
@@ -210,7 +196,7 @@ function initEmojisForElement(elementId) {
             toggleBtn.title = 'Añadir emoji';
             
             toggleBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevenir que se cierre inmediatamente
+                e.stopPropagation();
                 toggleEmojiPicker(elementId);
             });
             
@@ -222,12 +208,10 @@ function initEmojisForElement(elementId) {
 
 // Función para procesar todo el documento
 function processAllEmojis() {
-    // Procesar elementos con clase específica
     const elements = document.querySelectorAll('.emoji-content, .addon-description-large, .review-comment, .user-review-comment, .addon-title, .addon-description, .page-title');
     
     elements.forEach(element => {
         if (element.innerHTML && !element.classList.contains('emoji-processed')) {
-            // Determinar qué función de procesamiento usar según el tipo de elemento
             if (element.classList.contains('addon-title-large') || element.classList.contains('page-title') || element.classList.contains('addon-title')) {
                 element.innerHTML = processTextWithEmojisInTitles(element.innerHTML);
             } else {
@@ -242,11 +226,9 @@ function processAllEmojis() {
 function initEmojisForAll() {
     processAllEmojis();
     
-    // También procesar después de cargar contenido dinámico
     const observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
             if (mutation.type === 'childList') {
-                // Pequeño delay para asegurar que el contenido se haya renderizado
                 setTimeout(processAllEmojis, 50);
             }
         });
@@ -286,7 +268,6 @@ function protectImages() {
         }
     });
     
-    // Prevenir selección de imágenes
     document.addEventListener('selectstart', function(e) {
         if (e.target.tagName === 'IMG') {
             e.preventDefault();
@@ -322,7 +303,6 @@ function replaceEmojis(text) {
 
 // Función auxiliar para mostrar notificaciones
 function showNotification(message, type = 'info') {
-    // Eliminar notificaciones existentes
     const existingNotifications = document.querySelectorAll('.notification');
     existingNotifications.forEach(notification => notification.remove());
     
@@ -337,7 +317,6 @@ function showNotification(message, type = 'info') {
     
     document.body.appendChild(notification);
     
-    // Auto-eliminar después de 5 segundos
     setTimeout(() => {
         if (notification.parentNode) {
             notification.style.animation = 'slideOutRight 0.3s ease-out';

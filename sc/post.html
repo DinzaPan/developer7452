@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer7452 - Detalles del Proyecto</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .project-details-section {
+            padding: 2rem 0;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            padding: 0.5rem 1rem;
+            background-color: var(--dark-card);
+            color: var(--dark-text);
+            border-radius: var(--rounded);
+            text-decoration: none;
+            transition: var(--transition);
+            border: 1px solid var(--dark-border);
+            font-size: 0.9rem;
+        }
+
+        .back-btn:hover {
+            background-color: rgba(139, 92, 246, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .project-header {
+            margin-bottom: 2rem;
+        }
+
+        .project-image-large {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: var(--rounded-lg);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--dark-border);
+        }
+
+        .project-title-large {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark-text);
+            line-height: 1.2;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--dark-text);
+            font-size: 0.9rem;
+        }
+
+        .meta-item i {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: var(--primary-color);
+        }
+
+        .project-status-large {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-active {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-in-progress {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .status-planned {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .project-tags-large {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .project-tag-large {
+            display: inline-block;
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--primary-color);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .project-description-full {
+            margin-bottom: 2rem;
+            line-height: 1.7;
+            color: var(--dark-text);
+            font-size: 1.1rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: var(--dark-text);
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 3rem;
+            height: 0.2rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 0.25rem;
+        }
+
+        .features-list {
+            background-color: var(--dark-card);
+            border-radius: var(--rounded);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--dark-border);
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .feature-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .feature-icon {
+            width: 2rem;
+            height: 2rem;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .feature-content {
+            flex-grow: 1;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 0.25rem;
+        }
+
+        .feature-description {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .tech-item {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--accent-color);
+            padding: 0.5rem 1rem;
+            border-radius: var(--rounded);
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .project-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--rounded);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .link-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .link-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .link-secondary {
+            background-color: transparent;
+            color: var(--dark-text);
+            border: 1px solid var(--dark-border);
+        }
+
+        .link-secondary:hover {
+            background-color: var(--dark-border);
+            transform: translateY(-2px);
+        }
+
+        .link-disabled {
+            background-color: #64748b;
+            color: #94a3b8;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .link-disabled:hover {
+            transform: none;
+            background-color: #64748b;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 3rem;
+            background-color: var(--dark-card);
+            border-radius: var(--rounded);
+            border: 1px solid var(--dark-border);
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            color: var(--error-color);
+            margin-bottom: 1rem;
+        }
+
+        .error-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark-text);
+        }
+
+        .error-details {
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .project-title-large {
+                font-size: 2rem;
+            }
+
+            .project-meta {
+                gap: 1rem;
+            }
+
+            .project-links {
+                flex-direction: column;
+            }
+
+            .project-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .features-list {
+                padding: 1rem;
+            }
+
+            .feature-item {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .project-title-large {
+                font-size: 1.75rem;
+            }
+
+            .project-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .meta-item {
+                justify-content: flex-start;
+            }
+
+            .tech-stack {
+                gap: 0.5rem;
+            }
+
+            .tech-item {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="../img/logo.png" alt="Developer7452 Logo" class="site-logo">
+            <h1 class="site-title">Developer7452</h1>
+        </div>
+        
+        <!-- Menú de usuario -->
+        <div class="user-menu-container">
+            <div class="user-avatar" id="userAvatar">
+                <div class="avatar-placeholder">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar lateral -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info-sidebar" id="userInfoSidebar">
+                    <div class="user-avatar-sidebar">
+                        <div class="avatar-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="user-details">
+                        <h3 class="user-name" id="userName">Iniciar Sesión</h3>
+                        <p class="user-status" id="userStatus">Haz clic para conectar</p>
+                    </div>
+                </div>
+                <button class="close-sidebar" id="closeSidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="sidebar-items">
+                <a href="../index.html" class="sidebar-item">
+                    <i class="fas fa-home menu-icon"></i>
+                    Inicio
+                </a>
+                <a href="sobre-mi.html" class="sidebar-item">
+                    <i class="fas fa-user menu-icon"></i>
+                    Sobre Mí
+                </a>
+                <a href="comisiones.html" class="sidebar-item">
+                    <i class="fas fa-coins menu-icon"></i>
+                    Comisiones
+                </a>
+                <a href="proyectos.html" class="sidebar-item active">
+                    <i class="fas fa-project-diagram menu-icon"></i>
+                    Proyectos
+                </a>
+                <a href="paginas-web.html" class="sidebar-item">
+                    <i class="fas fa-globe menu-icon"></i>
+                    Páginas Web
+                </a>
+                <a href="#" class="sidebar-item" id="logoutBtn" style="display: none;">
+                    <i class="fas fa-sign-out-alt menu-icon"></i>
+                    Cerrar Sesión
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="social-links">
+                    <a href="https://discord.gg/Kag2a5YUYa" target="_blank" class="social-link discord">
+                        <i class="fab fa-discord"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@developer-7452" target="_blank" class="social-link tiktok">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://twitter.com" target="_blank" class="social-link twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </div>
+                <p class="copyright">© 2025 Developer7452</p>
+            </div>
+        </div>
+        
+        <!-- Overlay para cerrar sidebar -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <a href="proyectos.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Volver a Proyectos
+        </a>
+
+        <div class="project-details-section">
+            <div id="projectDetails">
+                <!-- Los detalles del proyecto se cargarán aquí dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de proyectos (mismos que en proyectos.html)
+        const projectsData = [
+            {
+                id: 1,
+                title: "Sistema de Rangos Avanzado",
+                shortDescription: "Sistema completo de rangos para servidores de Minecraft con interfaz moderna y funciones avanzadas.",
+                fullDescription: "Este proyecto es un sistema completo de rangos para servidores de Minecraft que incluye interfaz de usuario moderna, sistema de permisos avanzado, y integración con economías de servidor. Desarrollado con JavaScript y APIs de Minecraft Bedrock.\n\nEl sistema permite a los administradores de servidores crear rangos personalizados con permisos específicos, beneficios únicos, y sistemas de progresión. Los jugadores pueden visualizar los rangos disponibles y sus requisitos a través de una interfaz intuitiva.",
+                image: "../img/projects/ranks-system.jpg",
+                status: "active",
+                tags: ["Minecraft", "JavaScript", "UI/UX", "Addon", "Sistema de Permisos"],
+                date: "2025-01-15",
+                features: [
+                    {
+                        title: "Interfaz de usuario moderna",
+                        description: "Diseño responsive y atractivo que se adapta a diferentes dispositivos"
+                    },
+                    {
+                        title: "Sistema de permisos granular",
+                        description: "Control detallado de permisos por rango y por jugador"
+                    },
+                    {
+                        title: "Integración con economía",
+                        description: "Compatibilidad con sistemas económicos populares de servidores"
+                    },
+                    {
+                        title: "Progresión por niveles",
+                        description: "Sistema de experiencia y niveles para ascender entre rangos"
+                    },
+                    {
+                        title: "Compatibilidad multiplataforma",
+                        description: "Funciona en diferentes versiones de Minecraft Bedrock"
+                    }
+                ],
+                technologies: ["JavaScript", "Minecraft API", "HTML/CSS", "JSON", "Web Components"],
+                githubLink: "https://github.com/developer7452/ranks-system",
+                demoLink: "https://demo.ranks-system.com"
+            },
+            {
+                id: 2,
+                title: "E-commerce para Servidores",
+                shortDescription: "Plataforma de e-commerce especializada para tiendas de servidores de Minecraft.",
+                fullDescription: "Plataforma completa de e-commerce diseñada específicamente para servidores de Minecraft, incluyendo sistema de pagos, gestión de productos digitales, y panel de administración completo.\n\nEsta solución está optimizada para la venta de productos digitales como rangos, items personalizados, y otros beneficios dentro del servidor. Incluye integración con pasarelas de pago populares y sistema de entrega automática.",
+                image: "../img/projects/minecraft-shop.jpg",
+                status: "in-progress",
+                tags: ["Web", "E-commerce", "PHP", "MySQL", "Sistema de Pagos"],
+                date: "2025-02-20",
+                features: [
+                    {
+                        title: "Sistema de pagos integrado",
+                        description: "Integración con PayPal, Stripe y otras pasarelas de pago"
+                    },
+                    {
+                        title: "Panel de administración",
+                        description: "Interfaz completa para gestionar productos, pedidos y usuarios"
+                    },
+                    {
+                        title: "Productos digitales",
+                        description: "Gestión especializada para productos virtuales y servicios"
+                    },
+                    {
+                        title: "Sistema de cupones",
+                        description: "Creación y gestión de códigos promocionales y descuentos"
+                    },
+                    {
+                        title: "Estadísticas avanzadas",
+                        description: "Reportes detallados de ventas y comportamiento de usuarios"
+                    }
+                ],
+                technologies: ["PHP", "MySQL", "JavaScript", "Bootstrap", "REST API"],
+                githubLink: "https://github.com/developer7452/minecraft-shop",
+                demoLink: null
+            },
+            {
+                id: 3,
+                title: "API de Gestión de Addons",
+                shortDescription: "API RESTful para gestión y distribución de addons de Minecraft.",
+                fullDescription: "API completa para la gestión, distribución y actualización de addons de Minecraft. Incluye sistema de versionado, estadísticas de descargas, y gestión de dependencias entre addons.\n\nEsta API permite a los desarrolladores publicar y mantener sus addons de manera eficiente, mientras que los usuarios pueden descubrir y descargar addons de forma segura con sistema de verificación de integridad.",
+                image: "../img/projects/api-addons.jpg",
+                status: "planned",
+                tags: ["API", "Node.js", "MongoDB", "REST", "Microservicios"],
+                date: "2025-03-10",
+                features: [
+                    {
+                        title: "Versionado semántico",
+                        description: "Sistema de control de versiones siguiendo estándares semver"
+                    },
+                    {
+                        title: "Estadísticas en tiempo real",
+                        description: "Métricas de descargas y uso de cada addon"
+                    },
+                    {
+                        title: "Gestión de dependencias",
+                        description: "Sistema para manejar dependencias entre diferentes addons"
+                    },
+                    {
+                        title: "Documentación automática",
+                        description: "Generación automática de documentación OpenAPI/Swagger"
+                    },
+                    {
+                        title: "Autenticación JWT",
+                        description: "Sistema seguro de autenticación para desarrolladores"
+                    }
+                ],
+                technologies: ["Node.js", "Express", "MongoDB", "JWT", "Docker"],
+                githubLink: null,
+                demoLink: null
+            },
+            {
+                id: 4,
+                title: "Herramientas de Desarrollo",
+                shortDescription: "Suite de herramientas para desarrolladores de contenido de Minecraft.",
+                fullDescription: "Colección de herramientas y utilidades diseñadas para facilitar el desarrollo de contenido para Minecraft, incluyendo validadores, optimizadores y generadores de código automatizados.\n\nEsta suite incluye herramientas para validar archivos de configuración, optimizar texturas, generar manifiestos automáticamente, y facilitar el proceso de debugging durante el desarrollo de addons y packs de recursos.",
+                image: "../img/projects/dev-tools.jpg",
+                status: "active",
+                tags: ["Herramientas", "Python", "Automation", "DevOps", "CLI"],
+                date: "2024-12-05",
+                features: [
+                    {
+                        title: "Validador de JSON",
+                        description: "Validación de archivos JSON contra esquemas de Minecraft"
+                    },
+                    {
+                        title: "Optimizador de texturas",
+                        description: "Compresión y optimización automática de texturas"
+                    },
+                    {
+                        title: "Generador de manifiestos",
+                        description: "Creación automática de archivos de manifiesto para addons"
+                    },
+                    {
+                        title: "Herramientas de debugging",
+                        description: "Utilidades para identificar y solucionar problemas"
+                    },
+                    {
+                        title: "Integración CI/CD",
+                        description: "Compatibilidad con pipelines de integración continua"
+                    }
+                ],
+                technologies: ["Python", "FastAPI", "React", "Docker", "GitHub Actions"],
+                githubLink: "https://github.com/developer7452/mc-dev-tools",
+                demoLink: "https://tools.developer7452.com"
+            }
+        ];
+
+        // Función para obtener parámetros de URL
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                id: parseInt(params.get('id')) || null
+            };
+        }
+
+        // Función para obtener proyecto por ID
+        function getProjectById(id) {
+            return projectsData.find(project => project.id === id) || null;
+        }
+
+        // Función para obtener icono de estado
+        function getStatusIcon(status) {
+            const icons = {
+                'active': 'check-circle',
+                'in-progress': 'sync-alt',
+                'planned': 'clock'
+            };
+            return icons[status] || 'circle';
+        }
+
+        // Función para obtener texto de estado
+        function getStatusText(status) {
+            const texts = {
+                'active': 'Activo',
+                'in-progress': 'En Progreso',
+                'planned': 'Planificado'
+            };
+            return texts[status] || status;
+        }
+
+        // Función para formatear fecha
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('es-ES', options);
+        }
+
+        // Función para renderizar detalles del proyecto
+        function renderProjectDetails() {
+            const container = document.getElementById('projectDetails');
+            const { id } = getUrlParams();
+            
+            if (!id) {
+                container.innerHTML = `
+                    <div class="error-message">
+                        <div class="error-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h2 class="error-text">Proyecto no encontrado</h2>
+                        <p class="error-details">No se ha especificado un ID de proyecto válido.</p>
+                        <a href="proyectos.html" class="project-link link-primary">
+                            <i class="fas fa-arrow-left"></i>
+                            Volver a Proyectos
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+            
+            const project = getProjectById(id);
+            
+            if (!project) {
+                container.innerHTML = `
+                    <div class="error-message">
+                        <div class="error-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h2 class="error-text">Proyecto no encontrado</h2>
+                        <p class="error-details">El proyecto con ID ${id} no existe o ha sido eliminado.</p>
+                        <a href="proyectos.html" class="project-link link-primary">
+                            <i class="fas fa-arrow-left"></i>
+                            Volver a Proyectos
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="project-header">
+                    <img src="${project.image}" alt="${project.title}" class="project-image-large" onerror="this.src='../img/projects/default-project.jpg'">
+                    
+                    <h1 class="project-title-large">${project.title}</h1>
+                    
+                    <div class="project-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>Publicado: ${formatDate(project.date)}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-code"></i>
+                            <span>${project.technologies.length} tecnologías</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-tags"></i>
+                            <span>${project.tags.length} categorías</span>
+                        </div>
+                    </div>
+                    
+                    <div class="project-status-large status-${project.status}">
+                        <i class="fas fa-${getStatusIcon(project.status)}"></i>
+                        ${getStatusText(project.status)}
+                    </div>
+                    
+                    <div class="project-tags-large">
+                        ${project.tags.map(tag => `<span class="project-tag-large">${tag}</span>`).join('')}
+                    </div>
+                </div>
+                
+                <div class="project-description-full">
+                    ${project.fullDescription.replace(/\n/g, '<br><br>')}
+                </div>
+                
+                <h2 class="section-title">Características Principales</h2>
+                <div class="features-list">
+                    ${project.features.map((feature, index) => `
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-${index % 2 === 0 ? 'star' : 'check'}"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h3 class="feature-title">${feature.title}</h3>
+                                <p class="feature-description">${feature.description}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <h2 class="section-title">Tecnologías Utilizadas</h2>
+                <div class="tech-stack">
+                    ${project.technologies.map(tech => `<span class="tech-item">${tech}</span>`).join('')}
+                </div>
+                
+                <div class="project-links">
+                    ${project.githubLink ? `
+                        <a href="${project.githubLink}" target="_blank" class="project-link link-primary">
+                            <i class="fab fa-github"></i>
+                            Ver en GitHub
+                        </a>
+                    ` : `
+                        <span class="project-link link-disabled">
+                            <i class="fab fa-github"></i>
+                            Código Privado
+                        </span>
+                    `}
+                    
+                    ${project.demoLink ? `
+                        <a href="${project.demoLink}" target="_blank" class="project-link link-secondary">
+                            <i class="fas fa-external-link-alt"></i>
+                            Ver Demo
+                        </a>
+                    ` : `
+                        <span class="project-link link-disabled">
+                            <i class="fas fa-external-link-alt"></i>
+                            Demo no disponible
+                        </span>
+                    `}
+                </div>
+            `;
+        }
+
+        // Configurar sidebar
+        function setupSidebar() {
+            const userAvatar = document.getElementById('userAvatar');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            const closeSidebar = document.getElementById('closeSidebar');
+            
+            function toggleSidebar() {
+                const isActive = sidebar.classList.contains('active');
+                
+                if (isActive) {
+                    closeSidebarFunction();
+                } else {
+                    sidebar.classList.add('active');
+                    sidebarOverlay.classList.add('active');
+                    document.body.classList.add('menu-open');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+            
+            function closeSidebarFunction() {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                document.body.classList.remove('menu-open');
+                document.body.style.overflow = '';
+            }
+            
+            if (userAvatar) {
+                userAvatar.addEventListener('click', toggleSidebar);
+            }
+            
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', closeSidebarFunction);
+            }
+            
+            if (closeSidebar) {
+                closeSidebar.addEventListener('click', closeSidebarFunction);
+            }
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && sidebar && sidebar.classList.contains('active')) {
+                    closeSidebarFunction();
+                }
+            });
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            renderProjectDetails();
+            setupSidebar();
+        });
+    </script>
+</body>
+</html>

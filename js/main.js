@@ -1,5 +1,4 @@
-// Función para renderizar los addons
-async function renderAddons(addons) {
+function renderAddons(addons) {
     const container = document.getElementById('addonsContainer');
     
     if (addons.length === 0) {
@@ -44,12 +43,10 @@ async function renderAddons(addons) {
     `).join('');
 }
 
-// Función para navegar a la página de detalles del addon
 function viewAddon(id) {
     window.location.href = `view.html?id=${id}`;
 }
 
-// Función para descargar un addon
 function downloadAddon(id) {
     const addon = getAddonById(id);
     if (addon) {
@@ -72,7 +69,6 @@ function downloadAddon(id) {
     }
 }
 
-// Funcionalidad del sidebar lateral
 function setupSidebar() {
     const userAvatar = document.getElementById('userAvatar');
     const sidebar = document.getElementById('sidebar');
@@ -118,13 +114,11 @@ function setupSidebar() {
     });
 }
 
-// Función para formatear fechas
 function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('es-ES', options);
 }
 
-// Renderizar estrellas
 function renderStars(rating, interactive = false, size = 'medium') {
     const numericRating = parseFloat(rating) || 0;
     const starSize = size === 'small' ? '0.9rem' : '1.5rem';
@@ -150,7 +144,6 @@ function renderStars(rating, interactive = false, size = 'medium') {
     return `<div class="stars ${interactive ? 'interactive' : ''} ${size}">${starsHtml}</div>`;
 }
 
-// Sistema de búsqueda
 function setupSearch() {
     const searchForm = document.getElementById('searchForm');
     const searchInput = document.getElementById('searchInput');
@@ -197,7 +190,113 @@ function setupSearch() {
     });
 }
 
-// Inicializar la página
+function setupWelcomeNotification() {
+    const NOTIFICATION_KEY = 'welcome_notification_shown';
+    const NOTIFICATION_COOLDOWN = 6 * 24 * 60 * 60 * 1000;
+    const now = Date.now();
+    const lastShown = localStorage.getItem(NOTIFICATION_KEY);
+    
+    if (!lastShown || (now - parseInt(lastShown)) > NOTIFICATION_COOLDOWN) {
+        setTimeout(() => {
+            showWelcomeNotification();
+            localStorage.setItem(NOTIFICATION_KEY, now.toString());
+        }, 2000);
+    }
+}
+
+function showWelcomeNotification() {
+    const notification = document.createElement('div');
+    notification.className = 'welcome-notification';
+    notification.innerHTML = `
+        <div class="notification-content">
+            <span class="notification-message">Bienvenid@ a la página da click aqui</span>
+            <button class="notification-close" onclick="closeWelcomeNotification(this.parentElement.parentElement)">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    const autoCloseTimer = setTimeout(() => {
+        closeWelcomeNotification(notification);
+    }, 10000);
+    
+    notification.addEventListener('click', function(e) {
+        if (!e.target.closest('.notification-close')) {
+            clearTimeout(autoCloseTimer);
+            showWelcomeModal();
+            closeWelcomeNotification(notification);
+        }
+    });
+}
+
+function closeWelcomeNotification(notification) {
+    if (notification) {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }
+}
+
+function showWelcomeModal() {
+    const modal = document.createElement('div');
+    modal.className = 'welcome-modal-overlay';
+    modal.innerHTML = `
+        <div class="welcome-modal">
+            <div class="modal-header">
+                <h3>¡Hola Querido Usuario!</h3>
+                <button class="modal-close" onclick="closeWelcomeModal(this.parentElement.parentElement.parentElement)">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <p>Te queremos avisar que esta página fue hecha por <span class="megapixel-link" onclick="openMegapixelDiscord()">MegaPixel</span>, cuando le den click al texto "MegaPixel" te debe mandar a esta URL "https://discord.gg/RMfzSyNxjT", Si buscas una web semi profesional puede que seamos tu mejor opción</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-ok-btn" onclick="closeWelcomeModal(this.parentElement.parentElement.parentElement)">Entendido</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    setTimeout(() => {
+        modal.classList.add('show');
+    }, 100);
+}
+
+function closeWelcomeModal(modal) {
+    if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            if (modal.parentNode) {
+                modal.parentNode.removeChild(modal);
+            }
+        }, 300);
+    }
+}
+
+function openMegapixelDiscord() {
+    window.open('https://discord.gg/RMfzSyNxjT', '_blank');
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const modal = document.querySelector('.welcome-modal-overlay');
+        if (modal) {
+            closeWelcomeModal(modal);
+        }
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     showLoading();
     
@@ -207,10 +306,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     setupSidebar();
     setupSearch();
+    setupWelcomeNotification();
 });
 
-// Exportar funciones para uso global
 window.viewAddon = viewAddon;
 window.downloadAddon = downloadAddon;
 window.renderStars = renderStars;
 window.formatDate = formatDate;
+window.closeWelcomeNotification = closeWelcomeNotification;
+window.closeWelcomeModal = closeWelcomeModal;
+window.openMegapixelDiscord = openMegapixelDiscord;

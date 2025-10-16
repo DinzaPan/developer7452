@@ -260,38 +260,14 @@
             <p>Herramientas y utilidades web desarrolladas para la comunidad de Minecraft.</p>
         </div>
         
-        <div class="webpages-grid">
-            <!-- Editor HUD Screen -->
-            <div class="webpage-card locked" id="hudEditorCard">
-                <div class="countdown-overlay" id="countdownOverlay">
-                    <h3 class="countdown-title">Disponible en:</h3>
-                    <div class="countdown-timer" id="countdownTimer">20d, 2h, 3m, 50s</div>
-                    <div class="countdown-progress">
-                        <div class="countdown-progress-bar" id="countdownProgressBar"></div>
-                    </div>
-                    <p class="countdown-message">Esta herramienta estará disponible una vez que el contador llegue a cero</p>
-                </div>
-                
-                <div class="webpage-icon">
-                    <i class="fas fa-code"></i>
-                </div>
-                <div class="webpage-info">
-                    <h3 class="webpage-title">Editor HUD Screen</h3>
-                    <p class="webpage-description">
-                        Herramienta para crear y personalizar archivos hud_screen.json para Minecraft Bedrock Edition.
-                    </p>
-                    <div class="webpage-features">
-                        <div class="feature-tag">JSON Generator</div>
-                        <div class="feature-tag">Minecraft UI</div>
-                        <div class="feature-tag">Custom HUD</div>
-                    </div>
-                </div>
-            </div>
+        <div class="webpages-grid" id="webpagesGrid">
+            <!-- Las tarjetas se generarán dinámicamente desde time.js -->
         </div>
     </div>
 
     <script src="../js/complement.js"></script>
     <script src="../js/discord.js"></script>
+    <script src="../js/time.js"></script>
     <script>
         // Funcionalidad del sidebar lateral
         function setupSidebar() {
@@ -339,94 +315,6 @@
             });
         }
 
-        // Sistema de contador regresivo
-        function setupCountdown() {
-            const countdownTimer = document.getElementById('countdownTimer');
-            const countdownProgressBar = document.getElementById('countdownProgressBar');
-            const hudEditorCard = document.getElementById('hudEditorCard');
-            
-            // Tiempo inicial: 5 días, 2 horas, 3 minutos y 50 segundos
-            let totalSeconds = (5 * 24 * 60 * 60) + (2 * 60 * 60) + (3 * 60) + 50;
-            const initialTotalSeconds = totalSeconds;
-            
-            // Verificar si ya ha expirado (para cuando se recarga la página)
-            const savedEndTime = localStorage.getItem('countdownEndTime');
-            let endTime;
-            
-            if (savedEndTime) {
-                endTime = parseInt(savedEndTime);
-                const now = Math.floor(Date.now() / 1000);
-                const timeLeft = endTime - now;
-                
-                if (timeLeft <= 0) {
-                    // El contador ya expiró
-                    unlockCard();
-                    return;
-                } else {
-                    totalSeconds = timeLeft;
-                }
-            } else {
-                // Primera vez - establecer tiempo de finalización
-                endTime = Math.floor(Date.now() / 1000) + totalSeconds;
-                localStorage.setItem('countdownEndTime', endTime.toString());
-            }
-            
-            // Función para actualizar el contador
-            function updateCountdown() {
-                if (totalSeconds <= 0) {
-                    unlockCard();
-                    return;
-                }
-                
-                // Calcular días, horas, minutos y segundos
-                const days = Math.floor(totalSeconds / (24 * 60 * 60));
-                const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
-                const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
-                const seconds = totalSeconds % 60;
-                
-                // Actualizar el texto del contador
-                countdownTimer.textContent = `${days}d, ${hours}h, ${minutes}m, ${seconds}s`;
-                
-                // Actualizar la barra de progreso
-                const progressPercentage = (totalSeconds / initialTotalSeconds) * 100;
-                countdownProgressBar.style.width = `${progressPercentage}%`;
-                
-                // Reducir el tiempo
-                totalSeconds--;
-            }
-            
-            // Función para desbloquear la tarjeta
-            function unlockCard() {
-                hudEditorCard.classList.remove('locked');
-                hudEditorCard.classList.add('unlocked');
-                
-                // Permitir clic en la tarjeta
-                hudEditorCard.onclick = function() {
-                    window.location.href = 'web/index_dev.html';
-                };
-                
-                // Limpiar el intervalo
-                clearInterval(countdownInterval);
-                
-                // Eliminar el tiempo guardado
-                localStorage.removeItem('countdownEndTime');
-            }
-            
-            // Actualizar el contador inmediatamente y luego cada segundo
-            updateCountdown();
-            const countdownInterval = setInterval(updateCountdown, 1000);
-            
-            // Inicialmente, la tarjeta está bloqueada
-            hudEditorCard.onclick = function(e) {
-                if (hudEditorCard.classList.contains('locked')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    // Mostrar mensaje de que aún no está disponible
-                    showNotification('Esta herramienta aún no está disponible. Por favor, espera a que el contador llegue a cero.', 'info');
-                }
-            };
-        }
-        
         // Función para mostrar notificaciones
         function showNotification(message, type = 'info') {
             // Crear elemento de notificación
@@ -470,7 +358,7 @@
         // Inicializar la página
         document.addEventListener('DOMContentLoaded', function() {
             setupSidebar();
-            setupCountdown();
+            // Las tarjetas y contadores se inicializan desde time.js
         });
     </script>
 </body>

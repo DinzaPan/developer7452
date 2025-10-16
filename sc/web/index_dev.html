@@ -48,309 +48,21 @@
             min-height: 100vh;
             transition: var(--transition);
             position: relative;
-        }
-
-        /* Barra de navegación */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-            background-color: var(--dark-card);
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-            background-color: rgba(30, 41, 59, 0.8);
-            width: 100%;
-            max-width: 100%;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .site-logo {
-            width: 3.5rem;
-            height: 3.5rem;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .site-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 0;
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
-        }
-
-        .user-menu-container {
-            position: relative;
-        }
-
-        .user-avatar {
-            width: 3rem;
-            height: 3rem;
-            border-radius: 50%;
-            background-color: #64748b;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            border: 2px solid transparent;
-        }
-
-        .user-avatar:hover {
-            border-color: var(--primary-color);
-            transform: scale(1.05);
-        }
-
-        .avatar-placeholder {
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        /* Sidebar lateral - CORREGIDO para izquierda */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -320px;
-            width: 320px;
-            height: 100vh;
-            background-color: var(--dark-card);
-            box-shadow: var(--shadow-lg);
-            z-index: 1002;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            transition: var(--transition);
-            border-right: 1px solid var(--dark-border);
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-
-        .sidebar.active {
-            left: 0;
-        }
-
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--dark-border);
-            background-color: rgba(30, 41, 59, 0.95);
-            width: 100%;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
-
-        .user-info-sidebar {
-            display: flex;
-            align-items: center;
-            flex-grow: 1;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .user-info-sidebar:hover {
-            opacity: 0.9;
-        }
-
-        .user-avatar-sidebar {
-            width: 3.5rem;
-            height: 3.5rem;
-            border-radius: 50%;
-            background-color: #64748b;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            flex-shrink: 0;
-            overflow: hidden;
-        }
-
-        .user-avatar-sidebar .avatar-placeholder {
-            font-size: 1.3rem;
-        }
-
-        .user-details {
-            flex-grow: 1;
-        }
-
-        .user-name {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--dark-text);
-            margin-bottom: 0.25rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 12rem;
-        }
-
-        .user-status {
-            font-size: 0.875rem;
-            color: #94a3b8;
-        }
-
-        .close-sidebar {
-            background: none;
-            border: none;
-            color: var(--dark-text);
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: var(--rounded);
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 0.5rem;
-        }
-
-        .close-sidebar:hover {
-            background-color: rgba(239, 68, 68, 0.1);
-            color: var(--error-color);
-        }
-
-        .sidebar-items {
-            display: flex;
-            flex-direction: column;
-            padding: 0;
-            width: 100%;
-            flex-grow: 1;
-        }
-
-        .sidebar-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 1rem 1.5rem;
-            color: var(--dark-text);
-            text-decoration: none;
-            border-radius: 0;
-            transition: var(--transition);
-            font-weight: 500;
-            width: 100%;
-            border-bottom: 1px solid var(--dark-border);
-        }
-
-        .sidebar-item:last-child {
-            border-bottom: none;
-        }
-
-        .sidebar-item:hover {
-            background-color: rgba(139, 92, 246, 0.1);
-            color: var(--primary-color);
-            padding-left: 2rem;
-        }
-
-        .menu-icon {
-            width: 1.25rem;
-            height: 1.25rem;
-            flex-shrink: 0;
-            color: var(--primary-color);
-        }
-
-        .sidebar-footer {
-            padding: 1.5rem;
-            border-top: 1px solid var(--dark-border);
-            background-color: rgba(30, 41, 59, 0.95);
-            width: 100%;
-            position: sticky;
-            bottom: 0;
-            margin-top: auto;
-        }
-
-        .social-links {
             display: flex;
             justify-content: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .social-link {
-            display: flex;
             align-items: center;
-            justify-content: center;
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: var(--rounded);
-            background-color: var(--dark-bg);
-            color: var(--dark-text);
-            transition: var(--transition);
-            text-decoration: none;
-            font-size: 1.1rem;
+            padding: 1rem;
         }
 
-        .social-link:hover {
-            transform: translateY(-2px);
-        }
-
-        .social-link.discord:hover {
-            background-color: #5865F2;
-            color: white;
-        }
-
-        .social-link.tiktok:hover {
-            background-color: #000000;
-            color: white;
-        }
-
-        .social-link.twitter:hover {
-            background-color: #1DA1F2;
-            color: white;
-        }
-
-        .copyright {
-            text-align: center;
-            font-size: 0.875rem;
-            color: #94a3b8;
-            margin-top: 1rem;
-        }
-
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(15, 23, 42, 0.5);
-            z-index: 1001;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-            backdrop-filter: blur(2px);
-        }
-
-        .sidebar-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Contenido principal */
+        /* Contenedor principal */
         .container {
-            padding: 2rem;
-            max-width: 90rem;
-            margin: 0 auto;
+            max-width: 800px;
             width: 100%;
-            overflow: hidden;
-            transition: var(--transition);
-        }
-
-        .sidebar.active ~ .container {
-            transform: translateX(80px);
+            background-color: var(--dark-card);
+            border-radius: var(--rounded-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+            border: 1px solid var(--dark-border);
         }
 
         .page-title {
@@ -360,36 +72,44 @@
             color: var(--dark-text);
             position: relative;
             padding-bottom: 0.75rem;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.25rem;
+            text-align: center;
         }
 
         .page-title:after {
             content: '';
             position: absolute;
             bottom: 0;
-            left: 0;
+            left: 50%;
+            transform: translateX(-50%);
             width: 4rem;
             height: 0.25rem;
             background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
             border-radius: 0.25rem;
         }
 
-        /* Estilos específicos para el editor */
-        .editor-container {
-            max-width: 800px;
-            width: 100%;
-            background-color: var(--dark-card);
-            border-radius: var(--rounded-lg);
-            box-shadow: var(--shadow-lg);
-            padding: 2rem;
-            margin: 0 auto;
-            border: 1px solid var(--dark-border);
+        /* Botón de inicio */
+        .home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--rounded);
+            font-weight: 600;
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+            border: none;
+            cursor: pointer;
         }
 
+        .home-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Estilos específicos para el editor */
         .form-group {
             margin-bottom: 1.5rem;
             text-align: left;
@@ -466,30 +186,12 @@
             transform: translateY(-2px);
         }
 
-        .btn-secondary {
-            background-color: var(--secondary-color);
-        }
-
-        .btn-secondary:hover {
-            background-color: #e69500;
-            transform: translateY(-2px);
-        }
-
         .btn-success {
             background-color: var(--accent-color);
         }
 
         .btn-success:hover {
             background-color: #0da271;
-            transform: translateY(-2px);
-        }
-
-        .btn-danger {
-            background-color: var(--error-color);
-        }
-
-        .btn-danger:hover {
-            background-color: #dc2626;
             transform: translateY(-2px);
         }
 
@@ -540,50 +242,7 @@
         /* Estilos responsivos mejorados */
         @media (max-width: 768px) {
             .container {
-                padding: 1rem;
-                width: 100%;
-                overflow: hidden;
-            }
-            
-            .sidebar.active ~ .container {
-                transform: none;
-            }
-            
-            .navbar {
-                padding: 0.75rem 1rem;
-                width: 100%;
-            }
-            
-            .editor-container {
                 padding: 1.5rem;
-            }
-            
-            .sidebar {
-                width: 280px;
-                left: -280px;
-            }
-            
-            .sidebar.active {
-                left: 0;
-            }
-            
-            .sidebar-header {
-                padding: 1.25rem;
-                width: 100%;
-            }
-            
-            .sidebar-item {
-                padding: 0.875rem 1.25rem;
-                width: 100%;
-            }
-            
-            .site-logo {
-                width: 3rem;
-                height: 3rem;
-            }
-            
-            .site-title {
-                font-size: 1.25rem;
             }
             
             .form-row {
@@ -597,38 +256,12 @@
         }
 
         @media (max-width: 480px) {
-            .navbar {
-                padding: 0.75rem 1rem;
-            }
-            
             .container {
-                padding: 0.5rem;
+                padding: 1rem;
             }
             
             .page-title {
                 font-size: 1.75rem;
-            }
-            
-            .editor-container {
-                padding: 1rem;
-            }
-            
-            .logo-container {
-                gap: 0.75rem;
-            }
-            
-            .user-avatar {
-                width: 2.5rem;
-                height: 2.5rem;
-            }
-            
-            .sidebar-footer {
-                padding: 1rem 1.25rem;
-            }
-            
-            .sidebar {
-                width: 260px;
-                left: -260px;
             }
             
             .block-preview,
@@ -658,206 +291,119 @@
 </head>
 
 <body>
-    <!-- Barra de navegación -->
-    <nav class="navbar">
-        <div class="logo-container">
-            <img src="./img/logo.png" alt="Developer7452 Logo" class="site-logo">
-            <h1 class="site-title">Developer7452</h1>
-        </div>
-        
-        <!-- Menú de usuario -->
-        <div class="user-menu-container">
-            <div class="user-avatar" id="userAvatar">
-                <div class="avatar-placeholder">
-                    <i class="fas fa-user"></i>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Sidebar lateral -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="user-info-sidebar" id="userInfoSidebar">
-                    <div class="user-avatar-sidebar">
-                        <div class="avatar-placeholder">
-                            <i class="fas fa-user"></i>
-                        </div>
-                    </div>
-                    <div class="user-details">
-                        <h3 class="user-name" id="userName">Iniciar Sesión</h3>
-                        <p class="user-status" id="userStatus">Haz clic para conectar</p>
-                    </div>
-                </div>
-                <button class="close-sidebar" id="closeSidebar">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="sidebar-items">
-                <a href="index.html" class="sidebar-item">
-                    <i class="fas fa-home menu-icon"></i>
-                    Inicio
-                </a>
-                <a href="./sc/sobre-mi.html" class="sidebar-item">
-                    <i class="fas fa-user menu-icon"></i>
-                    Sobre Mí
-                </a>
-                <a href="./sc/comisiones.html" class="sidebar-item">
-                    <i class="fas fa-coins menu-icon"></i>
-                    Comisiones
-                </a>
-                <a href="./sc/proyectos.html" class="sidebar-item">
-                    <i class="fas fa-project-diagram menu-icon"></i>
-                    Proyectos
-                </a>
-                <a href="./sc/paginas-web.html" class="sidebar-item">
-                    <i class="fas fa-globe menu-icon"></i>
-                    Páginas Web
-                </a>
-                <a href="#" class="sidebar-item" id="logoutBtn" style="display: none;">
-                    <i class="fas fa-sign-out-alt menu-icon"></i>
-                    Cerrar Sesión
-                </a>
-            </div>
-            
-            <div class="sidebar-footer">
-                <div class="social-links">
-                    <a href="https://discord.gg/Kag2a5YUYa" target="_blank" class="social-link discord">
-                        <i class="fab fa-discord"></i>
-                    </a>
-                    <a href="https://www.youtube.com/@developer-7452" target="_blank" class="social-link tiktok">
-                        <i class="fab fa-youtube"></i>
-                    </a>
-                    <a href="https://twitter.com" target="_blank" class="social-link twitter">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                </div>
-                <p class="copyright">© 2025 Developer7452</p>
-            </div>
-        </div>
-        
-        <!-- Overlay para cerrar sidebar -->
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    </nav>
-
-    <!-- Contenido principal -->
     <div class="container">
         <h1 class="page-title">Editor de Elementos de Imagen</h1>
         
-        <div class="editor-container">
-            <form id="elementForm">
-                <div class="form-group">
-                    <a href="index.html" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Volver al Inicio
-                    </a>
-                </div>
-                
-                <div class="form-group">
-                    <label for="name">Nombre (ej. custom_totem)</label>
-                    <input type="text" id="name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="texture">Ruta de la textura (ej. textures/ui/Black)</label>
-                    <input type="text" id="texture" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="flag">Flag (Palabra clave para que aparezca)</label>
-                    <input type="text" id="flag" required>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="stayDuration">Tiempo en pantalla (segundos)</label>
-                        <input type="number" id="stayDuration">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="fadeInDuration">Tiempo para que aparezca (segundos)</label>
-                        <input type="number" id="fadeInDuration">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="fadeOutDuration">Tiempo para que desaparezca (segundos)</label>
-                        <input type="number" id="fadeOutDuration">
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="sizeX">Ancho (ej. 20)</label>
-                        <input type="number" id="sizeX" placeholder="Ancho" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="sizeY">Altura (ej. 20)</label>
-                        <input type="number" id="sizeY" placeholder="Altura" required>
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="offsetX">Desplazamiento X (ej. 0)</label>
-                        <input type="number" id="offsetX" placeholder="X Offset">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="offsetY">Desplazamiento Y (ej. 0)</label>
-                        <input type="number" id="offsetY" placeholder="Y Offset">
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="anchorFrom">Anchor From</label>
-                        <select id="anchorFrom">
-                            <option value="center">center</option>
-                            <option value="bottom_left">bottom_left</option>
-                            <option value="bottom_middle">bottom_middle</option>
-                            <option value="bottom_right">bottom_right</option>
-                            <option value="left_middle">left_middle</option>
-                            <option value="right_middle">right_middle</option>
-                            <option value="top_left">top_left</option>
-                            <option value="top_middle">top_middle</option>
-                            <option value="top_right">top_right</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="anchorTo">Anchor To</label>
-                        <select id="anchorTo">
-                            <option value="center">center</option>
-                            <option value="bottom_left">bottom_left</option>
-                            <option value="bottom_middle">bottom_middle</option>
-                            <option value="bottom_right">bottom_right</option>
-                            <option value="left_middle">left_middle</option>
-                            <option value="right_middle">right_middle</option>
-                            <option value="top_left">top_left</option>
-                            <option value="top_middle">top_middle</option>
-                            <option value="top_right">top_right</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="button-group">
-                    <button type="button" class="btn btn-primary" onclick="addNewBlock()">
-                        <i class="fas fa-plus"></i> Agregar Imagen
-                    </button>
-                    <button type="button" class="btn btn-success" onclick="downloadJson()">
-                        <i class="fas fa-download"></i> Descargar JSON
-                    </button>
-                </div>
-            </form>
-            
-            <div class="block-preview scrollable" id="block-preview">
-                <h3>Preview de imágenes agregadas</h3>
+        <a href="index.html" class="home-btn">
+            <i class="fas fa-arrow-left"></i> Volver al Inicio
+        </a>
+        
+        <form id="elementForm">
+            <div class="form-group">
+                <label for="name">Nombre (ej. custom_totem)</label>
+                <input type="text" id="name" required>
             </div>
             
-            <div class="original-json scrollable">
-                <h3>JSON Generado</h3>
-                <pre id="jsonOutput"></pre>
+            <div class="form-group">
+                <label for="texture">Ruta de la textura (ej. textures/ui/Black)</label>
+                <input type="text" id="texture" required>
             </div>
+            
+            <div class="form-group">
+                <label for="flag">Flag (Palabra clave para que aparezca)</label>
+                <input type="text" id="flag" required>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="stayDuration">Tiempo en pantalla (segundos)</label>
+                    <input type="number" id="stayDuration">
+                </div>
+                
+                <div class="form-group">
+                    <label for="fadeInDuration">Tiempo para que aparezca (segundos)</label>
+                    <input type="number" id="fadeInDuration">
+                </div>
+                
+                <div class="form-group">
+                    <label for="fadeOutDuration">Tiempo para que desaparezca (segundos)</label>
+                    <input type="number" id="fadeOutDuration">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="sizeX">Ancho (ej. 20)</label>
+                    <input type="number" id="sizeX" placeholder="Ancho" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="sizeY">Altura (ej. 20)</label>
+                    <input type="number" id="sizeY" placeholder="Altura" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="offsetX">Desplazamiento X (ej. 0)</label>
+                    <input type="number" id="offsetX" placeholder="X Offset">
+                </div>
+                
+                <div class="form-group">
+                    <label for="offsetY">Desplazamiento Y (ej. 0)</label>
+                    <input type="number" id="offsetY" placeholder="Y Offset">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="anchorFrom">Anchor From</label>
+                    <select id="anchorFrom">
+                        <option value="center">center</option>
+                        <option value="bottom_left">bottom_left</option>
+                        <option value="bottom_middle">bottom_middle</option>
+                        <option value="bottom_right">bottom_right</option>
+                        <option value="left_middle">left_middle</option>
+                        <option value="right_middle">right_middle</option>
+                        <option value="top_left">top_left</option>
+                        <option value="top_middle">top_middle</option>
+                        <option value="top_right">top_right</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="anchorTo">Anchor To</label>
+                    <select id="anchorTo">
+                        <option value="center">center</option>
+                        <option value="bottom_left">bottom_left</option>
+                        <option value="bottom_middle">bottom_middle</option>
+                        <option value="bottom_right">bottom_right</option>
+                        <option value="left_middle">left_middle</option>
+                        <option value="right_middle">right_middle</option>
+                        <option value="top_left">top_left</option>
+                        <option value="top_middle">top_middle</option>
+                        <option value="top_right">top_right</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button type="button" class="btn btn-primary" onclick="addNewBlock()">
+                    <i class="fas fa-plus"></i> Agregar Imagen
+                </button>
+                <button type="button" class="btn btn-success" onclick="downloadJson()">
+                    <i class="fas fa-download"></i> Descargar JSON
+                </button>
+            </div>
+        </form>
+        
+        <div class="block-preview scrollable" id="block-preview">
+            <h3>Preview de imágenes agregadas</h3>
+        </div>
+        
+        <div class="original-json scrollable">
+            <h3>JSON Generado</h3>
+            <pre id="jsonOutput"></pre>
         </div>
     </div>
 
@@ -1054,32 +600,6 @@
         }
 
         updateJsonOutput();
-
-        // Funcionalidad del sidebar
-        document.addEventListener('DOMContentLoaded', function() {
-            const userAvatar = document.getElementById('userAvatar');
-            const sidebar = document.getElementById('sidebar');
-            const closeSidebar = document.getElementById('closeSidebar');
-            const sidebarOverlay = document.getElementById('sidebarOverlay');
-            
-            userAvatar.addEventListener('click', function() {
-                sidebar.classList.add('active');
-                sidebarOverlay.classList.add('active');
-                document.body.classList.add('menu-open');
-            });
-            
-            closeSidebar.addEventListener('click', function() {
-                sidebar.classList.remove('active');
-                sidebarOverlay.classList.remove('active');
-                document.body.classList.remove('menu-open');
-            });
-            
-            sidebarOverlay.addEventListener('click', function() {
-                sidebar.classList.remove('active');
-                sidebarOverlay.classList.remove('active');
-                document.body.classList.remove('menu-open');
-            });
-        });
     </script>
 </body>
 

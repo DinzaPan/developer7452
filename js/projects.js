@@ -5,7 +5,7 @@ const projectsData = [
         title: "Sistema de Rangos Avanzado",
         shortDescription: "Sistema completo de rangos para servidores de Minecraft con interfaz moderna y funciones avanzadas.",
         fullDescription: "Este proyecto es un sistema completo de rangos para servidores de Minecraft que incluye interfaz de usuario moderna, sistema de permisos avanzado, y integración con economías de servidor. Desarrollado con JavaScript y APIs de Minecraft Bedrock.\n\nEl sistema permite a los administradores de servidores crear rangos personalizados con permisos específicos, beneficios únicos, y sistemas de progresión. Los jugadores pueden visualizar los rangos disponibles y sus requisitos a través de una interfaz intuitiva.",
-        image: "../img/prueba.jpg",
+        image: "../img/projects/prueba.jpg",
         status: "active",
         tags: ["Minecraft", "JavaScript", "UI/UX", "Addon", "Sistema de Permisos"],
         date: "2025-01-15",

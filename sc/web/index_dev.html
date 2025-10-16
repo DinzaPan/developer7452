@@ -1,120 +1,535 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5858966907751618"
-        crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custom Image Element Editor</title>
+    <title>Developer7452 - Editor de Elementos de Imagen</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #8B5CF6;
+            --primary-hover: #7C3AED;
+            --secondary-color: #F59E0B;
+            --accent-color: #10B981;
+            --dark-bg: #0F172A;
+            --dark-card: #1E293B;
+            --dark-text: #F8FAFC;
+            --dark-border: #334155;
+            --light-bg: #F1F5F9;
+            --light-card: #FFFFFF;
+            --light-text: #1E293B;
+            --light-border: #E2E8F0;
+            --error-color: #EF4444;
+            --success-color: #10B981;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            --rounded: 0.75rem;
+            --rounded-lg: 1rem;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        /* Barra de navegación */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: var(--dark-card);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background-color: rgba(30, 41, 59, 0.8);
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .site-logo {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .site-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .user-menu-container {
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .user-avatar:hover {
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        .avatar-placeholder {
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        /* Sidebar lateral - CORREGIDO para izquierda */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 320px;
+            height: 100vh;
+            background-color: var(--dark-card);
+            box-shadow: var(--shadow-lg);
+            z-index: 1002;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            border-right: 1px solid var(--dark-border);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+            background-color: rgba(30, 41, 59, 0.95);
+            width: 100%;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .user-info-sidebar {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-info-sidebar:hover {
+            opacity: 0.9;
+        }
+
+        .user-avatar-sidebar {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            background-color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .user-avatar-sidebar .avatar-placeholder {
+            font-size: 1.3rem;
+        }
+
+        .user-details {
+            flex-grow: 1;
+        }
+
+        .user-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 12rem;
+        }
+
+        .user-status {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            color: var(--dark-text);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--rounded);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 0.5rem;
+        }
+
+        .close-sidebar:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error-color);
+        }
+
+        .sidebar-items {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            width: 100%;
+            flex-grow: 1;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            color: var(--dark-text);
+            text-decoration: none;
+            border-radius: 0;
+            transition: var(--transition);
+            font-weight: 500;
+            width: 100%;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .sidebar-item:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar-item:hover {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--primary-color);
+            padding-left: 2rem;
+        }
+
+        .menu-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            flex-shrink: 0;
+            color: var(--primary-color);
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--dark-border);
+            background-color: rgba(30, 41, 59, 0.95);
+            width: 100%;
+            position: sticky;
+            bottom: 0;
+            margin-top: auto;
+        }
+
+        .social-links {
             display: flex;
             justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-link {
+            display: flex;
             align-items: center;
-            min-height: 100vh;
-            background-color: #f0f2f5;
-            margin: 0;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: var(--rounded);
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            transition: var(--transition);
+            text-decoration: none;
+            font-size: 1.1rem;
         }
 
-        .container {
-            max-width: 600px;
-            width: 100%;
-            background-color: #ffffff;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            /* Cambiado para mayor espacio */
-            margin: 20px;
+        .social-link:hover {
+            transform: translateY(-2px);
         }
 
-        h2 {
-            color: #333;
-            font-size: 1.5em;
-            margin-bottom: 15px;
+        .social-link.discord:hover {
+            background-color: #5865F2;
+            color: white;
+        }
+
+        .social-link.tiktok:hover {
+            background-color: #000000;
+            color: white;
+        }
+
+        .social-link.twitter:hover {
+            background-color: #1DA1F2;
+            color: white;
+        }
+
+        .copyright {
             text-align: center;
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-top: 1rem;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.5);
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            backdrop-filter: blur(2px);
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Contenido principal */
+        .container {
+            padding: 2rem;
+            max-width: 90rem;
+            margin: 0 auto;
+            width: 100%;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .sidebar.active ~ .container {
+            transform: translateX(80px);
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--dark-text);
+            position: relative;
+            padding-bottom: 0.75rem;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .page-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 4rem;
+            height: 0.25rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 0.25rem;
+        }
+
+        /* Estilos específicos para el editor */
+        .editor-container {
+            max-width: 800px;
+            width: 100%;
+            background-color: var(--dark-card);
+            border-radius: var(--rounded-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+            margin: 0 auto;
+            border: 1px solid var(--dark-border);
         }
 
         .form-group {
-            margin-bottom: 15px;
-            text-align: center;
-            /* Centrar los elementos dentro del grupo */
+            margin-bottom: 1.5rem;
+            text-align: left;
         }
 
         label {
             font-weight: bold;
             display: block;
-            margin-bottom: 5px;
-            color: #555;
+            margin-bottom: 0.5rem;
+            color: var(--dark-text);
         }
 
         input[type="text"],
         input[type="number"],
         select {
-            width: calc(100% - 20px);
-            /* Ajustar el ancho para el padding */
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            background-color: #f9f9f9;
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: var(--rounded);
+            border: 1px solid var(--dark-border);
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: 1rem;
+            transition: var(--transition);
             box-sizing: border-box;
-            margin-bottom: 10px;
-            /* Margen inferior para separar elementos */
         }
 
-        button {
-            padding: 10px 20px;
-            margin-top: 10px;
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 8px;
-            font-weight: bold;
+            border-radius: var(--rounded);
+            font-weight: 600;
             cursor: pointer;
             color: #fff;
-            width: 48%;
-            /* Cambiado para dar espacio entre botones */
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex: 1;
         }
 
-        button[type="button"] {
-            background-color: #007bff;
-            margin-right: 2%;
-            /* Espacio entre los botones */
+        .btn-primary {
+            background-color: var(--primary-color);
         }
 
-        button[type="button"]:hover {
-            background-color: #0056b3;
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e69500;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--accent-color);
+        }
+
+        .btn-success:hover {
+            background-color: #0da271;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--error-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+            transform: translateY(-2px);
         }
 
         .block-preview,
         .original-json {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            background-color: #e9ecef;
-            color: #333;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: var(--rounded);
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
             position: relative;
             font-family: monospace;
             white-space: pre-wrap;
+            border: 1px solid var(--dark-border);
+        }
+
+        .block-preview h3,
+        .original-json h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: var(--dark-text);
+            font-size: 1.25rem;
         }
 
         .remove-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 5px 10px;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
             border: none;
-            border-radius: 5px;
-            background-color: #dc3545;
+            border-radius: var(--rounded);
+            background-color: var(--error-color);
             color: #fff;
             cursor: pointer;
+            font-size: 0.875rem;
+            transition: var(--transition);
         }
 
         .remove-btn:hover {
             background-color: #b02a37;
-        }
-
-        .dropdown-container {
-            margin: 10px 0;
         }
 
         .scrollable {
@@ -122,100 +537,327 @@
             white-space: nowrap;
         }
 
-        * {
-            box-sizing: border-box;
+        /* Estilos responsivos mejorados */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+                width: 100%;
+                overflow: hidden;
+            }
+            
+            .sidebar.active ~ .container {
+                transform: none;
+            }
+            
+            .navbar {
+                padding: 0.75rem 1rem;
+                width: 100%;
+            }
+            
+            .editor-container {
+                padding: 1.5rem;
+            }
+            
+            .sidebar {
+                width: 280px;
+                left: -280px;
+            }
+            
+            .sidebar.active {
+                left: 0;
+            }
+            
+            .sidebar-header {
+                padding: 1.25rem;
+                width: 100%;
+            }
+            
+            .sidebar-item {
+                padding: 0.875rem 1.25rem;
+                width: 100%;
+            }
+            
+            .site-logo {
+                width: 3rem;
+                height: 3rem;
+            }
+            
+            .site-title {
+                font-size: 1.25rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 0.75rem 1rem;
+            }
+            
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .page-title {
+                font-size: 1.75rem;
+            }
+            
+            .editor-container {
+                padding: 1rem;
+            }
+            
+            .logo-container {
+                gap: 0.75rem;
+            }
+            
+            .user-avatar {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+            
+            .sidebar-footer {
+                padding: 1rem 1.25rem;
+            }
+            
+            .sidebar {
+                width: 260px;
+                left: -260px;
+            }
+            
+            .block-preview,
+            .original-json {
+                padding: 1rem;
+            }
+        }
+
+        /* Estilos para scrollbar personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--dark-border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
         }
     </style>
-
 </head>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5858966907751618"
-    crossorigin="anonymous"></script>
 
 <body>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5858966907751618"
-        crossorigin="anonymous"></script>
-    <div class="container">
-        <h2>Developer7452 hud_screen.json</h2>
-        <form id="elementForm">
-            <div class="form-group">
-                <button type="button" onclick="location.href='https://discord.gg/jcUAsfAvMY'">Discord</button>
-                <button type="button" onclick="location.href='https://www.youtube.com/@developer-7452'">YouTube</button>
-            </div>
-            <div class="form-group">
-                <label for="name">Name (ej. custom_totem)</label>
-                <input type="text" id="name" required>
-            </div>
-            <div class="form-group">
-                <label for="texture">Ruta de la textura (ej. textures/ui/Black)</label>
-                <input type="text" id="texture" required>
-            </div>
-            <div class="form-group">
-                <label for="flag">Flag (Palabra clave para que aparezca)</label>
-                <input type="text" id="flag" required>
-            </div>
-            <div class="form-group">
-                <label for="stayDuration">Tiempo en pantalla (segundos)</label>
-                <input type="number" id="stayDuration">
-            </div>
-            <div class="form-group">
-                <label for="fadeInDuration">Tiempo para que aparezca (segundos)</label>
-                <input type="number" id="fadeInDuration">
-            </div>
-            <div class="form-group">
-                <label for="fadeOutDuration">Tiempo para que desaparezca (segundos)</label>
-                <input type="number" id="fadeOutDuration">
-            </div>
-            <div class="form-group">
-                <label>Tamaño</label>
-                <div style="display: flex; gap: 10px;">
-                    <input type="number" id="sizeX" placeholder="Ancho (ej. 20)" required>
-                    <input type="number" id="sizeY" placeholder="Altura (ej. 20)" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Desplazamiento</label>
-                <div style="display: flex; gap: 10px;">
-                    <input type="number" id="offsetX" placeholder="X Offset (ej. 0)">
-                    <input type="number" id="offsetY" placeholder="Y Offset (ej. 0)">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Anchor From</label>
-                <select id="anchorFrom">
-                    <option value="center">center</option>
-                    <option value="bottom_left">bottom_left</option>
-                    <option value="bottom_middle">bottom_middle</option>
-                    <option value="bottom_right">bottom_right</option>
-                    <option value="left_middle">left_middle</option>
-                    <option value="right_middle">right_middle</option>
-                    <option value="top_left">top_left</option>
-                    <option value="top_middle">top_middle</option>
-                    <option value="top_right">top_right</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Anchor To</label>
-                <select id="anchorTo">
-                    <option value="center">center</option>
-                    <option value="bottom_left">bottom_left</option>
-                    <option value="bottom_middle">bottom_middle</option>
-                    <option value="bottom_right">bottom_right</option>
-                    <option value="left_middle">left_middle</option>
-                    <option value="right_middle">right_middle</option>
-                    <option value="top_left">top_left</option>
-                    <option value="top_middle">top_middle</option>
-                    <option value="top_right">top_right</option>
-                </select>
-            </div>
-            <button type="button" onclick="addNewBlock()">Agregar Imagen</button>
-            <button type="button" onclick="downloadJson()">Descargar JSON</button>
-        </form>
-        <div class="block-preview scrollable" id="block-preview">
-            <h3>Preview de imagenes agregadas</h3>
+    <!-- Barra de navegación -->
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="./img/logo.png" alt="Developer7452 Logo" class="site-logo">
+            <h1 class="site-title">Developer7452</h1>
         </div>
-        <div class="original-json scrollable">
-            <h3>Original JSON</h3>
-            <pre id="jsonOutput"></pre>
+        
+        <!-- Menú de usuario -->
+        <div class="user-menu-container">
+            <div class="user-avatar" id="userAvatar">
+                <div class="avatar-placeholder">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar lateral -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info-sidebar" id="userInfoSidebar">
+                    <div class="user-avatar-sidebar">
+                        <div class="avatar-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="user-details">
+                        <h3 class="user-name" id="userName">Iniciar Sesión</h3>
+                        <p class="user-status" id="userStatus">Haz clic para conectar</p>
+                    </div>
+                </div>
+                <button class="close-sidebar" id="closeSidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="sidebar-items">
+                <a href="index.html" class="sidebar-item">
+                    <i class="fas fa-home menu-icon"></i>
+                    Inicio
+                </a>
+                <a href="./sc/sobre-mi.html" class="sidebar-item">
+                    <i class="fas fa-user menu-icon"></i>
+                    Sobre Mí
+                </a>
+                <a href="./sc/comisiones.html" class="sidebar-item">
+                    <i class="fas fa-coins menu-icon"></i>
+                    Comisiones
+                </a>
+                <a href="./sc/proyectos.html" class="sidebar-item">
+                    <i class="fas fa-project-diagram menu-icon"></i>
+                    Proyectos
+                </a>
+                <a href="./sc/paginas-web.html" class="sidebar-item">
+                    <i class="fas fa-globe menu-icon"></i>
+                    Páginas Web
+                </a>
+                <a href="#" class="sidebar-item" id="logoutBtn" style="display: none;">
+                    <i class="fas fa-sign-out-alt menu-icon"></i>
+                    Cerrar Sesión
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="social-links">
+                    <a href="https://discord.gg/Kag2a5YUYa" target="_blank" class="social-link discord">
+                        <i class="fab fa-discord"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@developer-7452" target="_blank" class="social-link tiktok">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://twitter.com" target="_blank" class="social-link twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </div>
+                <p class="copyright">© 2025 Developer7452</p>
+            </div>
+        </div>
+        
+        <!-- Overlay para cerrar sidebar -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <h1 class="page-title">Editor de Elementos de Imagen</h1>
+        
+        <div class="editor-container">
+            <form id="elementForm">
+                <div class="form-group">
+                    <a href="index.html" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver al Inicio
+                    </a>
+                </div>
+                
+                <div class="form-group">
+                    <label for="name">Nombre (ej. custom_totem)</label>
+                    <input type="text" id="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="texture">Ruta de la textura (ej. textures/ui/Black)</label>
+                    <input type="text" id="texture" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="flag">Flag (Palabra clave para que aparezca)</label>
+                    <input type="text" id="flag" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="stayDuration">Tiempo en pantalla (segundos)</label>
+                        <input type="number" id="stayDuration">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fadeInDuration">Tiempo para que aparezca (segundos)</label>
+                        <input type="number" id="fadeInDuration">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fadeOutDuration">Tiempo para que desaparezca (segundos)</label>
+                        <input type="number" id="fadeOutDuration">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="sizeX">Ancho (ej. 20)</label>
+                        <input type="number" id="sizeX" placeholder="Ancho" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sizeY">Altura (ej. 20)</label>
+                        <input type="number" id="sizeY" placeholder="Altura" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="offsetX">Desplazamiento X (ej. 0)</label>
+                        <input type="number" id="offsetX" placeholder="X Offset">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="offsetY">Desplazamiento Y (ej. 0)</label>
+                        <input type="number" id="offsetY" placeholder="Y Offset">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="anchorFrom">Anchor From</label>
+                        <select id="anchorFrom">
+                            <option value="center">center</option>
+                            <option value="bottom_left">bottom_left</option>
+                            <option value="bottom_middle">bottom_middle</option>
+                            <option value="bottom_right">bottom_right</option>
+                            <option value="left_middle">left_middle</option>
+                            <option value="right_middle">right_middle</option>
+                            <option value="top_left">top_left</option>
+                            <option value="top_middle">top_middle</option>
+                            <option value="top_right">top_right</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="anchorTo">Anchor To</label>
+                        <select id="anchorTo">
+                            <option value="center">center</option>
+                            <option value="bottom_left">bottom_left</option>
+                            <option value="bottom_middle">bottom_middle</option>
+                            <option value="bottom_right">bottom_right</option>
+                            <option value="left_middle">left_middle</option>
+                            <option value="right_middle">right_middle</option>
+                            <option value="top_left">top_left</option>
+                            <option value="top_middle">top_middle</option>
+                            <option value="top_right">top_right</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button type="button" class="btn btn-primary" onclick="addNewBlock()">
+                        <i class="fas fa-plus"></i> Agregar Imagen
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="downloadJson()">
+                        <i class="fas fa-download"></i> Descargar JSON
+                    </button>
+                </div>
+            </form>
+            
+            <div class="block-preview scrollable" id="block-preview">
+                <h3>Preview de imágenes agregadas</h3>
+            </div>
+            
+            <div class="original-json scrollable">
+                <h3>JSON Generado</h3>
+                <pre id="jsonOutput"></pre>
+            </div>
         </div>
     </div>
 
@@ -377,7 +1019,7 @@
 
             const removeBtn = document.createElement('button');
             removeBtn.className = 'remove-btn';
-            removeBtn.textContent = 'Remove';
+            removeBtn.textContent = 'Eliminar';
             removeBtn.onclick = function () {
                 const index = originalJson.custom_images_element.controls.indexOf(block);
                 if (index > -1) {
@@ -412,6 +1054,32 @@
         }
 
         updateJsonOutput();
+
+        // Funcionalidad del sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            const userAvatar = document.getElementById('userAvatar');
+            const sidebar = document.getElementById('sidebar');
+            const closeSidebar = document.getElementById('closeSidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            
+            userAvatar.addEventListener('click', function() {
+                sidebar.classList.add('active');
+                sidebarOverlay.classList.add('active');
+                document.body.classList.add('menu-open');
+            });
+            
+            closeSidebar.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                document.body.classList.remove('menu-open');
+            });
+            
+            sidebarOverlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                document.body.classList.remove('menu-open');
+            });
+        });
     </script>
 </body>
 

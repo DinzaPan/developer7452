@@ -258,7 +258,7 @@ function showWelcomeModal() {
                 </button>
             </div>
             <div class="modal-content">
-                <p>Te queremos avisar que esta página fue hecha por <span class="megapixel-link" onclick="openMegapixelDiscord()">MegaPixel</span>, cuando le den click al texto "MegaPixel" te debe mandar a esta URL "https://discord.gg/RMfzSyNxjT", Si buscas una web semi profesional puede que seamos tu mejor opción</p>
+                <p>Te queremos avisar que esta página fue hecha por <span class="megapixel-link" onclick="openMegapixelDiscord()">MegaPixel</span>, Si buscas una web semi profesional puede que seamos tu mejor opción</p>
             </div>
             <div class="modal-footer">
                 <button class="modal-ok-btn" onclick="closeWelcomeModal(this.parentElement.parentElement.parentElement)">Entendido</button>

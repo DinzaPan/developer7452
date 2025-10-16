@@ -9,10 +9,10 @@ const cardConfigurations = [
         targetUrl: 'web/index_dev.html',
         // Tiempo inicial: 5 días, 2 horas, 3 minutos y 50 segundos
         initialTime: {
-            days: 5,
-            hours: 2,
-            minutes: 3,
-            seconds: 50
+            days: 30,
+            hours: 0,
+            minutes: 0,
+            seconds: 0
         }
     },
     // Ejemplo de otra tarjeta (descomenta para usar)

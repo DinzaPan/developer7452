@@ -115,7 +115,10 @@ async function initializeCountdownData() {
 
 function generateCards() {
     const gridContainer = document.getElementById('webpagesGrid');
-    if (!gridContainer) return;
+    if (!gridContainer) {
+        console.error('No se encontró el contenedor webpagesGrid');
+        return;
+    }
     
     gridContainer.innerHTML = '';
     
@@ -169,7 +172,10 @@ async function setupCountdown(config) {
     const countdownProgressBar = document.getElementById(`${config.id}-progress-bar`);
     const card = document.getElementById(config.id);
     
-    if (!countdownTimer || !countdownProgressBar || !card) return;
+    if (!countdownTimer || !countdownProgressBar || !card) {
+        console.error(`Elementos no encontrados para: ${config.id}`);
+        return;
+    }
 
     const countdownData = await getCountdownData();
     const cardData = countdownData[config.id];
@@ -190,6 +196,8 @@ async function setupCountdown(config) {
         return;
     }
 
+    let countdownInterval;
+
     function updateCountdown() {
         if (totalSeconds <= 0) {
             unlockCard(config, card);
@@ -209,11 +217,13 @@ async function setupCountdown(config) {
         cardElement.onclick = function() {
             window.location.href = config.targetUrl;
         };
-        clearInterval(countdownInterval);
+        if (countdownInterval) {
+            clearInterval(countdownInterval);
+        }
     }
 
     updateCountdown();
-    const countdownInterval = setInterval(updateCountdown, 1000);
+    countdownInterval = setInterval(updateCountdown, 1000);
     
     card.onclick = function(e) {
         if (card.classList.contains('locked')) {
@@ -229,7 +239,7 @@ async function setupCountdown(config) {
 }
 
 async function setupAllCountdowns() {
-    const countdownData = await initializeCountdownData();
+    await initializeCountdownData();
     
     cardConfigurations.forEach(config => {
         setupCountdown(config);
@@ -327,6 +337,7 @@ async function resetTimer(cardId) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Inicializando sistema de tarjetas...');
     generateCards();
     setupAllCountdowns();
     

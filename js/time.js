@@ -9,7 +9,7 @@ const cardConfigurations = [
         targetUrl: 'web/index_dev.html',
         // Tiempo inicial: 30 días, 0 horas, 0 minutos y 0 segundos
         initialTime: {
-            days: 50,
+            days: 10,
             hours: 0,
             minutes: 0,
             seconds: 0

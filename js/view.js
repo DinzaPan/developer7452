@@ -1,4 +1,3 @@
-// Función para renderizar los detalles del addon
 async function renderAddonDetails(addon) {
     const container = document.getElementById('addonDetails');
     
@@ -22,6 +21,7 @@ async function renderAddonDetails(addon) {
     const reviews = await getReviewsForAddon(addon.id);
     const averageRating = calculateAverageRating(reviews);
     const userReview = await getUserReviewForAddon(addon.id);
+    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
     
     container.innerHTML = `
         <div class="addon-header">
@@ -68,7 +68,7 @@ async function renderAddonDetails(addon) {
                 </div>
             </div>
             
-            ${renderReviewForm(addon.id, userReview)}
+            ${renderReviewSection(addon.id, userReview, currentUser)}
             ${renderReviewsList(reviews, userReview)}
         </div>
     `;
@@ -77,10 +77,29 @@ async function renderAddonDetails(addon) {
     processAllEmojis();
 }
 
-// Función para renderizar el formulario de reseña
-function renderReviewForm(addonId, userReview) {
-    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+function renderReviewSection(addonId, userReview, currentUser) {
+    if (!currentUser) {
+        return `
+            <div class="login-prompt">
+                <div class="login-prompt-icon">
+                    <i class="fab fa-discord"></i>
+                </div>
+                <h3 class="login-prompt-title">Inicia sesión para dejar una reseña</h3>
+                <p class="login-prompt-text">
+                    Conecta tu cuenta de Discord para calificar este addon y compartir tu experiencia con la comunidad.
+                </p>
+                <button class="login-prompt-btn" onclick="loginWithDiscord()">
+                    <i class="fab fa-discord"></i>
+                    Conectar con Discord
+                </button>
+            </div>
+        `;
+    }
     
+    return renderReviewForm(addonId, userReview);
+}
+
+function renderReviewForm(addonId, userReview) {
     if (userReview) {
         return `
             <div class="user-review">
@@ -138,7 +157,6 @@ function renderReviewForm(addonId, userReview) {
     }
 }
 
-// Función para renderizar la lista de reseñas
 function renderReviewsList(reviews, userReview) {
     const otherReviews = reviews.filter(review => 
         !userReview || review.userId !== userReview.userId
@@ -183,7 +201,6 @@ function renderReviewsList(reviews, userReview) {
     `;
 }
 
-// Configurar el formulario de reseña
 function setupReviewForm(addonId) {
     const reviewForm = document.getElementById('reviewForm');
     const stars = document.querySelectorAll('.stars.interactive .star');
@@ -224,7 +241,6 @@ function setupReviewForm(addonId) {
     }
 }
 
-// Eliminar reseña del usuario
 async function deleteUserReview(addonId) {
     if (confirm('¿Estás seguro de que quieres eliminar tu reseña?')) {
         try {
@@ -236,11 +252,9 @@ async function deleteUserReview(addonId) {
     }
 }
 
-// Función para descargar el addon
 function downloadAddon(addonId) {
     const addon = getAddonById(addonId);
     if (addon && addon.download_link) {
-        // Verificar si el usuario está autenticado
         const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
         
         if (!currentUser) {
@@ -252,7 +266,6 @@ function downloadAddon(addonId) {
             return;
         }
         
-        // Simular descarga
         setTimeout(() => {
             window.open(addon.download_link, '_blank');
             showNotification(`¡Addon "${addon.title}" descargado correctamente!`, 'success');
@@ -262,13 +275,11 @@ function downloadAddon(addonId) {
     }
 }
 
-// Función para formatear fechas
 function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('es-ES', options);
 }
 
-// Renderizar estrellas
 function renderStars(rating, interactive = false, size = 'medium') {
     const numericRating = parseFloat(rating) || 0;
     const starSize = size === 'small' ? '0.9rem' : '1.5rem';
@@ -294,7 +305,6 @@ function renderStars(rating, interactive = false, size = 'medium') {
     return `<div class="stars ${interactive ? 'interactive' : ''} ${size}">${starsHtml}</div>`;
 }
 
-// Configurar sidebar
 function setupSidebar() {
     const userAvatar = document.getElementById('userAvatar');
     const sidebar = document.getElementById('sidebar');
@@ -340,12 +350,15 @@ function setupSidebar() {
     });
 }
 
-// Inicializar la página de detalles
+function loginWithDiscord() {
+    if (window.loginWithDiscord) {
+        window.loginWithDiscord();
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Configurar sidebar
     setupSidebar();
     
-    // Inicializar sistema de emojis
     if (typeof window.EmojiSystem !== 'undefined') {
         window.EmojiSystem.initEmojisForAll();
     }
@@ -361,7 +374,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Exportar funciones para uso global
 window.deleteUserReview = deleteUserReview;
 window.downloadAddon = downloadAddon;
 window.formatDate = formatDate;
@@ -371,3 +383,4 @@ window.toggleEmojiPicker = toggleEmojiPicker;
 window.processTextWithEmojis = processTextWithEmojis;
 window.processTextWithEmojisInTitles = processTextWithEmojisInTitles;
 window.processAllEmojis = processAllEmojis;
+window.loginWithDiscord = loginWithDiscord;

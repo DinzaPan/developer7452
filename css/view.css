@@ -908,3 +908,92 @@ body {
         height: 2.5rem;
     }
 }
+
+/* ESTILOS PARA USUARIOS NO AUTENTICADOS */
+.login-prompt {
+    background-color: var(--dark-card);
+    border-radius: var(--rounded);
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    border: 1px solid var(--dark-border);
+}
+
+.login-prompt-icon {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.login-prompt-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--dark-text);
+}
+
+.login-prompt-text {
+    color: #94a3b8;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.login-prompt-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--rounded);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.login-prompt-btn:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+.login-prompt-btn i {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Responsive para login prompt */
+@media (max-width: 768px) {
+    .login-prompt {
+        padding: 1.5rem;
+    }
+    
+    .login-prompt-icon {
+        font-size: 2.5rem;
+    }
+    
+    .login-prompt-title {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-prompt {
+        padding: 1rem;
+    }
+    
+    .login-prompt-icon {
+        font-size: 2rem;
+    }
+    
+    .login-prompt-title {
+        font-size: 1.1rem;
+    }
+    
+    .login-prompt-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

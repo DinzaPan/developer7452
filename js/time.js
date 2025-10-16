@@ -9,11 +9,13 @@ const cardConfigurations = [
         targetUrl: 'web/index_dev.html',
         // Tiempo inicial: 5 días, 2 horas, 3 minutos y 50 segundos
         initialTime: {
-            days: 30,
-            hours: 0,
-            minutes: 0,
-            seconds: 0
-        }
+            days: 5,
+            hours: 2,
+            minutes: 3,
+            seconds: 50
+        },
+        // Versión para detectar cambios
+        version: '1.0'
     },
     // Ejemplo de otra tarjeta (descomenta para usar)
     /*
@@ -30,7 +32,8 @@ const cardConfigurations = [
             hours: 12,
             minutes: 0,
             seconds: 0
-        }
+        },
+        version: '1.0'
     }
     */
 ];
@@ -95,6 +98,12 @@ function formatTime(totalSeconds) {
     return `${days}d, ${hours}h, ${minutes}m, ${seconds}s`;
 }
 
+// Función para verificar si una tarjeta ha sido modificada
+function hasCardChanged(cardId, currentVersion) {
+    const savedVersion = localStorage.getItem(`${cardId}-version`);
+    return savedVersion !== currentVersion;
+}
+
 // Función para inicializar todos los contadores
 function setupAllCountdowns() {
     cardConfigurations.forEach(config => {
@@ -116,6 +125,14 @@ function setupCountdown(config) {
     const initialTotalSeconds = calculateTotalSeconds(config.initialTime);
     let totalSeconds = initialTotalSeconds;
     
+    // Verificar si la tarjeta ha sido modificada (nueva versión)
+    if (hasCardChanged(config.id, config.version)) {
+        console.log(`Tarjeta ${config.id} modificada. Reiniciando temporizador...`);
+        // Reiniciar el temporizador para esta tarjeta
+        localStorage.removeItem(`${config.id}-endTime`);
+        localStorage.setItem(`${config.id}-version`, config.version);
+    }
+    
     // Verificar si ya ha expirado (para cuando se recarga la página)
     const savedEndTime = localStorage.getItem(`${config.id}-endTime`);
     let endTime;
@@ -136,6 +153,7 @@ function setupCountdown(config) {
         // Primera vez - establecer tiempo de finalización
         endTime = Math.floor(Date.now() / 1000) + totalSeconds;
         localStorage.setItem(`${config.id}-endTime`, endTime.toString());
+        localStorage.setItem(`${config.id}-version`, config.version);
     }
     
     // Función para actualizar el contador
@@ -192,21 +210,47 @@ function setupCountdown(config) {
     };
 }
 
-// Función para reiniciar todos los temporizadores
+// Función para reiniciar todos los temporizadores (solo para desarrollo)
 function resetAllTimers() {
     cardConfigurations.forEach(config => {
         localStorage.removeItem(`${config.id}-endTime`);
+        localStorage.removeItem(`${config.id}-version`);
     });
     
     // Recargar la página para aplicar los cambios
     location.reload();
 }
 
-// Función para reiniciar un temporizador específico
+// Función para reiniciar un temporizador específico (solo para desarrollo)
 function resetTimer(cardId) {
     localStorage.removeItem(`${cardId}-endTime`);
+    localStorage.removeItem(`${cardId}-version`);
     // Recargar la página para aplicar los cambios
     location.reload();
+}
+
+// Función para actualizar el tiempo de una tarjeta específica
+function updateCardTime(cardId, newTime) {
+    // Encontrar la tarjeta en la configuración
+    const cardIndex = cardConfigurations.findIndex(card => card.id === cardId);
+    
+    if (cardIndex !== -1) {
+        // Actualizar el tiempo
+        cardConfigurations[cardIndex].initialTime = newTime;
+        
+        // Incrementar la versión para forzar el reinicio
+        const currentVersion = cardConfigurations[cardIndex].version;
+        const versionParts = currentVersion.split('.');
+        versionParts[1] = parseInt(versionParts[1]) + 1;
+        cardConfigurations[cardIndex].version = versionParts.join('.');
+        
+        console.log(`Tiempo actualizado para ${cardId}. Nueva versión: ${cardConfigurations[cardIndex].version}`);
+        
+        // Reiniciar solo esta tarjeta
+        resetTimer(cardId);
+    } else {
+        console.error(`No se encontró la tarjeta con ID: ${cardId}`);
+    }
 }
 
 // Inicializar cuando el DOM esté listo
@@ -214,12 +258,14 @@ document.addEventListener('DOMContentLoaded', function() {
     generateCards();
     setupAllCountdowns();
     
-    // Para desarrollo: exponer funciones de reinicio en la consola
+    // Para desarrollo: exponer funciones en la consola
     window.resetAllTimers = resetAllTimers;
     window.resetTimer = resetTimer;
+    window.updateCardTime = updateCardTime;
     window.cardConfigurations = cardConfigurations;
     
     console.log('Sistema de tarjetas con temporizador inicializado');
     console.log('Para reiniciar todos los temporizadores, ejecuta: resetAllTimers()');
     console.log('Para reiniciar un temporizador específico, ejecuta: resetTimer("id-de-la-tarjeta")');
+    console.log('Para actualizar el tiempo de una tarjeta, ejecuta: updateCardTime("id-de-la-tarjeta", {days: X, hours: X, minutes: X, seconds: X})');
 });

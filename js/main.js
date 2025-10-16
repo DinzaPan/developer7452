@@ -1,4 +1,4 @@
-function renderAddons(addons) {
+async function renderAddons(addons) {
     const container = document.getElementById('addonsContainer');
     
     if (addons.length === 0) {

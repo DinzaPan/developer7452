@@ -1,6 +1,6 @@
 // Datos de proyectos
 const projectsData = [
-    {
+  /*  {
         id: 1,
         title: "Sistema de Rangos Avanzado",
         shortDescription: "Sistema completo de rangos para servidores de Minecraft con interfaz moderna y funciones avanzadas.",
@@ -34,7 +34,7 @@ const projectsData = [
         technologies: ["JavaScript", "Minecraft API", "HTML/CSS", "JSON", "Web Components"],
         githubLink: "https://github.com/developer7452/ranks-system",
         demoLink: "https://demo.ranks-system.com"
-    }
+    }*/
 ];
 
 // Función para obtener proyecto por ID

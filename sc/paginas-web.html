@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Estilos específicos para la página de Páginas Web */
         .webpages-intro {
             text-align: center;
             max-width: 500px;
@@ -87,7 +86,6 @@
             border: 1px solid rgba(139, 92, 246, 0.3);
         }
         
-        /* Estilos para el contador regresivo */
         .countdown-overlay {
             position: absolute;
             top: 0;
@@ -160,7 +158,6 @@
             border-color: var(--dark-border);
         }
         
-        /* Estilos responsivos */
         @media (max-width: 768px) {
             .webpages-grid {
                 grid-template-columns: 1fr;
@@ -170,14 +167,12 @@
     </style>
 </head>
 <body>
-    <!-- Barra de navegación -->
     <nav class="navbar">
         <div class="logo-container">
             <img src="../img/logo.png" alt="Developer7452 Logo" class="site-logo">
             <h1 class="site-title">Developer7452</h1>
         </div>
         
-        <!-- Menú de usuario -->
         <div class="user-menu-container">
             <div class="user-avatar" id="userAvatar">
                 <div class="avatar-placeholder">
@@ -186,7 +181,6 @@
             </div>
         </div>
         
-        <!-- Sidebar lateral -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="user-info-sidebar" id="userInfoSidebar">
@@ -248,11 +242,9 @@
             </div>
         </div>
         
-        <!-- Overlay para cerrar sidebar -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
     </nav>
 
-    <!-- Contenido principal -->
     <div class="container">
         <h1 class="page-title">Páginas Web</h1>
         
@@ -261,7 +253,6 @@
         </div>
         
         <div class="webpages-grid" id="webpagesGrid">
-            <!-- Las tarjetas se generarán dinámicamente desde time.js -->
         </div>
     </div>
 
@@ -269,7 +260,6 @@
     <script src="../js/discord.js"></script>
     <script src="../js/time.js"></script>
     <script>
-        // Funcionalidad del sidebar lateral
         function setupSidebar() {
             const userAvatar = document.getElementById('userAvatar');
             const sidebar = document.getElementById('sidebar');
@@ -315,9 +305,7 @@
             });
         }
 
-        // Función para mostrar notificaciones
         function showNotification(message, type = 'info') {
-            // Crear elemento de notificación
             const notification = document.createElement('div');
             notification.className = `notification notification-${type}`;
             notification.innerHTML = `
@@ -327,7 +315,6 @@
                 </div>
             `;
             
-            // Estilos para la notificación
             notification.style.cssText = `
                 position: fixed;
                 top: 20px;
@@ -344,7 +331,6 @@
             
             document.body.appendChild(notification);
             
-            // Remover después de 3 segundos
             setTimeout(() => {
                 notification.style.animation = 'slideOutRight 0.3s ease-in';
                 setTimeout(() => {
@@ -355,10 +341,8 @@
             }, 3000);
         }
 
-        // Inicializar la página
         document.addEventListener('DOMContentLoaded', function() {
             setupSidebar();
-            // Las tarjetas y contadores se inicializan desde time.js
         });
     </script>
 </body>

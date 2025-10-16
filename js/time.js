@@ -7,7 +7,7 @@ const cardConfigurations = [
         features: ['JSON Generator', 'Minecraft UI', 'Custom HUD'],
         targetUrl: 'web/index_dev.html',
         initialTime: {
-            days: 5,
+            days: 20,
             hours: 0,
             minutes: 0,
             seconds: 0

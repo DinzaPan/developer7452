@@ -21,7 +21,7 @@ const cardConfigurations = [
         features: ['JSON Generator', 'Minecraft UI', 'Custom HUD'],
         targetUrl: 'web/video.html',
         initialTime: {
-            days: 0,
+            days: 20,
             hours: 0,
             minutes: 0,
             seconds: 0

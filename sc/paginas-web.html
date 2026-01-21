@@ -341,155 +341,142 @@
             }, 3000);
         }
 
-        class CountdownManager {
-            constructor() {
-                this.pages = [
-                    {
-                        id: 'mcstats',
-                        icon: 'fas fa-chart-line',
-                        title: 'Estadísticas de Minecraft',
-                        description: 'Visualiza estadísticas detalladas de servidores y jugadores de Minecraft.',
-                        features: ['Servidores', 'Jugadores', 'Estadísticas'],
-                        unlockTime: 1729123200000
-                    },
-                    {
-                        id: 'mcskin',
-                        icon: 'fas fa-user-circle',
-                        title: 'Editor de Skins',
-                        description: 'Crea y edita skins personalizadas para Minecraft directamente en tu navegador.',
-                        features: ['Editor 3D', 'Plantillas', 'Compartir'],
-                        unlockTime: 1729209600000
-                    },
-                    {
-                        id: 'newpage',
-                        icon: 'fas fa-rocket',
-                        title: 'Nueva Herramienta',
-                        description: 'Una nueva herramienta para la comunidad de Minecraft que estará disponible pronto.',
-                        features: ['Novedad', 'Utilidad', 'Gratis'],
-                        unlockTime: 1730419200000
-                    }
-                ];
+        const webpages = [
+            {
+                id: 'mcstats',
+                icon: 'fas fa-chart-line',
+                title: 'Estadísticas de Minecraft',
+                description: 'Visualiza estadísticas detalladas de servidores y jugadores de Minecraft.',
+                features: ['Servidores', 'Jugadores', 'Estadísticas'],
+                unlockTime: 1729123200000,
+                url: 'https://mcstats.example.com'
+            },
+            {
+                id: 'hubeditor',
+                icon: 'fas fa-video',
+                title: 'Editor HUB Screen Video',
+                description: 'Crea y personaliza pantallas de hub para videos de Minecraft.',
+                features: ['Personalización', 'Templates', 'Exportar'],
+                unlockTime: 1729209600000,
+                url: 'https://hubeditor.example.com'
             }
+        ];
 
-            formatTime(ms) {
-                const days = Math.floor(ms / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((ms % (1000 * 60)) / 1000);
-                
-                if (days > 0) return `${days}d ${hours}h`;
-                if (hours > 0) return `${hours}h ${minutes}m`;
-                if (minutes > 0) return `${minutes}m ${seconds}s`;
-                return `${seconds}s`;
+        function formatTime(ms) {
+            if (ms <= 0) return "00:00:00";
+            const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+            
+            if (days > 0) return `${days}d ${hours}h ${minutes}m`;
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function calculateProgress(unlockTime) {
+            const now = Date.now();
+            const weekInMs = 7 * 24 * 60 * 60 * 1000;
+            const startTime = unlockTime - weekInMs;
+            
+            if (now >= unlockTime) return 100;
+            if (now <= startTime) return 0;
+            
+            const elapsed = now - startTime;
+            const total = unlockTime - startTime;
+            return Math.min(100, (elapsed / total) * 100);
+        }
+
+        function createPageCard(page) {
+            const now = Date.now();
+            const timeLeft = page.unlockTime - now;
+            const isLocked = timeLeft > 0;
+            
+            const card = document.createElement('div');
+            card.className = `webpage-card ${isLocked ? 'locked' : 'unlocked'}`;
+            card.setAttribute('data-id', page.id);
+            
+            let countdownHtml = '';
+            if (isLocked) {
+                const progress = calculateProgress(page.unlockTime);
+                const timeDisplay = formatTime(timeLeft);
+                countdownHtml = `
+                    <div class="countdown-overlay">
+                        <div class="countdown-title">Disponible en</div>
+                        <div class="countdown-timer">${timeDisplay}</div>
+                        <div class="countdown-progress">
+                            <div class="countdown-progress-bar" style="width: ${progress}%"></div>
+                        </div>
+                        <div class="countdown-message">
+                            Esta página web estará disponible pronto
+                        </div>
+                    </div>
+                `;
             }
-
-            calculateProgress(unlockTime) {
-                const now = Date.now();
-                const totalTime = unlockTime - (unlockTime - 7 * 24 * 60 * 60 * 1000);
-                const elapsed = now - (unlockTime - 7 * 24 * 60 * 60 * 1000);
-                
-                if (now >= unlockTime) return 100;
-                if (now < unlockTime - 7 * 24 * 60 * 60 * 1000) return 0;
-                
-                return Math.min(100, (elapsed / totalTime) * 100);
+            
+            card.innerHTML = `
+                <div class="webpage-icon">
+                    <i class="${page.icon}"></i>
+                </div>
+                <h3 class="webpage-title">${page.title}</h3>
+                <p class="webpage-description">${page.description}</p>
+                <div class="webpage-features">
+                    ${page.features.map(feature => `<span class="feature-tag">${feature}</span>`).join('')}
+                </div>
+                ${countdownHtml}
+            `;
+            
+            if (!isLocked) {
+                card.addEventListener('click', () => {
+                    window.open(page.url, '_blank');
+                });
             }
+            
+            return card;
+        }
 
-            updateCountdown(cardElement, page) {
-                const now = Date.now();
-                const timeLeft = page.unlockTime - now;
+        function updateCountdowns() {
+            webpages.forEach(page => {
+                const card = document.querySelector(`[data-id="${page.id}"]`);
+                if (!card) return;
                 
-                if (timeLeft <= 0) {
-                    cardElement.classList.remove('locked');
-                    cardElement.classList.add('unlocked');
-                    return;
-                }
-                
-                const countdownTimer = cardElement.querySelector('.countdown-timer');
-                if (countdownTimer) {
-                    countdownTimer.textContent = this.formatTime(timeLeft);
-                }
-                
-                const progressBar = cardElement.querySelector('.countdown-progress-bar');
-                if (progressBar) {
-                    const progress = this.calculateProgress(page.unlockTime);
-                    progressBar.style.width = `${progress}%`;
-                }
-            }
-
-            createPageCard(page) {
                 const now = Date.now();
                 const timeLeft = page.unlockTime - now;
                 const isLocked = timeLeft > 0;
                 
-                const card = document.createElement('div');
-                card.className = `webpage-card ${isLocked ? 'locked' : 'unlocked'}`;
-                card.setAttribute('data-id', page.id);
-                
-                let countdownHtml = '';
-                if (isLocked) {
-                    const progress = this.calculateProgress(page.unlockTime);
-                    countdownHtml = `
-                        <div class="countdown-overlay">
-                            <div class="countdown-title">Disponible en</div>
-                            <div class="countdown-timer">${this.formatTime(timeLeft)}</div>
-                            <div class="countdown-progress">
-                                <div class="countdown-progress-bar" style="width: ${progress}%"></div>
-                            </div>
-                            <div class="countdown-message">
-                                Esta página web estará disponible pronto
-                            </div>
-                        </div>
-                    `;
-                }
-                
-                card.innerHTML = `
-                    <div class="webpage-icon">
-                        <i class="${page.icon}"></i>
-                    </div>
-                    <h3 class="webpage-title">${page.title}</h3>
-                    <p class="webpage-description">${page.description}</p>
-                    <div class="webpage-features">
-                        ${page.features.map(feature => `<span class="feature-tag">${feature}</span>`).join('')}
-                    </div>
-                    ${countdownHtml}
-                `;
-                
                 if (!isLocked) {
-                    card.addEventListener('click', () => {
-                        if (page.id === 'mcstats') {
-                            window.open('https://mcstats.example.com', '_blank');
-                        } else if (page.id === 'mcskin') {
-                            window.open('https://mcskin.example.com', '_blank');
-                        } else if (page.id === 'newpage') {
-                            window.open('https://newpage.example.com', '_blank');
-                        }
-                    });
+                    card.classList.remove('locked');
+                    card.classList.add('unlocked');
+                    return;
                 }
                 
-                return card;
-            }
+                const countdownTimer = card.querySelector('.countdown-timer');
+                if (countdownTimer) {
+                    countdownTimer.textContent = formatTime(timeLeft);
+                }
+                
+                const progressBar = card.querySelector('.countdown-progress-bar');
+                if (progressBar) {
+                    const progress = calculateProgress(page.unlockTime);
+                    progressBar.style.width = `${progress}%`;
+                }
+            });
+        }
 
-            startCountdowns() {
-                this.pages.forEach(page => {
-                    const card = this.createPageCard(page);
-                    document.getElementById('webpagesGrid').appendChild(card);
-                    
-                    if (page.unlockTime > Date.now()) {
-                        const cardElement = document.querySelector(`[data-id="${page.id}"]`);
-                        this.updateCountdown(cardElement, page);
-                        
-                        setInterval(() => {
-                            this.updateCountdown(cardElement, page);
-                        }, 1000);
-                    }
-                });
-            }
+        function loadWebpages() {
+            const grid = document.getElementById('webpagesGrid');
+            
+            webpages.forEach(page => {
+                const card = createPageCard(page);
+                grid.appendChild(card);
+            });
+            
+            updateCountdowns();
+            setInterval(updateCountdowns, 1000);
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             setupSidebar();
-            const countdownManager = new CountdownManager();
-            countdownManager.startCountdowns();
+            loadWebpages();
         });
     </script>
 </body>

@@ -19,6 +19,8 @@
         }
 
     function addNewBlock() {
+      const Addonname = document.getElementById('Addonname').value;
+      const Addondescripcion = document.getElementById('Addondescripcion').value;
       const name = document.getElementById('name').value;
       const texture = document.getElementById('texture').value;
       const flag = document.getElementById('flag').value;
@@ -36,6 +38,9 @@
       if (!flags.includes(flag)) {
   flags.push(flag);
 }
+      if (Addonname === "" || Addondescripcion === "") {
+          alert("Incomplete addon settings: name or description")
+      }
       if (uvSize.length !== 2 || isNaN(uvSize[0]) || isNaN(uvSize[1])) {
         alert("Formato de UV Size incorrecto.");
         return;
@@ -139,6 +144,10 @@ jsonInfo.appendChild(jsonFileName);
     }
 
  async function downloadJson() {
+    
+    const Addonname = document.getElementById('Addonname').value;
+      const Addondescripcion = document.getElementById('Addondescripcion').value;
+    
  const zip = new JSZip();
 const rp = zip.folder("Hud_Screen");
     const jsonData = {
@@ -246,8 +255,8 @@ const rp = zip.folder("Hud_Screen");
     rp.file("manifest.json", JSON.stringify({
   format_version: 2,
   header: {
-    name: "Hud_Screen",
-    description: "By Developer7452",
+    name: Addonname,
+    description: Addondescripcion + " By Developer7452",
     uuid: generateUUID(),
     version: [1, 0, 0],
     min_engine_version: [1, 19, 0]
@@ -273,5 +282,5 @@ const rp = zip.folder("Hud_Screen");
         rp.file("ui/hud_screen.json", JSON.stringify(jsonData, null, 2));
 
         zip.generateAsync({ type: "blob", mimeType: "application/mcaddon" })
-    .then(blob => saveAs(blob, "Totems.mcaddon"));
+    .then(blob => saveAs(blob, `${Addonname}.mcaddon`));
     };

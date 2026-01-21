@@ -341,8 +341,155 @@
             }, 3000);
         }
 
+        class CountdownManager {
+            constructor() {
+                this.pages = [
+                    {
+                        id: 'mcstats',
+                        icon: 'fas fa-chart-line',
+                        title: 'Estadísticas de Minecraft',
+                        description: 'Visualiza estadísticas detalladas de servidores y jugadores de Minecraft.',
+                        features: ['Servidores', 'Jugadores', 'Estadísticas'],
+                        unlockTime: 1729123200000
+                    },
+                    {
+                        id: 'mcskin',
+                        icon: 'fas fa-user-circle',
+                        title: 'Editor de Skins',
+                        description: 'Crea y edita skins personalizadas para Minecraft directamente en tu navegador.',
+                        features: ['Editor 3D', 'Plantillas', 'Compartir'],
+                        unlockTime: 1729209600000
+                    },
+                    {
+                        id: 'newpage',
+                        icon: 'fas fa-rocket',
+                        title: 'Nueva Herramienta',
+                        description: 'Una nueva herramienta para la comunidad de Minecraft que estará disponible pronto.',
+                        features: ['Novedad', 'Utilidad', 'Gratis'],
+                        unlockTime: 1730419200000
+                    }
+                ];
+            }
+
+            formatTime(ms) {
+                const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+                
+                if (days > 0) return `${days}d ${hours}h`;
+                if (hours > 0) return `${hours}h ${minutes}m`;
+                if (minutes > 0) return `${minutes}m ${seconds}s`;
+                return `${seconds}s`;
+            }
+
+            calculateProgress(unlockTime) {
+                const now = Date.now();
+                const totalTime = unlockTime - (unlockTime - 7 * 24 * 60 * 60 * 1000);
+                const elapsed = now - (unlockTime - 7 * 24 * 60 * 60 * 1000);
+                
+                if (now >= unlockTime) return 100;
+                if (now < unlockTime - 7 * 24 * 60 * 60 * 1000) return 0;
+                
+                return Math.min(100, (elapsed / totalTime) * 100);
+            }
+
+            updateCountdown(cardElement, page) {
+                const now = Date.now();
+                const timeLeft = page.unlockTime - now;
+                
+                if (timeLeft <= 0) {
+                    cardElement.classList.remove('locked');
+                    cardElement.classList.add('unlocked');
+                    return;
+                }
+                
+                const countdownTimer = cardElement.querySelector('.countdown-timer');
+                if (countdownTimer) {
+                    countdownTimer.textContent = this.formatTime(timeLeft);
+                }
+                
+                const progressBar = cardElement.querySelector('.countdown-progress-bar');
+                if (progressBar) {
+                    const progress = this.calculateProgress(page.unlockTime);
+                    progressBar.style.width = `${progress}%`;
+                }
+            }
+
+            createPageCard(page) {
+                const now = Date.now();
+                const timeLeft = page.unlockTime - now;
+                const isLocked = timeLeft > 0;
+                
+                const card = document.createElement('div');
+                card.className = `webpage-card ${isLocked ? 'locked' : 'unlocked'}`;
+                card.setAttribute('data-id', page.id);
+                
+                let countdownHtml = '';
+                if (isLocked) {
+                    const progress = this.calculateProgress(page.unlockTime);
+                    countdownHtml = `
+                        <div class="countdown-overlay">
+                            <div class="countdown-title">Disponible en</div>
+                            <div class="countdown-timer">${this.formatTime(timeLeft)}</div>
+                            <div class="countdown-progress">
+                                <div class="countdown-progress-bar" style="width: ${progress}%"></div>
+                            </div>
+                            <div class="countdown-message">
+                                Esta página web estará disponible pronto
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                card.innerHTML = `
+                    <div class="webpage-icon">
+                        <i class="${page.icon}"></i>
+                    </div>
+                    <h3 class="webpage-title">${page.title}</h3>
+                    <p class="webpage-description">${page.description}</p>
+                    <div class="webpage-features">
+                        ${page.features.map(feature => `<span class="feature-tag">${feature}</span>`).join('')}
+                    </div>
+                    ${countdownHtml}
+                `;
+                
+                if (!isLocked) {
+                    card.addEventListener('click', () => {
+                        if (page.id === 'mcstats') {
+                            window.open('https://mcstats.example.com', '_blank');
+                        } else if (page.id === 'mcskin') {
+                            window.open('https://mcskin.example.com', '_blank');
+                        } else if (page.id === 'newpage') {
+                            window.open('https://newpage.example.com', '_blank');
+                        }
+                    });
+                }
+                
+                return card;
+            }
+
+            startCountdowns() {
+                this.pages.forEach(page => {
+                    const card = this.createPageCard(page);
+                    document.getElementById('webpagesGrid').appendChild(card);
+                    
+                    if (page.unlockTime > Date.now()) {
+                        const cardElement = document.querySelector(`[data-id="${page.id}"]`);
+                        this.updateCountdown(cardElement, page);
+                        
+                        setInterval(() => {
+                            this.updateCountdown(cardElement, page);
+                        }, 1000);
+                    }
+                });
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             setupSidebar();
+            const countdownManager = new CountdownManager();
+            countdownManager.startCountdowns();
         });
     </script>
 </body>

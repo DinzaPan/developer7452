@@ -14,7 +14,7 @@ const cardConfigurations = [
         }
     },
     {
-        id: 'hudVideoCard',
+        id: 'VideoCard',
         title: 'Editor HUD Screen Videos',
         description: 'Herramienta para crear y personalizar archivos hud_screen.json para Minecraft Bedrock Edition.',
         icon: 'fas fa-code',
@@ -26,7 +26,7 @@ const cardConfigurations = [
             minutes: 0,
             seconds: 0
         }
-    }
+   }
 ];
 
 function generateCards() {

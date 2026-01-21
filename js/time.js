@@ -1,13 +1,27 @@
 const cardConfigurations = [
     {
         id: 'hudEditorCard',
-        title: 'Editor HUD Screen',
+        title: 'Editor HUD Screen Imagen',
         description: 'Herramienta para crear y personalizar archivos hud_screen.json para Minecraft Bedrock Edition.',
         icon: 'fas fa-code',
         features: ['JSON Generator', 'Minecraft UI', 'Custom HUD'],
         targetUrl: 'web/index_dev.html',
         initialTime: {
             days: 0,
+            hours: 0,
+            minutes: 0,
+            seconds: 0
+        }
+    },
+    {
+        id: 'hudVideoCard',
+        title: 'Editor HUD Screen Videos',
+        description: 'Herramienta para crear y personalizar archivos hud_screen.json para Minecraft Bedrock Edition.',
+        icon: 'fas fa-code',
+        features: ['JSON Generator', 'Minecraft UI', 'Custom HUD'],
+        targetUrl: 'web/video.html',
+        initialTime: {
+            days: 20,
             hours: 0,
             minutes: 0,
             seconds: 0

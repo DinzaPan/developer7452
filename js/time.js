@@ -26,7 +26,7 @@ const cardConfigurations = [
             minutes: 0,
             seconds: 0
         }
-   }
+    }
 ];
 
 function generateCards() {
@@ -72,12 +72,29 @@ function calculateTotalSeconds(timeObj) {
 }
 
 function formatTime(totalSeconds) {
+    if (totalSeconds <= 0) return "¡Disponible!";
+    
     const days = Math.floor(totalSeconds / (24 * 60 * 60));
     const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
     const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
     const seconds = totalSeconds % 60;
     
-    return `${days}d, ${hours}h, ${minutes}m, ${seconds}s`;
+    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+}
+
+function unlockCard(config, cardElement) {
+    if (!cardElement) return;
+    
+    cardElement.classList.remove('locked');
+    cardElement.classList.add('unlocked');
+    cardElement.onclick = function() {
+        window.location.href = config.targetUrl;
+    };
+    
+    const overlay = document.getElementById(`${config.id}-overlay`);
+    if (overlay) overlay.style.display = 'none';
+    
+    localStorage.removeItem(`${config.id}-endTime`);
 }
 
 function setupCountdown(config) {
@@ -89,41 +106,48 @@ function setupCountdown(config) {
     
     const initialTotalSeconds = calculateTotalSeconds(config.initialTime);
     
+    if (initialTotalSeconds <= 0) {
+        unlockCard(config, card);
+        return;
+    }
+    
     const configKey = `${config.id}-config`;
     const savedConfig = localStorage.getItem(configKey);
     const currentConfig = JSON.stringify(config.initialTime);
     
     let totalSeconds;
+    let endTime;
     
     if (savedConfig !== currentConfig) {
         localStorage.removeItem(`${config.id}-endTime`);
         localStorage.setItem(configKey, currentConfig);
         
-        const endTime = Math.floor(Date.now() / 1000) + initialTotalSeconds;
+        endTime = Math.floor(Date.now() / 1000) + initialTotalSeconds;
         localStorage.setItem(`${config.id}-endTime`, endTime.toString());
         totalSeconds = initialTotalSeconds;
     } else {
         const savedEndTime = localStorage.getItem(`${config.id}-endTime`);
         
         if (savedEndTime) {
-            const endTime = parseInt(savedEndTime);
+            endTime = parseInt(savedEndTime);
             const now = Math.floor(Date.now() / 1000);
-            const timeLeft = endTime - now;
+            totalSeconds = endTime - now;
             
-            if (timeLeft <= 0) {
+            if (totalSeconds <= 0) {
                 unlockCard(config, card);
                 return;
-            } else {
-                totalSeconds = timeLeft;
             }
         } else {
-            const endTime = Math.floor(Date.now() / 1000) + initialTotalSeconds;
+            endTime = Math.floor(Date.now() / 1000) + initialTotalSeconds;
             localStorage.setItem(`${config.id}-endTime`, endTime.toString());
             totalSeconds = initialTotalSeconds;
         }
     }
     
     function updateCountdown() {
+        const now = Math.floor(Date.now() / 1000);
+        totalSeconds = endTime - now;
+        
         if (totalSeconds <= 0) {
             unlockCard(config, card);
             return;
@@ -132,18 +156,6 @@ function setupCountdown(config) {
         countdownTimer.textContent = formatTime(totalSeconds);
         const progressPercentage = (totalSeconds / initialTotalSeconds) * 100;
         countdownProgressBar.style.width = `${progressPercentage}%`;
-        
-        totalSeconds--;
-    }
-    
-    function unlockCard(config, cardElement) {
-        cardElement.classList.remove('locked');
-        cardElement.classList.add('unlocked');
-        cardElement.onclick = function() {
-            window.location.href = config.targetUrl;
-        };
-        clearInterval(countdownInterval);
-        localStorage.removeItem(`${config.id}-endTime`);
     }
     
     updateCountdown();
@@ -156,8 +168,6 @@ function setupCountdown(config) {
             if (typeof showNotification === 'function') {
                 showNotification('Esta herramienta aún no está disponible. Por favor, espera a que el contador llegue a cero.', 'info');
             }
-        } else {
-            window.location.href = config.targetUrl;
         }
     };
 }

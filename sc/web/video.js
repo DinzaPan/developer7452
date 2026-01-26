@@ -1,13 +1,27 @@
+      const addonIconInput = document.getElementById("addonIcon");
+const addonPreview = document.getElementById("addonPreview");
+
+addonIconInput.addEventListener("change", () => {
+  const file = addonIconInput.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    addonPreview.innerHTML = `<img src="${e.target.result}" alt="Addon Icon">`;
+  };
+  reader.readAsDataURL(file);
+});
+      
     let images = [];
     let imagenes = [];
     let archivos = [];
     let flags = [];
     
     function buildFlagCondition() {
-  if (flags.length === 0) return "(#hud_title_text_string = '')";
+  if (flags.length === 0) return "(#hud_title_text_string - '')";
 
   const joined = flags.map(f => `'${f}'`).join(" - ");
-  return `((#hud_title_text_string = ${joined}) = #hud_title_text_string)`;
+  return `((#hud_title_text_string - ${joined}) = #hud_title_text_string)`;
 }
 
          function generateUUID() {
@@ -19,124 +33,206 @@
         }
 
     function addNewBlock() {
-      const Addonname = document.getElementById('Addonname').value;
-      const Addondescripcion = document.getElementById('Addondescripcion').value;
-      const name = document.getElementById('name').value;
-      const texture = document.getElementById('texture').value;
-      const flag = document.getElementById('flag').value;
-      const stayDuration = document.getElementById('stayDuration').value || 3;
-      const fadeInDuration = document.getElementById('fadeInDuration').value || 3;
-      const fadeOutDuration = document.getElementById('fadeOutDuration').value || 3;
-      const uvSize = document.getElementById('uvSize').value.split(",").map(num => parseInt(num.trim()));
-      const size = document.getElementById('size').value.split(",").map(num => num.trim());
-      const anchorFrom = document.getElementById('anchorFrom').value;
-      const anchorTo = document.getElementById('anchorTo').value;
+    const blockId = crypto.randomUUID();
+  const addonName = document.getElementById('Addonname').value.trim();
+  const addonDescription = document.getElementById('Addondescripcion').value.trim();
+  const addonImage = document.getElementById('addonIcon').files[0]
+  
+  if (!addonName || !addonDescription || !addonImage) {
+    alert("Nombre, Descripción, Icono del addon no lleno");
+    return;
+  }
+  
+  const mediaType = document.getElementById('mediaType').value;
+  const name = document.getElementById('name').value.trim();
+  const texture = document.getElementById('texture').value.trim();
+  const flag = document.getElementById('flag').value.trim();
 
-      const imageFile = document.getElementById("imageUpload").files[0];
-      const jsonFile = document.getElementById("jsonUpload").files[0];
-      
-      if (!flags.includes(flag)) {
-  flags.push(flag);
-}
-      if (Addonname === "" || Addondescripcion === "") {
-          alert("Incomplete addon settings: name or description")
-      }
-      if (uvSize.length !== 2 || isNaN(uvSize[0]) || isNaN(uvSize[1])) {
-        alert("Formato de UV Size incorrecto.");
-        return;
-      }
-      if (size.length !== 2) {
-        alert("Formato de Size incorrecto.");
-        return;
-      }
+  if (!name || !texture || !flag) {
+    alert("Nombre, textura y flag son obligatorios");
+    return;
+  }
 
-      if (imageFile && jsonFile) {
-                let readerImage = new FileReader();
-                let readerJson = new FileReader();
+  const stayDuration = parseFloat(document.getElementById('stayDuration').value) || 3;
+  const fadeInValue = parseFloat(document.getElementById('fadeInDuration').value);
+const fadeInDuration = isNaN(fadeInValue) ? 3 : fadeInValue;
 
-                // Cargar imagen
-                readerImage.onload = function (e) {
-                    let index = archivos.length;
-                    archivos.push({
+const fadeOutValue = parseFloat(document.getElementById('fadeOutDuration').value);
+const fadeOutDuration = isNaN(fadeOutValue) ? 3 : fadeOutValue;
+
+  const sizeRaw = document.getElementById('size').value;
+  const size = sizeRaw.split(",").map(v => v.trim());
+  if (size.length !== 2) {
+    alert("Size debe ser: 100%, 100%");
+    return;
+  }
+
+  const anchorFrom = document.getElementById('anchorFrom').value;
+  const anchorTo = document.getElementById('anchorTo').value;
+
+  const imageFile = document.getElementById("imageUpload").files[0];
+  const jsonFile = document.getElementById("jsonUpload").files[0];
+
+  if (!imageFile) {
+    alert("Debes subir una imagen");
+    return;
+  }
+
+  if (mediaType === "video" && !jsonFile) {
+    alert("Para VIDEO debes subir el JSON");
+    return;
+  }
+
+  if (!flags.includes(flag)) flags.push(flag);
+
+  let uvSize = "#null";
+
+  if (mediaType === "video") {
+    const uvRaw = document.getElementById('uvSize').value;
+    uvSize = uvRaw.split(",").map(n => parseInt(n.trim()));
+    if (uvSize.length !== 2 || uvSize.some(isNaN)) {
+      alert("UV Size inválido (ej: 82, 82)");
+      return;
+    }
+  }
+
+  // ===== BLOQUE HUD =====
+  const newBlock = {
+    [`deve_${name}@hud.deve_title`]: {
+      "$stay_duration": stayDuration,
+      "$fade_in_duration": fadeInDuration,
+      "$fade_out_duration": fadeOutDuration,
+      "$texture": texture,
+      "$flag": flag,
+      "$size": size,
+      "$offset": [0, 0],
+      "$anchor_to": anchorTo,
+      "$anchor_from": anchorFrom,
+      "$uv": mediaType === "video" ? "@hud.deve_aseprite_animation" : "#null",
+      "$uv_size_re": mediaType === "video" ? uvSize : "#null"
+    }
+  };
+
+  Object.defineProperty(newBlock, "__id", {
+  value: blockId,
+  enumerable: false // 👈 CLAVE
+});
+  images.push(newBlock);
+  updateJson();
+
+  // ===== ARCHIVOS =====
+  const readerImage = new FileReader();
+readerImage.onload = e => {
+  archivos.push({
   name: imageFile.name,
   data: e.target.result,
-  type: 'image',
-  path: texture
+  type: "image",
+  path: texture,
+  blockId
 });
 
-                    let container = document.createElement("div");
-                    container.classList.add("file-container");
+  renderPreview(
+  e.target.result,
+  imageFile.name,
+  mediaType === "video" ? jsonFile.name : null,
+  blockId
+   );
+};
+readerImage.readAsDataURL(imageFile);
 
-                    let fileInfo = document.createElement("div");
-                    fileInfo.classList.add("file-info");
+if (mediaType === "video") {
+  const readerJson = new FileReader();
+  readerJson.onload = e => {
+    archivos.push({
+  name: jsonFile.name,
+  data: e.target.result,
+  type: "json",
+  path: texture,
+  blockId
+     });
+  };
+  readerJson.readAsText(jsonFile);
+}
+}
 
-                    // Mostrar miniatura de la imagen
-                    let img = document.createElement("img");
-                    img.src = e.target.result;
-                    fileInfo.appendChild(img);
+function renderPreview(imageBase64, imageName, jsonName, blockId) {
+  const container = document.createElement("div");
+  container.className = "file-container";
+  container.id = "preview-" + blockId;
+  container.style.position = "relative";
 
-                    // Mostrar solo el nombre del archivo
-                 //   let fileName = document.createElement("span");
-                //    fileName.textContent = imageFile.name;
-                    //fileInfo.appendChild(fileName);
+  const close = document.createElement("span");
+  close.textContent = "❌";
+  close.style.position = "absolute";
+  close.style.top = "5px";
+  close.style.right = "8px";
+  close.style.cursor = "pointer";
+  close.style.fontSize = "18px";
+  close.onclick = () => removeBlock(blockId);
 
-                    container.appendChild(fileInfo);
+  const img = document.createElement("img");
+  img.src = imageBase64;
+  img.style.width = "80px";
+  img.style.borderRadius = "8px";
 
-                    // Cargar archivo JSON
-                    readerJson.onload = function (e) {
-                        archivos.push({ name: jsonFile.name, data: e.target.result, type: 'json', path: texture });
+  const imgText = document.createElement("span");
+  imgText.textContent = imageName;
 
-                        let jsonInfo = document.createElement("div");
-                        jsonInfo.classList.add("file-info");
+  container.appendChild(close);
+  container.appendChild(img);
+  container.appendChild(imgText);
 
-                        // Mostrar nombre del archivo JSON
-                        let jsonFileName = document.createElement("span");
-jsonFileName.textContent = jsonFile.name;
-jsonFileName.style.marginLeft = "10px";
-jsonFileName.style.fontWeight = "bold";
-jsonInfo.appendChild(jsonFileName);
+  if (jsonName) {
+    const jsonText = document.createElement("span");
+    jsonText.textContent = jsonName;
+    jsonText.style.color = "#61dafb";
+    container.appendChild(jsonText);
+  }
 
-                        container.appendChild(jsonInfo);
+  document.getElementById("preview").appendChild(container);
+}
 
-                        // Crear el campo de entrada para la ruta de guardado
-                        //let inputPath = document.createElement("input");
-//inputPath.type = "text";
-//inputPath.placeholder = "Ruta de guardado, ej: textures/ui/Pepe";
-//inputPath.style.width = "100%"; // NUEVO: limitar el ancho/inputPath.oninput = function () {
-   //archivos.forEach(file => file.path = //inputPath.value);
-//};
+function removeBlock(blockId) {
+  // eliminar HUD
+  images = images.filter(b => !b.__id || b.__id !== blockId);
 
-                        //container.appendChild(inputPath);
-                        document.getElementById("preview").appendChild(container);
-                    };
+  // eliminar archivos
+  archivos = archivos.filter(f => f.blockId !== blockId);
 
-                    readerJson.readAsText(jsonFile); // Leer el archivo JSON como texto
-                };
+  // eliminar flag si ya no se usa
+  const usedFlags = images.map(b => Object.values(b)[0]["$flag"]);
+  flags = flags.filter(f => usedFlags.includes(f));
 
-                readerImage.readAsDataURL(imageFile); // Leer la imagen como base64
-            } else {
-        alert("Selecciona imagen y JSON.");
-        return;
-      }
+  // eliminar preview
+  const el = document.getElementById("preview-" + blockId);
+  if (el) el.remove();
 
-      const newBlock = {
-        [`deve_${name}@hud.deve_title`]: {
-          "$stay_duration": parseFloat(stayDuration),
-          "$fade_in_duration": parseFloat(fadeInDuration),
-          "$fade_out_duration": parseFloat(fadeOutDuration),
-          "$texture": texture,
-          "$flag": flag,
-          "$size": size,
-          "$offset": [0, 0],
-          "$anchor_to": anchorTo,
-          "$anchor_from": anchorFrom,
-          "$uv_size_re": uvSize
-        }
-      };
+  updateJson();
+}
 
-      images.push(newBlock);
-      updateJson();
-    }
+const mediaTypeSelect = document.getElementById("mediaType");
+const uvSizeGroup = document.getElementById("uvSizeGroup");
+const imageUploadGroup = document.getElementById("imageUploadGroup");
+const jsonUploadGroup = document.getElementById("jsonUploadGroup");
+
+function updateMediaFields() {
+  if (mediaTypeSelect.value === "image") {
+    // IMAGEN
+    uvSizeGroup.style.display = "none";
+    jsonUploadGroup.style.display = "none";
+    imageUploadGroup.style.display = "block";
+
+    document.getElementById("jsonUpload").value = "";
+  } else {
+    // VIDEO
+    uvSizeGroup.style.display = "block";
+    jsonUploadGroup.style.display = "block";
+    imageUploadGroup.style.display = "block";
+  }
+}
+
+mediaTypeSelect.addEventListener("change", updateMediaFields);
+updateMediaFields();
 
     function updateJson() {
       const finalJson = Object.assign({}, ...images);
@@ -144,10 +240,6 @@ jsonInfo.appendChild(jsonFileName);
     }
 
  async function downloadJson() {
-    
-    const Addonname = document.getElementById('Addonname').value;
-      const Addondescripcion = document.getElementById('Addondescripcion').value;
-    
  const zip = new JSZip();
 const rp = zip.folder("Hud_Screen");
     const jsonData = {
@@ -158,9 +250,6 @@ const rp = zip.folder("Hud_Screen");
                     "array_name": "bindings",
                     "operation": "insert_back",
                     "value": [
-                        {
-                            "binding_name": "#hud_title_text_string"
-                        },
                         {
                             "binding_type": "view",
                             "source_property_name": buildFlagCondition(),
@@ -186,9 +275,11 @@ const rp = zip.folder("Hud_Screen");
             "texture": "$texture",
             "anchor_from": "$anchor_from",
             "anchor_to": "$anchor_to",
+            "$flag|default": "black",
             "alpha": 6,
             "anims": ["@hud.in_animation"],
-            "uv": "@hud.deve_aseprite_animation",
+            "uv": "$uv",
+            "$uv|default": "@hud.deve_aseprite_animation",
             "uv_size": "$uv_size_re",
             "$uv_size_re|default": [82, 82],
             "disable_anim_fast_forward": true,
@@ -251,12 +342,16 @@ const rp = zip.folder("Hud_Screen");
             ]
         }
     };
+    
+    const addonName = document.getElementById('Addonname').value.trim();
+  const addonDescription = document.getElementById('Addondescripcion').value.trim();
+  const addonIconFile = document.getElementById('addonIcon').files[0]
 
     rp.file("manifest.json", JSON.stringify({
   format_version: 2,
   header: {
-    name: Addonname,
-    description: Addondescripcion + " By Developer7452",
+    name: addonName,
+    description: addonDescription + " bye Developer7452",
     uuid: generateUUID(),
     version: [1, 0, 0],
     min_engine_version: [1, 19, 0]
@@ -278,9 +373,13 @@ const rp = zip.folder("Hud_Screen");
   }
 });
 
+if (addonIconFile) {
+  const iconBuffer = await addonIconFile.arrayBuffer();
+  rp.file("pack_icon.png", iconBuffer);
+}
 
         rp.file("ui/hud_screen.json", JSON.stringify(jsonData, null, 2));
 
         zip.generateAsync({ type: "blob", mimeType: "application/mcaddon" })
-    .then(blob => saveAs(blob, `${Addonname}.mcaddon`));
+    .then(blob => saveAs(blob, `${addonName}.mcaddon`));
     };

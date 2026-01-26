@@ -193,27 +193,133 @@
     box-shadow: 0 0 5px #61dafb;
   }
 }
+.top-section {
+  width: 100%;
+  max-width: 900px;
+  background: linear-gradient(135deg, #1e2238, #2c2f48);
+  border-radius: 25px;
+  padding: 30px 25px;
+  margin-bottom: 35px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(97, 218, 251, 0.25);
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.top-section h1 {
+  margin: 0 0 10px;
+  font-size: 30px;
+  color: #61dafb;
+  text-shadow: 0 0 10px #61dafb;
+}
+
+.top-section p {
+  margin: 0;
+  font-size: 15px;
+  color: #d0d0e6;
+  line-height: 1.5;
+}
+
+.addon-section {
+  background: #252944;
+  border-radius: 20px;
+  padding: 25px;
+  max-width: 700px;
+  width: 100%;
+  margin-bottom: 35px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.addon-section h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.addon-section .hint {
+  font-size: 12px;
+  color: #aab;
+}
+
+.addon-preview {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #151521;
+  border-radius: 15px;
+  padding: 15px;
+  min-height: 120px;
+}
+
+.addon-preview img {
+  max-width: 280px;
+  max-height: 280px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(97,218,251,0.6);
+}
+
+.preview-text {
+  color: #777;
+}
   </style>
 </head>
 <body>
+    
+    <div class="top-section">
+  <h1><i class="fa-solid fa-layer-group"></i> HUD Screen Builder</h1>
+  <h1><i></i>By Developer7452</h1>
+  <p>
+    Crea y administra elementos <b>Imagen / Video</b> para el HUD de Minecraft Bedrock.<br>
+    Los archivos se exportan listos en formato <b>.mcaddon</b>.
+  </p>
+</div>
+
+<div class="addon-section">
+  <h2><i class="fa-solid fa-box"></i> Información del Addon</h2>
+
+  <div class="form-group">
+    <label><i class="fa-solid fa-tag"></i> Nombre del Addon</label>
+    <input type="text" id="Addonname" placeholder="Ej: Totems HUD" />
+  </div>
+
+  <div class="form-group">
+    <label><i class="fa-solid fa-align-left"></i> Descripción del Addon</label>
+    <input type="text" id="Addondescripcion" placeholder="Descripción del addon" />
+  </div>
+
+  <div class="form-group">
+    <label for="addonIcon" class="custom-file-upload">
+      <i class="fa-solid fa-image"></i> Subir Imagen del Addon
+    </label>
+    <input type="file" id="addonIcon" accept="image/*" />
+    <small class="hint">Esta imagen será el icono del addon</small>
+  </div>
+
+  <div class="addon-preview" id="addonPreview">
+    <span class="preview-text">Sin imagen seleccionada</span>
+  </div>
+</div>
+    
   <div class="container">
-      <h2><i class="fa-solid fa-pen-to-square"></i>Configuración del addon</h2>
-      <form id="elementForm">
-          <div class="form-group"><label><i class="fa-solid fa-tag"></i> Nombre del addon</label><input type="text" id="Addonname" required></div>
-          <div class="form-group"><label><i class="fa-solid fa-tag"></i> Descripción del addon</label><input type="text" id="Addondescripcion" required></div>
-      </form>
-  </div>    
-      
-  <div class="container">
-    <h2><i class="fa-solid fa-pen-to-square"></i> Editor HUD - Developer7452</h2>
+    <h2><i class="fa-solid fa-pen-to-square"></i> Editor HUD</h2>
     <form id="elementForm">
+        <div class="form-group">
+  <label><i class="fa-solid fa-photo-film"></i> Tipo de elemento</label>
+  <select id="mediaType">
+    <option value="video">Video</option>
+    <option value="image">Imagen</option>
+  </select>
+</div>
       <div class="form-group"><label><i class="fa-solid fa-tag"></i> Nombre</label><input type="text" id="name" required></div>
       <div class="form-group"><label><i class="fa-solid fa-image"></i> Ruta de la textura</label><input type="text" id="texture" required></div>
       <div class="form-group"><label><i class="fa-solid fa-flag"></i> Flag</label><input type="text" id="flag" required></div>
       <div class="form-group"><label><i class="fa-solid fa-clock"></i> Tiempo en pantalla (s)</label><input type="number" id="stayDuration"></div>
       <div class="form-group"><label><i class="fa-solid fa-arrow-up"></i> Tiempo para aparecer (s)</label><input type="number" id="fadeInDuration"></div>
       <div class="form-group"><label><i class="fa-solid fa-arrow-down"></i> Tiempo para desaparecer (s)</label><input type="number" id="fadeOutDuration"></div>
-      <div class="form-group"><label><i class="fa-solid fa-ruler-combined"></i> UV Size (ejemplo: 82, 82)</label><input type="text" id="uvSize"></div>
+      <div class="form-group" id="uvSizeGroup">
+  <label><i class="fa-solid fa-ruler-combined"></i> UV Size (ejemplo: 82, 82)</label>
+  <input type="text" id="uvSize">
+</div>
       <div class="form-group"><label><i class="fa-solid fa-expand-arrows-alt"></i> Size (ejemplo: 100%, 100%)</label><input type="text" id="size"></div>
 
       <div class="form-group">
@@ -246,13 +352,17 @@
         </select>
       </div>
 
-      <div class="form-group">
-        <i class="fa-solid fa-images"></i><label for="imageUpload" class="custom-file-upload">Subir Imagen</label>
-<input type="file" id="imageUpload" accept="image/*" required />
+      <div class="form-group" id="imageUploadGroup">
+  <i class="fa-solid fa-images"></i>
+  <label for="imageUpload" class="custom-file-upload">Subir Imagen</label>
+  <input type="file" id="imageUpload" accept="image/*" />
+</div>
 
-<i class="fa-solid fa-file-lines"></i><label for="jsonUpload" class="custom-file-upload">Subir JSON</label>
-<input type="file" id="jsonUpload" accept=".json" required />
-      </div>
+<div class="form-group" id="jsonUploadGroup">
+  <i class="fa-solid fa-file-lines"></i>
+  <label for="jsonUpload" class="custom-file-upload">Subir JSON</label>
+  <input type="file" id="jsonUpload" accept=".json" />
+</div>
 
       <button type="button" onclick="addNewBlock()"><i class="fa-solid fa-plus"></i> Agregar Imagen</button>
       <button type="button" onclick="downloadJson()"><i class="fa-solid fa-download"></i> Descargar JSON</button>
@@ -268,6 +378,6 @@
     <h3><i class="fa-solid fa-images"></i> Imágenes Agregadas</h3>
     <div id="preview" class="preview-images"></div>
   </div>
-  <script src="./video.js"></script>
+     <script src="./video.js"></script>
 </body>
 </html>

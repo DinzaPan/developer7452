@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Editor HUD - Developer7452</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #1e1e2f;
+      color: #f1f1f1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      margin: 0;
+    }
+
+    h2, h3 {
+  color: #61dafb;
+  animation: subtleGlow 3s ease-in-out infinite;
+}
+
+    .container {
+  background: #2c2f48;
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 700px;
+  width: 100%;
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+  animation: fadeInUp 0.8s ease-out;
+}
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      background: #3a3f5c;
+      color: #fff;
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+
+    input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #2d2d3a;
+  color: #61dafb;
+  border: 1px solid #61dafb;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 10px;
+  font-weight: bold;
+  box-shadow: 0 0 5px #61dafb;
+}
+
+.custom-file-upload:hover {
+  background-color: #3a3a4d;
+  box-shadow: 0 0 10px #4cc5eb;
+}
+    
+    input:focus, textarea:focus, select:focus {
+  outline: none;
+  border: 1px solid #61dafb;
+  box-shadow: 0 0 8px #61dafb;
+  animation: subtleGlowInput 1.5s ease-in-out infinite;
+  background-color: #1e1e2f;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+    button {
+  margin-top: 20px;
+  padding: 12px 20px;
+  background-color: #61dafb;
+  color: #1e1e2f;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-right: 10px;
+  box-shadow: 0 0 10px #61dafb;
+  animation: glow 2s infinite;
+}
+
+    button:hover {
+      background-color: #4cc5eb;
+    }
+
+    .json-output {
+      margin-top: 30px;
+      background: #151521;
+      padding: 20px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 700px;
+      overflow-x: auto;
+    }
+    
+    .json-output, .file-container {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .preview-images {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .file-container {
+  display: flex;
+  flex-direction: column; /* apila los elementos */
+  align-items: center;
+  background: #2a2f45;
+  padding: 10px;
+  border-radius: 10px;
+  gap: 15px;
+}
+
+    .file-info img {
+      width: 50px;
+      height: 50px;
+      border-radius: 5px;
+      object-fit: cover;
+    }
+
+    .file-info span {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .file-container input[type="text"] {
+      margin-left: auto;
+      width: 50%;
+    }
+    
+    @keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes subtleGlow {
+  0% {
+    text-shadow: 0 0 4px #61dafb;
+  }
+  50% {
+    text-shadow: 0 0 8px #4cc5eb;
+  }
+  100% {
+    text-shadow: 0 0 4px #61dafb;
+  }
+}
+
+@keyframes subtleGlowInput {
+  0% {
+    box-shadow: 0 0 5px #61dafb;
+  }
+  50% {
+    box-shadow: 0 0 10px #4cc5eb;
+  }
+  100% {
+    box-shadow: 0 0 5px #61dafb;
+  }
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+      <h2><i class="fa-solid fa-pen-to-square"></i>Configuración del addon</h2>
+      <form id="elementForm">
+          <div class="form-group"><label><i class="fa-solid fa-tag"></i> Nombre del addon</label><input type="text" id="Addonname" required></div>
+          <div class="form-group"><label><i class="fa-solid fa-tag"></i> Descripción del addon</label><input type="text" id="Addondescripcion" required></div>
+      </form>
+  </div>    
+      
+  <div class="container">
+    <h2><i class="fa-solid fa-pen-to-square"></i> Editor HUD - Developer7452</h2>
+    <form id="elementForm">
+      <div class="form-group"><label><i class="fa-solid fa-tag"></i> Nombre</label><input type="text" id="name" required></div>
+      <div class="form-group"><label><i class="fa-solid fa-image"></i> Ruta de la textura</label><input type="text" id="texture" required></div>
+      <div class="form-group"><label><i class="fa-solid fa-flag"></i> Flag</label><input type="text" id="flag" required></div>
+      <div class="form-group"><label><i class="fa-solid fa-clock"></i> Tiempo en pantalla (s)</label><input type="number" id="stayDuration"></div>
+      <div class="form-group"><label><i class="fa-solid fa-arrow-up"></i> Tiempo para aparecer (s)</label><input type="number" id="fadeInDuration"></div>
+      <div class="form-group"><label><i class="fa-solid fa-arrow-down"></i> Tiempo para desaparecer (s)</label><input type="number" id="fadeOutDuration"></div>
+      <div class="form-group"><label><i class="fa-solid fa-ruler-combined"></i> UV Size (ejemplo: 82, 82)</label><input type="text" id="uvSize"></div>
+      <div class="form-group"><label><i class="fa-solid fa-expand-arrows-alt"></i> Size (ejemplo: 100%, 100%)</label><input type="text" id="size"></div>
+
+      <div class="form-group">
+        <label><i class="fa-solid fa-location-crosshairs"></i> Anchor From</label>
+        <select id="anchorFrom">
+          <option value="center">center</option>
+          <option value="bottom_left">bottom_left</option>
+          <option value="bottom_middle">bottom_middle</option>
+          <option value="bottom_right">bottom_right</option>
+          <option value="left_middle">left_middle</option>
+          <option value="right_middle">right_middle</option>
+          <option value="top_left">top_left</option>
+          <option value="top_middle">top_middle</option>
+          <option value="top_right">top_right</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label><i class="fa-solid fa-location-dot"></i> Anchor To</label>
+        <select id="anchorTo">
+          <option value="center">center</option>
+          <option value="bottom_left">bottom_left</option>
+          <option value="bottom_middle">bottom_middle</option>
+          <option value="bottom_right">bottom_right</option>
+          <option value="left_middle">left_middle</option>
+          <option value="right_middle">right_middle</option>
+          <option value="top_left">top_left</option>
+          <option value="top_middle">top_middle</option>
+          <option value="top_right">top_right</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <i class="fa-solid fa-images"></i><label for="imageUpload" class="custom-file-upload">Subir Imagen</label>
+<input type="file" id="imageUpload" accept="image/*" required />
+
+<i class="fa-solid fa-file-lines"></i><label for="jsonUpload" class="custom-file-upload">Subir JSON</label>
+<input type="file" id="jsonUpload" accept=".json" required />
+      </div>
+
+      <button type="button" onclick="addNewBlock()"><i class="fa-solid fa-plus"></i> Agregar Imagen</button>
+      <button type="button" onclick="downloadJson()"><i class="fa-solid fa-download"></i> Descargar JSON</button>
+    </form>
+  </div>
+
+  <div class="json-output">
+    <h3><i class="fa-solid fa-code"></i> JSON Final</h3>
+    <pre id="jsonOutput">{}</pre>
+  </div>
+
+  <div class="json-output">
+    <h3><i class="fa-solid fa-images"></i> Imágenes Agregadas</h3>
+    <div id="preview" class="preview-images"></div>
+  </div>
+  <script src="./video.js"></script>
+</body>
+</html>
+

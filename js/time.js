@@ -19,7 +19,7 @@ const cardConfigurations = [
         description: 'Herramienta para crear y personalizar archivos hud_screen.json para Minecraft Bedrock Edition.',
         icon: 'fas fa-code',
         features: ['JSON Generator', 'Minecraft UI', 'Custom HUD'],
-        targetUrl: 'web/video.html',
+        targetUrl: 'web/hudscreen.html',
         initialTime: {
             days: 0,
             hours: 0,
